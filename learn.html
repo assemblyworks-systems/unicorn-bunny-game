@@ -87,6 +87,10 @@
   .choice.right { animation:rightpop 0.5s; background:#d9ffd9; }
   @keyframes wiggle { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
   @keyframes rightpop { 0%{transform:scale(1)} 50%{transform:scale(1.25)} 100%{transform:scale(1)} }
+  .picChoice { flex-direction:column; gap:2px; width:auto; min-width:120px; max-width:160px; height:auto; min-height:120px; padding:12px 10px; }
+  .picChoice .pic { font-size:62px; line-height:1; }
+  .picChoice .cword { font-size:19px; color:#7a2e6b; opacity:0; height:0; overflow:hidden; white-space:normal; transition:opacity .3s; }
+  .picChoice .cword.show { opacity:1; height:auto; margin-top:4px; }
 
   /* Counting objects */
   #countArea { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; max-width:90vw; max-height:38vh; overflow:hidden; }
@@ -108,6 +112,14 @@
   @keyframes cheer { 0%{transform:translate(-50%,-50%) scale(0.3); opacity:0;} 25%{transform:translate(-50%,-50%) scale(1.1); opacity:1;} 100%{transform:translate(-50%,-78%) scale(1.1); opacity:0;} }
   .spark { position:fixed; font-size:30px; pointer-events:none; z-index:65; animation:spark 0.8s ease-out forwards; }
   @keyframes spark { 0%{transform:translate(0,0) scale(0.4); opacity:1;} 100%{transform:translate(var(--dx),var(--dy)) scale(1.3); opacity:0;} }
+
+  .repeatBtn {
+    font-family:inherit; font-size:54px; background:#ff79c6; color:#fff; border:none;
+    border-radius:50%; width:120px; height:120px; box-shadow:0 7px 0 #d44ea8; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; animation:rpulse 1.7s ease-in-out infinite;
+  }
+  .repeatBtn:active { transform:translateY(4px); box-shadow:0 2px 0 #d44ea8; animation:none; }
+  @keyframes rpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
 </style>
 </head>
 <body>
@@ -236,6 +248,13 @@
     }
   }
 
+  function makeRepeat(fn){
+    const b=document.createElement('button'); b.className='repeatBtn'; b.textContent='🔊';
+    b.setAttribute('aria-label','Repeat');
+    b.addEventListener('pointerdown',e=>{ e.preventDefault(); initAudio(); fn(); });
+    return b;
+  }
+
   // ---------- navigation ----------
   function openMode(m){
     goFullscreen(); initAudio();
@@ -262,14 +281,12 @@
   function findRound(){
     play.innerHTML='';
     const cat=rand([UPPER,LOWER,NUMS]);
-    const target=rand(cat);
-    cur=target;
+    const target=rand(cat); cur=target;
     const distract=shuffle(cat.filter(x=>x!==target)).slice(0,2);
     const opts=shuffle([target,...distract]);
+    const sayIt=()=>speak('Can you find the '+nameOf(target)+'?');
 
-    const bp=document.createElement('div'); bp.id='bigPrompt';
-    bp.textContent='Find the '+nameOf(target)+'!';
-    play.appendChild(bp);
+    play.appendChild(makeRepeat(sayIt));
 
     const ch=document.createElement('div'); ch.id='choices';
     opts.forEach(o=>{
@@ -281,44 +298,43 @@
       ch.appendChild(b);
     });
     play.appendChild(ch);
-    promptEl.textContent='Find the '+nameOf(target);
-    speak('Can you find the '+nameOf(target)+'?');
+    promptEl.textContent='👂';
+    sayIt();
   }
 
-  // ================= A IS FOR =================
-  let soundsList=[], soundsIdx=0;
-  function startSounds(){
-    soundsList=[...UPPER, ...NUMS]; soundsIdx=0; renderSounds();
-  }
-  function renderSounds(){
+  // ================= A IS FOR (pick the picture) =================
+  function startSounds(){ soundsRound(); }
+  function soundsRound(){
     play.innerHTML='';
-    const t=soundsList[soundsIdx];
-    const card=document.createElement('div'); card.className='targetCard';
-    if(isNum(t)){
-      const g=document.createElement('div'); g.className='glyph'; g.textContent=t; card.appendChild(g);
-      const e=document.createElement('div'); e.className='wordemo'; e.textContent=OBJ[0].repeat(1); card.appendChild(e);
-      const w=document.createElement('div'); w.className='word'; w.textContent=NUMWORDS[+t]; card.appendChild(w);
-      card.onpointerdown=ev=>{ ev.preventDefault(); sayNumber(t); };
-    } else {
-      const g=document.createElement('div'); g.className='glyph'; g.textContent=t+' '+t.toLowerCase(); g.style.fontSize='96px'; card.appendChild(g);
-      const e=document.createElement('div'); e.className='wordemo'; e.textContent=WORDS[t][1]; card.appendChild(e);
-      const w=document.createElement('div'); w.className='word'; w.textContent=t+' is for '+WORDS[t][0]; card.appendChild(w);
-      card.onpointerdown=ev=>{ ev.preventDefault(); sayLetter(t); };
-    }
-    play.appendChild(card);
+    const target=rand(UPPER); cur=target;
+    const others=shuffle(UPPER.filter(l=>l!==target)).slice(0,2);
+    const opts=shuffle([target,...others]);
+    const sayIt=()=>speak(target+'. Which picture starts with '+target+'?');
 
-    const row=document.createElement('div'); row.className='row';
-    const prev=document.createElement('button'); prev.className='pill'; prev.textContent='◀'; prev.style.fontSize='28px';
-    prev.onpointerdown=e=>{ e.preventDefault(); soundsIdx=(soundsIdx-1+soundsList.length)%soundsList.length; renderSounds(); };
-    const next=document.createElement('button'); next.className='pill'; next.textContent='▶'; next.style.fontSize='28px';
-    next.onpointerdown=e=>{ e.preventDefault(); soundsIdx=(soundsIdx+1)%soundsList.length; renderSounds(); };
-    row.appendChild(prev); row.appendChild(next); play.appendChild(row);
+    const head=document.createElement('div'); head.className='targetCard';
+    const g=document.createElement('div'); g.className='glyph'; g.textContent=target+' '+target.toLowerCase(); g.style.fontSize='92px';
+    head.appendChild(g);
+    head.onpointerdown=ev=>{ ev.preventDefault(); sayIt(); };
+    play.appendChild(head);
 
-    promptEl.textContent='Tap to hear!';
-    if(isNum(t)) sayNumber(t); else sayLetter(t);
+    play.appendChild(makeRepeat(sayIt));
+
+    const ch=document.createElement('div'); ch.id='choices';
+    opts.forEach(o=>{
+      const b=document.createElement('button'); b.className='choice picChoice';
+      const pic=document.createElement('span'); pic.className='pic'; pic.textContent=WORDS[o][1]; b.appendChild(pic);
+      const cw=document.createElement('span'); cw.className='cword'; cw.textContent=o+' is for '+WORDS[o][0]; b.appendChild(cw);
+      b.addEventListener('pointerdown',e=>{ e.preventDefault();
+        if(o===target){ b.classList.add('right'); cw.classList.add('show'); celebrate(); sayLetter(target); setTimeout(soundsRound,1900); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),400); }
+      });
+      ch.appendChild(b);
+    });
+    play.appendChild(ch);
+    promptEl.textContent='👂';
+    sayIt();
   }
-  function sayLetter(t){ speak(t.toUpperCase()+'. '+t.toUpperCase()+' is for '+WORDS[t][0]+'.'); }
-  function sayNumber(t){ const n=+t; let s=n+'. '; let parts=[]; for(let i=1;i<=Math.min(n,20);i++) parts.push(i); speak(s+parts.join(', ')+'!'); }
+  function sayLetter(t){ speak(t.toUpperCase()+'. '+t.toUpperCase()+' is for '+WORDS[t][0]+'!'); }
 
   // ================= TRACE IT =================
   let traceList=[], traceIdx=0, traceMask=null, coveredCells=null, totalCells=0, drawing=false, lastP=null;
@@ -376,10 +392,10 @@
     const dx=cv.getContext('2d'); dx.setTransform(dpr,0,0,dpr,0,0);
     dx.clearRect(0,0,rect.width,rect.height);
     dx.lineCap='round'; dx.lineJoin='round'; dx.lineWidth=22;
-    drawing=false; lastP=null;
-    cv.onpointerdown=e=>{ e.preventDefault(); drawing=true; lastP=pos(cv,e); paint(dx,rect,lastP,lastP); cv.setPointerCapture&&cv.setPointerCapture(e.pointerId); };
-    cv.onpointermove=e=>{ if(!drawing) return; e.preventDefault(); const p=pos(cv,e); paint(dx,rect,lastP,p); lastP=p; checkCoverage(rect); };
-    cv.onpointerup=e=>{ drawing=false; lastP=null; checkCoverage(rect,true); };
+    drawing=false; lastP=null; traceDone=false;
+    cv.onpointerdown=e=>{ e.preventDefault(); drawing=true; lastP=pos(cv,e); paint(dx,rect,lastP,lastP); markSeg(lastP,lastP,rect); cv.setPointerCapture&&cv.setPointerCapture(e.pointerId); };
+    cv.onpointermove=e=>{ if(!drawing) return; e.preventDefault(); const p=pos(cv,e); paint(dx,rect,lastP,p); markSeg(lastP,p,rect); lastP=p; evalCoverage(rect); };
+    cv.onpointerup=e=>{ drawing=false; lastP=null; evalCoverage(rect); };
     cv.onpointercancel=()=>{ drawing=false; lastP=null; };
   }
   function pos(cv,e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
@@ -389,23 +405,25 @@
     dx.beginPath(); dx.moveTo(a.x,a.y); dx.lineTo(b.x,b.y); dx.stroke();
   }
   let traceDone=false;
-  function checkCoverage(rect,final){
-    if(!traceMask) return;
-    const gx=Math.floor((lastP? lastP.x:0)/rect.width*GRID);
-    const gy=Math.floor((lastP? lastP.y:0)/rect.height*GRID);
-    if(lastP){
-      for(let oy=-1;oy<=1;oy++) for(let ox=-1;ox<=1;ox++){
-        const cxi=gx+ox, cyi=gy+oy;
-        if(cxi<0||cyi<0||cxi>=GRID||cyi>=GRID) continue;
-        const k=cyi*GRID+cxi;
-        if(traceMask[k]&&!coveredCells[k]) coveredCells[k]=true;
-      }
+  function markSeg(a,b,rect){
+    if(!traceMask||!a||!b) return;
+    const dist=Math.hypot(b.x-a.x,b.y-a.y);
+    const steps=Math.max(1,Math.ceil(dist/4));
+    for(let i=0;i<=steps;i++){
+      const x=a.x+(b.x-a.x)*i/steps, y=a.y+(b.y-a.y)*i/steps;
+      const gx=Math.floor(x/rect.width*GRID), gy=Math.floor(y/rect.height*GRID);
+      if(gx<0||gy<0||gx>=GRID||gy>=GRID) continue;
+      const k=gy*GRID+gx;
+      if(traceMask[k]&&!coveredCells[k]) coveredCells[k]=true;
     }
+  }
+  function evalCoverage(rect){
+    if(!traceMask||traceDone||totalCells<=0) return;
     const covered=coveredCells.reduce((s,v)=>s+(v?1:0),0);
-    if(!traceDone && totalCells>0 && covered/totalCells>=0.55){
+    if(covered/totalCells>=0.8){
       traceDone=true;
       celebrate('Great tracing!'); speak('Great job! You traced the '+nameOf(cur)+'!');
-      setTimeout(()=>{ traceDone=false; traceIdx=(traceIdx+1)%traceList.length; renderTrace(); },1500);
+      setTimeout(()=>{ traceDone=false; traceIdx=(traceIdx+1)%traceList.length; renderTrace(); },1600);
     }
   }
 
@@ -415,10 +433,11 @@
     play.innerHTML='';
     const n=1+Math.floor(Math.random()*20); cur=String(n);
     const emo=rand(OBJ);
-    const bp=document.createElement('div'); bp.id='bigPrompt'; bp.textContent='How many? Tap the number!'; play.appendChild(bp);
+    const sayIt=()=>speak('How many? Count them and tap the number.');
     const area=document.createElement('div'); area.id='countArea';
     for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.textContent=emo; o.style.animationDelay=(i*0.04)+'s'; area.appendChild(o); }
     play.appendChild(area);
+    play.appendChild(makeRepeat(sayIt));
 
     let opts=[n];
     while(opts.length<3){ let d=Math.max(1,Math.min(20, n+(Math.floor(Math.random()*7)-3))); if(!opts.includes(d)) opts.push(d); }
@@ -433,8 +452,8 @@
       ch.appendChild(b);
     });
     play.appendChild(ch);
-    promptEl.textContent='Count them!';
-    speak('How many? Count them and tap the number.');
+    promptEl.textContent='👂';
+    sayIt();
   }
 
   // ---------- wiring ----------
@@ -447,7 +466,6 @@
     if(!soundOn&&'speechSynthesis' in window) speechSynthesis.cancel();
     if(soundOn) initAudio();
   });
-  // resize handling for trace
   window.addEventListener('resize',()=>{ if(mode==='trace'&&cur) setupTrace(cur); });
 })();
 </script>
