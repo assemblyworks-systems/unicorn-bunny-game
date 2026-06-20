@@ -12,114 +12,97 @@
 <meta name="apple-mobile-web-app-title" content="Avalynn's Games">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
-  html, body { height:100%; overflow:hidden; touch-action:manipulation; }
-  body { font-family:"Comic Sans MS","Trebuchet MS",sans-serif; background:#ffd6ef; cursor:pointer; }
-  #app { position:fixed; inset:0; transition:background 0.6s ease; }
+  *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
+  html,body{ height:100%; overflow:hidden; touch-action:none; }
+  body{ font-family:"Comic Sans MS","Trebuchet MS",sans-serif; background:#ffd6ef; }
+  #app{ position:fixed; inset:0; transition:background .6s ease; background:linear-gradient(160deg,#ffe3f3,#e7d9ff); }
 
-  /* Top bar */
-  #topbar {
-    position:fixed; top:0; left:0; right:0; height:64px; z-index:60;
-    display:none; align-items:center; justify-content:space-between; padding:0 12px;
-  }
-  .pill {
-    font-family:inherit; font-size:22px; font-weight:bold; color:#fff;
-    background:#ff79c6; border:none; border-radius:40px; padding:8px 18px;
-    box-shadow:0 4px 0 #d44ea8; cursor:pointer;
-  }
-  .pill:active { transform:translateY(3px); box-shadow:0 1px 0 #d44ea8; }
-  #prompt {
-    background:rgba(255,255,255,0.8); border-radius:40px; padding:8px 22px;
-    font-size:24px; font-weight:bold; color:#d44ea8; white-space:nowrap; max-width:62vw;
-    overflow:hidden; text-overflow:ellipsis; text-align:center;
-  }
-  .iconbtn {
-    font-family:inherit; font-size:24px; background:rgba(255,255,255,0.8);
-    border:none; border-radius:40px; padding:8px 14px; cursor:pointer;
-  }
+  /* top bar */
+  #topbar{ position:fixed; top:0; left:0; right:0; height:66px; z-index:60; display:none; align-items:center; justify-content:space-between; padding:0 12px; }
+  .pill{ font-family:inherit; font-size:22px; font-weight:bold; color:#fff; background:#ff79c6; border:none; border-radius:40px; padding:9px 20px; box-shadow:0 4px 0 #d44ea8; cursor:pointer; }
+  .pill:active{ transform:translateY(3px); box-shadow:0 1px 0 #d44ea8; }
+  #starCount{ background:#fff; border-radius:40px; padding:8px 20px; font-size:24px; font-weight:bold; color:#f5a623; white-space:nowrap; box-shadow:0 4px 0 rgba(245,166,35,.35); cursor:pointer; }
+  #starCount.bump{ animation:bump .4s; }
+  @keyframes bump{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+  .iconbtn{ font-family:inherit; font-size:24px; background:#fff; border:none; border-radius:40px; padding:9px 14px; cursor:pointer; box-shadow:0 4px 0 rgba(0,0,0,.08); }
 
-  .screen { position:fixed; inset:0; }
-  .hidden { display:none !important; }
+  .screen{ position:fixed; inset:0; }
+  .hidden{ display:none !important; }
 
-  /* Home */
-  #home { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; padding:18px; text-align:center; }
-  #home h1 { font-size:34px; color:#d44ea8; text-shadow:0 3px 0 #fff; line-height:1.1; }
-  #home .big { font-size:74px; animation:bob 1.6s ease-in-out infinite; }
-  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-  #menu { display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:540px; }
-  .menu-btn {
-    font-family:inherit; font-size:21px; font-weight:bold; color:#7a2e6b;
-    background:rgba(255,255,255,0.9); border:none; border-radius:26px;
-    padding:16px 10px; box-shadow:0 6px 0 rgba(212,78,168,0.4); cursor:pointer;
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-  }
-  .menu-btn .emo { font-size:50px; }
-  .menu-btn:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(212,78,168,0.4); }
-  .link-btn {
-    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
-    font-family:inherit; font-size:20px; font-weight:bold; color:#fff;
-    background:#a86bd6; border-radius:40px; padding:12px 26px; box-shadow:0 5px 0 #7d49a8;
-  }
-  .link-btn:active { transform:translateY(3px); box-shadow:0 2px 0 #7d49a8; }
+  /* home */
+  #home{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:18px; text-align:center; }
+  #home h1{ font-size:34px; color:#d44ea8; text-shadow:0 3px 0 #fff; line-height:1.1; }
+  #home .hero{ font-size:78px; animation:bob 1.7s ease-in-out infinite; filter:drop-shadow(0 8px 8px rgba(0,0,0,.15)); }
+  @keyframes bob{ 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-14px) rotate(3deg)} }
+  #menu{ display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:560px; }
+  .menu-btn{ font-family:inherit; font-size:21px; font-weight:bold; color:#7a2e6b; border:none; border-radius:28px; padding:16px 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:0 6px 0 rgba(0,0,0,.12); transition:transform .1s; }
+  .menu-btn .emo{ font-size:50px; filter:drop-shadow(0 4px 4px rgba(0,0,0,.12)); }
+  .menu-btn:active{ transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.12); }
+  .m1{ background:#fff0a6;} .m2{ background:#ffc2e2;} .m3{ background:#bfe7ff;} .m4{ background:#c8f6cf;}
+  .homeRow{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .link-btn{ display:inline-flex; align-items:center; gap:8px; text-decoration:none; font-family:inherit; font-size:19px; font-weight:bold; color:#fff; border-radius:40px; padding:12px 24px; box-shadow:0 5px 0 rgba(0,0,0,.18); }
+  .link-btn:active{ transform:translateY(3px); }
+  .purple{ background:#a86bd6;} .blue{ background:#5aa9e6;}
 
-  /* Play */
-  #play { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px; padding:84px 16px 28px; }
-  #bigPrompt { font-size:26px; font-weight:bold; color:#7a2e6b; text-align:center; min-height:32px; }
+  /* play */
+  #play{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:84px 14px 24px; }
 
-  .targetCard {
-    background:#fff; border-radius:30px; box-shadow:0 8px 0 rgba(212,78,168,0.3);
-    min-width:160px; padding:18px 30px; display:flex; flex-direction:column; align-items:center; gap:4px; cursor:pointer;
-  }
-  .targetCard .glyph { font-size:120px; font-weight:bold; color:#d44ea8; line-height:1; }
-  .targetCard .word { font-size:26px; color:#7a2e6b; }
-  .targetCard .wordemo { font-size:60px; }
-  .targetCard:active { transform:scale(1.04); }
+  .targetCard{ background:#fff; border-radius:30px; box-shadow:0 8px 0 rgba(212,78,168,.3); padding:14px 30px; display:flex; flex-direction:column; align-items:center; gap:4px; animation:popin .35s; }
+  .targetCard .glyph{ font-size:96px; font-weight:bold; color:#d44ea8; line-height:1; }
 
-  #choices { display:flex; flex-wrap:wrap; gap:18px; justify-content:center; }
-  .choice {
-    font-family:inherit; font-size:64px; font-weight:bold; color:#7a2e6b;
-    background:#fff; border:none; border-radius:26px; width:120px; height:120px;
-    box-shadow:0 6px 0 rgba(212,78,168,0.35); cursor:pointer;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .choice:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(212,78,168,0.35); }
-  .choice.wrong { animation:wiggle 0.4s; }
-  .choice.right { animation:rightpop 0.5s; background:#d9ffd9; }
-  @keyframes wiggle { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px)} 75%{transform:translateX(10px)} }
-  @keyframes rightpop { 0%{transform:scale(1)} 50%{transform:scale(1.25)} 100%{transform:scale(1)} }
-  .picChoice { flex-direction:column; gap:2px; width:auto; min-width:120px; max-width:160px; height:auto; min-height:120px; padding:12px 10px; }
-  .picChoice .pic { font-size:62px; line-height:1; }
-  .picChoice .cword { font-size:19px; color:#7a2e6b; opacity:0; height:0; overflow:hidden; white-space:normal; transition:opacity .3s; }
-  .picChoice .cword.show { opacity:1; height:auto; margin-top:4px; }
+  #choices{ display:flex; flex-wrap:wrap; gap:18px; justify-content:center; }
+  .choice{ font-family:inherit; font-size:64px; font-weight:bold; color:#7a2e6b; background:#fff; border:none; border-radius:26px; width:122px; height:122px; box-shadow:0 6px 0 rgba(0,0,0,.16); cursor:pointer; display:flex; align-items:center; justify-content:center; animation:popin .4s backwards; }
+  .choice:active{ transform:translateY(4px); box-shadow:0 2px 0 rgba(0,0,0,.16); }
+  .choice.wrong{ animation:wiggle .4s; }
+  .choice.right{ animation:rightpop .6s; background:#d9ffd9; }
+  @keyframes popin{ 0%{transform:scale(.3); opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1); opacity:1} }
+  @keyframes wiggle{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px) rotate(-5deg)} 75%{transform:translateX(10px) rotate(5deg)} }
+  @keyframes rightpop{ 0%{transform:scale(1)} 40%{transform:scale(1.3) rotate(6deg)} 100%{transform:scale(1)} }
 
-  /* Counting objects */
-  #countArea { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; max-width:90vw; max-height:38vh; overflow:hidden; }
-  #countArea .obj { font-size:46px; animation:pop 0.3s; }
-  @keyframes pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+  .picChoice{ flex-direction:column; gap:2px; width:auto; min-width:122px; max-width:165px; height:auto; min-height:122px; padding:12px 10px; }
+  .picChoice .pic{ font-size:64px; line-height:1; animation:floaty 2.4s ease-in-out infinite; }
+  .picChoice .cword{ font-size:19px; color:#7a2e6b; opacity:0; height:0; overflow:hidden; white-space:normal; transition:opacity .3s; }
+  .picChoice .cword.show{ opacity:1; height:auto; margin-top:4px; }
+  .picChoice .cword b{ color:#d44ea8; font-size:24px; }
+  @keyframes floaty{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 
-  /* Trace */
-  #traceWrap { position:relative; width:min(78vw,420px); height:min(78vw,420px); background:#fff; border-radius:30px; box-shadow:0 8px 0 rgba(212,78,168,0.3); }
-  #traceCanvas, #guideCanvas { position:absolute; inset:0; width:100%; height:100%; border-radius:30px; }
-  #guideCanvas { pointer-events:none; }
-  .row { display:flex; gap:14px; }
+  #countArea{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; max-width:92vw; max-height:36vh; overflow:hidden; }
+  #countArea .obj{ font-size:46px; animation:dropin .4s backwards; }
+  @keyframes dropin{ 0%{transform:translateY(-40px) scale(0); opacity:0} 60%{transform:translateY(6px) scale(1.15)} 100%{transform:translateY(0) scale(1); opacity:1} }
 
-  .cheer {
-    position:fixed; left:50%; top:42%; transform:translate(-50%,-50%);
-    font-size:54px; font-weight:bold; color:#fff; pointer-events:none; z-index:70;
-    text-shadow:0 3px 0 #ff9ad5, 0 0 14px rgba(255,255,255,0.8);
-    animation:cheer 1.1s ease-out forwards; white-space:nowrap; text-align:center;
-  }
-  @keyframes cheer { 0%{transform:translate(-50%,-50%) scale(0.3); opacity:0;} 25%{transform:translate(-50%,-50%) scale(1.1); opacity:1;} 100%{transform:translate(-50%,-78%) scale(1.1); opacity:0;} }
-  .spark { position:fixed; font-size:30px; pointer-events:none; z-index:65; animation:spark 0.8s ease-out forwards; }
-  @keyframes spark { 0%{transform:translate(0,0) scale(0.4); opacity:1;} 100%{transform:translate(var(--dx),var(--dy)) scale(1.3); opacity:0;} }
+  .repeatBtn{ font-family:inherit; font-size:52px; background:radial-gradient(circle at 40% 35%,#ff9ad5,#ff5db0); color:#fff; border:none; border-radius:50%; width:118px; height:118px; box-shadow:0 7px 0 #d44ea8; cursor:pointer; display:flex; align-items:center; justify-content:center; animation:rpulse 1.7s ease-in-out infinite; }
+  .repeatBtn:active{ transform:translateY(4px); box-shadow:0 2px 0 #d44ea8; animation:none; }
+  @keyframes rpulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.09)} }
 
-  .repeatBtn {
-    font-family:inherit; font-size:54px; background:#ff79c6; color:#fff; border:none;
-    border-radius:50%; width:120px; height:120px; box-shadow:0 7px 0 #d44ea8; cursor:pointer;
-    display:flex; align-items:center; justify-content:center; animation:rpulse 1.7s ease-in-out infinite;
-  }
-  .repeatBtn:active { transform:translateY(4px); box-shadow:0 2px 0 #d44ea8; animation:none; }
-  @keyframes rpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  /* trace */
+  #traceWrap{ position:relative; width:min(80vw,440px); height:min(80vw,440px); background:#fff; border-radius:32px; box-shadow:0 8px 0 rgba(212,78,168,.3); touch-action:none; }
+  #traceCanvas,#guideCanvas{ position:absolute; inset:0; width:100%; height:100%; border-radius:32px; touch-action:none; }
+  #guideCanvas{ pointer-events:none; }
+  .startDot{ position:absolute; width:30px; height:30px; margin:-15px 0 0 -15px; border-radius:50%; background:#3ec46d; box-shadow:0 0 0 6px rgba(62,196,109,.35); pointer-events:none; animation:spulse 1s ease-in-out infinite; z-index:5; }
+  .startDot::after{ content:"👆"; position:absolute; left:24px; top:6px; font-size:26px; }
+  @keyframes spulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
+  .row{ display:flex; gap:14px; }
+
+  /* mascot */
+  #buddy{ position:fixed; bottom:10px; left:10px; font-size:74px; z-index:40; filter:drop-shadow(0 6px 6px rgba(0,0,0,.18)); pointer-events:none; animation:bob 2s ease-in-out infinite; }
+  #buddy.cheer{ animation:bjump .7s; }
+  @keyframes bjump{ 0%{transform:translateY(0) scale(1)} 30%{transform:translateY(-40px) scale(1.2) rotate(-12deg)} 60%{transform:translateY(0) scale(1.1) rotate(10deg)} 100%{transform:translateY(0) scale(1)} }
+
+  /* fx */
+  .cheer{ position:fixed; left:50%; top:38%; transform:translate(-50%,-50%); font-size:58px; font-weight:bold; color:#fff; pointer-events:none; z-index:80; text-shadow:0 3px 0 #ff9ad5,0 0 16px rgba(255,255,255,.9); animation:cheer 1.2s ease-out forwards; white-space:nowrap; text-align:center; }
+  @keyframes cheer{ 0%{transform:translate(-50%,-50%) scale(.2); opacity:0} 25%{transform:translate(-50%,-50%) scale(1.15); opacity:1} 100%{transform:translate(-50%,-80%) scale(1.15); opacity:0} }
+  .confetti{ position:fixed; top:-30px; font-size:26px; pointer-events:none; z-index:75; will-change:transform; }
+  .spark{ position:fixed; pointer-events:none; z-index:78; animation:spk .8s ease-out forwards; }
+  @keyframes spk{ 0%{transform:translate(0,0) scale(.4); opacity:1} 100%{transform:translate(var(--dx),var(--dy)) scale(1.3); opacity:0} }
+  .flyStick{ position:fixed; font-size:46px; z-index:85; pointer-events:none; transition:all .8s cubic-bezier(.4,0,.2,1); }
+
+  /* board */
+  #board{ display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:16px; padding:84px 18px 24px; overflow:auto; }
+  #board h2{ font-size:30px; color:#d44ea8; text-shadow:0 2px 0 #fff; }
+  #board .count{ font-size:22px; color:#7a2e6b; }
+  #stickerGrid{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:680px; }
+  #stickerGrid .st{ font-size:46px; background:#fff; border-radius:20px; width:74px; height:74px; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 rgba(0,0,0,.1); animation:popin .4s backwards; }
+  #board .empty{ font-size:20px; color:#9b6f93; max-width:420px; text-align:center; }
 </style>
 </head>
 <body>
@@ -127,26 +110,37 @@
 
   <div id="topbar">
     <button id="backBtn" class="pill">⟵ Home</button>
-    <div id="prompt">Let's learn!</div>
+    <div id="starCount">⭐ 0</div>
     <button id="soundBtn" class="iconbtn">🔊</button>
   </div>
 
   <!-- HOME -->
   <div id="home" class="screen">
-    <div class="big">🔤🔢</div>
+    <div class="hero">🦄</div>
     <h1>Avalynn's<br>ABC &amp; 123</h1>
     <div id="menu">
-      <button class="menu-btn" data-mode="find"><span class="emo">🔍</span>Find It</button>
-      <button class="menu-btn" data-mode="sounds"><span class="emo">🍎</span>A is for…</button>
-      <button class="menu-btn" data-mode="trace"><span class="emo">✏️</span>Trace It</button>
-      <button class="menu-btn" data-mode="count"><span class="emo">🍓</span>Count It</button>
+      <button class="menu-btn m1" data-mode="find"><span class="emo">🔍</span>Find It</button>
+      <button class="menu-btn m2" data-mode="sounds"><span class="emo">🍎</span>A is for…</button>
+      <button class="menu-btn m3" data-mode="trace"><span class="emo">✏️</span>Trace It</button>
+      <button class="menu-btn m4" data-mode="count"><span class="emo">🍓</span>Count It</button>
     </div>
-    <a class="link-btn" href="index.html">🦄 Play Games</a>
+    <div class="homeRow">
+      <button class="link-btn purple" id="boardBtn">🎁 My Stickers</button>
+      <a class="link-btn blue" href="index.html">🦄 Play Games</a>
+    </div>
   </div>
 
   <!-- PLAY -->
   <div id="play" class="screen hidden"></div>
 
+  <!-- BOARD -->
+  <div id="board" class="screen hidden">
+    <h2>🎁 My Sticker Board</h2>
+    <div class="count" id="boardCount"></div>
+    <div id="stickerGrid"></div>
+  </div>
+
+  <div id="buddy">🦄</div>
 </div>
 
 <script>
@@ -154,16 +148,18 @@
   const app=document.getElementById('app');
   const home=document.getElementById('home');
   const play=document.getElementById('play');
+  const board=document.getElementById('board');
   const topbar=document.getElementById('topbar');
   const backBtn=document.getElementById('backBtn');
   const soundBtn=document.getElementById('soundBtn');
-  const promptEl=document.getElementById('prompt');
+  const starCount=document.getElementById('starCount');
+  const boardBtn=document.getElementById('boardBtn');
+  const buddy=document.getElementById('buddy');
 
   // ---------- content ----------
   const UPPER='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const LOWER='abcdefghijklmnopqrstuvwxyz'.split('');
   const NUMS=[]; for(let i=1;i<=20;i++) NUMS.push(String(i));
-  const NUMWORDS={1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven',8:'eight',9:'nine',10:'ten',11:'eleven',12:'twelve',13:'thirteen',14:'fourteen',15:'fifteen',16:'sixteen',17:'seventeen',18:'eighteen',19:'nineteen',20:'twenty'};
   const WORDS={
     A:['apple','🍎'],B:['banana','🍌'],C:['cat','🐱'],D:['dog','🐶'],E:['elephant','🐘'],
     F:['fish','🐟'],G:['grapes','🍇'],H:['hat','🎩'],I:['ice cream','🍦'],J:['juice','🧃'],
@@ -172,302 +168,202 @@
     U:['umbrella','☂️'],V:['violin','🎻'],W:['watermelon','🍉'],X:['fox','🦊'],Y:['yo-yo','🪀'],Z:['zebra','🦓']
   };
   const OBJ=['🍓','⭐','🐠','🌸','🍎','🦋','🐥','🎈','🍒','🐞'];
-  const SCENES=['#d6ffe0','#ffd6ef','#e3d6ff','#d6e8ff','#fff4c2'];
-  const PRAISE=['Yay!','Great job!','Wonderful!','You did it!','Amazing!','Hooray!','Super!','Well done!','Brilliant!'];
+  const STICKERS=['⭐','🌈','🦄','🐰','🍭','🎀','🌸','🦋','🍓','🧁','🐱','🌟','💖','🎈','🐥','🦊','🐢','🌷'];
+  const SCENES=['linear-gradient(160deg,#d8ffe6,#fff6c2)','linear-gradient(160deg,#ffe3f3,#e7d9ff)','linear-gradient(160deg,#dff0ff,#e7d9ff)','linear-gradient(160deg,#fff4c2,#cdeeff)','linear-gradient(160deg,#ffe0ef,#ffd9c2)'];
+  const PRAISE=['Yay!','Great job!','Wonderful!','You did it!','Amazing!','Hooray!','Super!','Well done!','Brilliant!','Awesome!'];
   const TRYAGAIN=['Try again!','Almost!','You can do it!','Keep trying!','So close!'];
 
   let mode=null, soundOn=true, audioCtx=null;
-  let cur=null; // current target token
+  let cur=null, roundLock=false;
   const rand=a=>a[Math.floor(Math.random()*a.length)];
   const isNum=t=>/^[0-9]+$/.test(t);
+  function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+
+  // ---------- stickers (persistent) ----------
+  const SKEY='avalynn_stickers_v1';
+  function loadStore(){ try{ return JSON.parse(localStorage.getItem(SKEY))||{count:0,board:[]}; }catch(e){ return {count:0,board:[]}; } }
+  function saveStore(s){ try{ localStorage.setItem(SKEY,JSON.stringify(s)); }catch(e){} }
+  let store=loadStore();
+  function renderStars(){ starCount.textContent='⭐ '+store.count; }
+  function earnSticker(){
+    const s=rand(STICKERS);
+    store.count++; store.board.push(s); if(store.board.length>60) store.board.shift();
+    saveStore(store); renderStars();
+    starCount.classList.remove('bump'); void starCount.offsetWidth; starCount.classList.add('bump');
+    flyTo(s);
+    if(store.count%10===0){ setTimeout(()=>{ fanfare(); cheerText('⭐ '+store.count+' stars! ⭐'); confetti(28); }, 500); }
+  }
+  function flyTo(emo){
+    const f=document.createElement('div'); f.className='flyStick'; f.textContent=emo;
+    f.style.left='48vw'; f.style.top='42vh'; document.body.appendChild(f);
+    const r=starCount.getBoundingClientRect();
+    requestAnimationFrame(()=>{ f.style.left=r.left+'px'; f.style.top=r.top+'px'; f.style.transform='scale(.4)'; f.style.opacity='0.2'; });
+    setTimeout(()=>f.remove(),850);
+  }
 
   // ---------- audio ----------
-  function initAudio(){
-    if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; } }
-    if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume();
-  }
-  function chime(){
-    if(!soundOn||!audioCtx) return;
-    const now=audioCtx.currentTime, root=523.25;
-    [root,root*1.26,root*1.5].forEach((f,i)=>{
-      const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-      o.type='sine'; o.frequency.value=f;
-      g.gain.setValueAtTime(0.0001, now+i*0.06);
-      g.gain.exponentialRampToValueAtTime(0.22, now+i*0.06+0.02);
-      g.gain.exponentialRampToValueAtTime(0.0001, now+i*0.06+0.3);
-      o.connect(g).connect(audioCtx.destination);
-      o.start(now+i*0.06); o.stop(now+i*0.06+0.34);
-    });
-  }
-  function boop(){
-    if(!soundOn||!audioCtx) return;
-    const now=audioCtx.currentTime;
-    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
-    o.type='sine'; o.frequency.setValueAtTime(330,now); o.frequency.exponentialRampToValueAtTime(220,now+0.18);
-    g.gain.setValueAtTime(0.18,now); g.gain.exponentialRampToValueAtTime(0.0001,now+0.22);
-    o.connect(g).connect(audioCtx.destination); o.start(now); o.stop(now+0.24);
-  }
+  function initAudio(){ if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; } } if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume(); }
+  function tone(f,t0,dur,vol){ const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(vol||.2,t0+.02); g.gain.exponentialRampToValueAtTime(.0001,t0+dur); o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0+dur+.02); }
+  function chime(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; [523.25,659.25,783.99].forEach((f,i)=>tone(f,n+i*.07,.32,.22)); }
+  function fanfare(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; [523,659,784,1047].forEach((f,i)=>tone(f,n+i*.12,.4,.22)); }
+  function boop(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(330,n); o.frequency.exponentialRampToValueAtTime(220,n+.18); g.gain.setValueAtTime(.16,n); g.gain.exponentialRampToValueAtTime(.0001,n+.22); o.connect(g).connect(audioCtx.destination); o.start(n); o.stop(n+.24); }
+  function blip(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; tone(880,n,.08,.08); }
+
   let chosenVoice=null;
-  function pickVoice(){
-    if(!('speechSynthesis' in window)) return;
-    const vs=speechSynthesis.getVoices();
-    chosenVoice = vs.find(v=>/female|samantha|karen|zira|tessa|google uk english female|google us english/i.test(v.name))
-              || vs.find(v=>/en[-_]/i.test(v.lang)) || vs[0] || null;
-  }
+  function pickVoice(){ if(!('speechSynthesis' in window)) return; const vs=speechSynthesis.getVoices(); chosenVoice=vs.find(v=>/female|samantha|karen|zira|tessa|google uk english female|google us english/i.test(v.name))||vs.find(v=>/en[-_]/i.test(v.lang))||vs[0]||null; }
   if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
-  function speak(text){
-    if(!soundOn||!('speechSynthesis' in window)) return;
-    try{
-      speechSynthesis.cancel();
-      const u=new SpeechSynthesisUtterance(text);
-      u.rate=0.9; u.pitch=1.3; u.volume=1;
-      if(chosenVoice) u.voice=chosenVoice;
-      speechSynthesis.speak(u);
-    }catch(e){}
-  }
-  function nameOf(t){ return isNum(t) ? ('number '+t) : ('letter '+t.toUpperCase()); }
+  function speak(text){ if(!soundOn||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=.9; u.pitch=1.3; u.volume=1; if(chosenVoice) u.voice=chosenVoice; speechSynthesis.speak(u); }catch(e){} }
+  function nameOf(t){ return isNum(t)?('number '+t):('letter '+t.toUpperCase()); }
 
   // ---------- fx ----------
-  function celebrate(msg){
-    chime();
-    const c=document.createElement('div'); c.className='cheer'; c.textContent=msg||rand(PRAISE);
-    document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove(),{once:true});
-    for(let i=0;i<10;i++){
-      const s=document.createElement('div'); s.className='spark'; s.textContent=rand(['✨','💖','⭐','🌟','💕','🌸']);
-      s.style.left=(45+Math.random()*10)+'vw'; s.style.top=(38+Math.random()*8)+'vh';
-      s.style.setProperty('--dx',(Math.random()*300-150)+'px');
-      s.style.setProperty('--dy',(Math.random()*300-160)+'px');
-      document.body.appendChild(s); s.addEventListener('animationend',()=>s.remove(),{once:true});
-    }
-  }
-  function goFullscreen(){
-    const el=document.documentElement;
-    const rfs=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen;
-    if(rfs&&!(document.fullscreenElement||document.webkitFullscreenElement)){
-      try{ const p=rfs.call(el); if(p&&p.catch) p.catch(()=>{}); }catch(e){}
-    }
-  }
+  function cheerText(msg){ const c=document.createElement('div'); c.className='cheer'; c.textContent=msg; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove(),{once:true}); }
+  function confetti(n){ const set=['🎉','✨','💖','⭐','🌈','🎊','🌸','💕']; for(let i=0;i<(n||18);i++){ const d=document.createElement('div'); d.className='confetti'; d.textContent=rand(set); d.style.left=(Math.random()*100)+'vw'; document.body.appendChild(d); const dur=1200+Math.random()*900, x=(Math.random()*200-100); d.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate('+x+'px,'+(window.innerHeight+60)+'px) rotate('+(Math.random()*720-360)+'deg)',opacity:.9}],{duration:dur,easing:'ease-in'}); setTimeout(()=>d.remove(),dur); } }
+  function sparkAt(x,y){ const s=document.createElement('div'); s.className='spark'; s.textContent=rand(['✨','⭐','💖','🌟','💕']); s.style.left=x+'px'; s.style.top=y+'px'; s.style.fontSize=(18+Math.random()*16)+'px'; s.style.setProperty('--dx',(Math.random()*120-60)+'px'); s.style.setProperty('--dy',(-30-Math.random()*70)+'px'); document.body.appendChild(s); s.addEventListener('animationend',()=>s.remove(),{once:true}); }
+  function buddyCheer(){ buddy.classList.remove('cheer'); void buddy.offsetWidth; buddy.classList.add('cheer'); }
+  function win(praiseText){ chime(); confetti(); buddyCheer(); cheerText(praiseText||rand(PRAISE)); earnSticker(); }
+  function goFullscreen(){ const el=document.documentElement; const rfs=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen; if(rfs&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const p=rfs.call(el); if(p&&p.catch)p.catch(()=>{}); }catch(e){} } }
 
-  function makeRepeat(fn){
-    const b=document.createElement('button'); b.className='repeatBtn'; b.textContent='🔊';
-    b.setAttribute('aria-label','Repeat');
-    b.addEventListener('pointerdown',e=>{ e.preventDefault(); initAudio(); fn(); });
-    return b;
-  }
+  // palm-proof tap helper for buttons
+  function onTap(el,fn){ el.addEventListener('pointerdown',e=>{ if(e.pointerType==='touch'&&(e.width>48||e.height>48)) return; e.preventDefault(); fn(e); }); }
 
   // ---------- navigation ----------
-  function openMode(m){
-    goFullscreen(); initAudio();
-    mode=m; play.innerHTML='';
-    home.classList.add('hidden'); play.classList.remove('hidden');
-    topbar.style.display='flex';
-    app.style.background=rand(SCENES);
-    if(m==='find') startFind();
-    else if(m==='sounds') startSounds();
-    else if(m==='trace') startTrace();
-    else if(m==='count') startCount();
-  }
-  function goHome(){
-    if('speechSynthesis' in window) speechSynthesis.cancel();
-    play.classList.add('hidden'); home.classList.remove('hidden');
-    topbar.style.display='none'; app.style.background='#ffd6ef'; mode=null;
-  }
-
-  // ---------- shuffle ----------
-  function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function openMode(m){ goFullscreen(); initAudio(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
+    if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='count') startCount(); }
+  function goHome(){ if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='linear-gradient(160deg,#ffe3f3,#e7d9ff)'; mode=null; }
+  function showBoard(){ initAudio(); home.classList.add('hidden'); play.classList.add('hidden'); board.classList.remove('hidden'); topbar.style.display='flex'; buddy.style.display='none'; mode='board';
+    document.getElementById('boardCount').textContent='You have earned '+store.count+' stars!';
+    const grid=document.getElementById('stickerGrid'); grid.innerHTML='';
+    if(!store.board.length){ const e=document.createElement('div'); e.className='empty'; e.textContent='Play the games to earn stickers! Every time you get it right, you win one. 🌟'; grid.appendChild(e); }
+    else { store.board.slice().reverse().forEach((s,i)=>{ const d=document.createElement('div'); d.className='st'; d.textContent=s; d.style.animationDelay=(i*0.02)+'s'; grid.appendChild(d); }); } }
 
   // ================= FIND IT =================
   function startFind(){ findRound(); }
   function findRound(){
-    play.innerHTML='';
+    play.innerHTML=''; roundLock=false;
     const cat=rand([UPPER,LOWER,NUMS]);
     const target=rand(cat); cur=target;
-    const distract=shuffle(cat.filter(x=>x!==target)).slice(0,2);
-    const opts=shuffle([target,...distract]);
+    const opts=shuffle([target,...shuffle(cat.filter(x=>x!==target)).slice(0,2)]);
     const sayIt=()=>speak('Can you find the '+nameOf(target)+'?');
-
     play.appendChild(makeRepeat(sayIt));
-
     const ch=document.createElement('div'); ch.id='choices';
-    opts.forEach(o=>{
-      const b=document.createElement('button'); b.className='choice'; b.textContent=o;
-      b.addEventListener('pointerdown',e=>{ e.preventDefault();
-        if(o===target){ b.classList.add('right'); celebrate(); speak(rand(PRAISE)); setTimeout(findRound,1100); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),400); }
-      });
-      ch.appendChild(b);
-    });
-    play.appendChild(ch);
-    promptEl.textContent='👂';
-    sayIt();
+    opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o; b.style.animationDelay=(i*0.08)+'s';
+      onTap(b,()=>{ if(roundLock) return;
+        if(o===target){ roundLock=true; b.classList.add('right'); win(); speak(rand(PRAISE)); setTimeout(findRound,1300); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+      ch.appendChild(b); });
+    play.appendChild(ch); sayIt();
   }
 
   // ================= A IS FOR (pick the picture) =================
   function startSounds(){ soundsRound(); }
   function soundsRound(){
-    play.innerHTML='';
+    play.innerHTML=''; roundLock=false;
     const target=rand(UPPER); cur=target;
-    const others=shuffle(UPPER.filter(l=>l!==target)).slice(0,2);
-    const opts=shuffle([target,...others]);
+    const opts=shuffle([target,...shuffle(UPPER.filter(l=>l!==target)).slice(0,2)]);
     const sayIt=()=>speak(target+'. Which picture starts with '+target+'?');
-
     const head=document.createElement('div'); head.className='targetCard';
-    const g=document.createElement('div'); g.className='glyph'; g.textContent=target+' '+target.toLowerCase(); g.style.fontSize='92px';
-    head.appendChild(g);
-    head.onpointerdown=ev=>{ ev.preventDefault(); sayIt(); };
-    play.appendChild(head);
-
+    const g=document.createElement('div'); g.className='glyph'; g.textContent=target+' '+target.toLowerCase(); head.appendChild(g);
+    onTap(head,sayIt); play.appendChild(head);
     play.appendChild(makeRepeat(sayIt));
-
     const ch=document.createElement('div'); ch.id='choices';
-    opts.forEach(o=>{
-      const b=document.createElement('button'); b.className='choice picChoice';
-      const pic=document.createElement('span'); pic.className='pic'; pic.textContent=WORDS[o][1]; b.appendChild(pic);
-      const cw=document.createElement('span'); cw.className='cword'; cw.textContent=o+' is for '+WORDS[o][0]; b.appendChild(cw);
-      b.addEventListener('pointerdown',e=>{ e.preventDefault();
-        if(o===target){ b.classList.add('right'); cw.classList.add('show'); celebrate(); sayLetter(target); setTimeout(soundsRound,1900); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),400); }
-      });
-      ch.appendChild(b);
-    });
-    play.appendChild(ch);
-    promptEl.textContent='👂';
-    sayIt();
-  }
-  function sayLetter(t){ speak(t.toUpperCase()+'. '+t.toUpperCase()+' is for '+WORDS[t][0]+'!'); }
-
-  // ================= TRACE IT =================
-  let traceList=[], traceIdx=0, traceMask=null, coveredCells=null, totalCells=0, drawing=false, lastP=null;
-  const GRID=22;
-  function startTrace(){ traceList=[...UPPER, ...LOWER, ...NUMS]; traceIdx=0; renderTrace(); }
-  function renderTrace(){
-    play.innerHTML='';
-    const t=traceList[traceIdx]; cur=t;
-    const wrap=document.createElement('div'); wrap.id='traceWrap';
-    const guide=document.createElement('canvas'); guide.id='guideCanvas';
-    const cv=document.createElement('canvas'); cv.id='traceCanvas';
-    wrap.appendChild(guide); wrap.appendChild(cv); play.appendChild(wrap);
-
-    const row=document.createElement('div'); row.className='row';
-    const clr=document.createElement('button'); clr.className='pill'; clr.textContent='↺ Clear';
-    clr.onpointerdown=e=>{ e.preventDefault(); setupTrace(t); };
-    const nxt=document.createElement('button'); nxt.className='pill'; nxt.textContent='Next ▶';
-    nxt.onpointerdown=e=>{ e.preventDefault(); traceIdx=(traceIdx+1)%traceList.length; renderTrace(); };
-    row.appendChild(clr); row.appendChild(nxt); play.appendChild(row);
-
-    promptEl.textContent='Trace the '+nameOf(t);
-    speak("Let's trace the "+nameOf(t)+"!");
-    setTimeout(()=>setupTrace(t),40);
-    setTimeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
-  }
-  function setupTrace(t){
-    const guide=document.getElementById('guideCanvas');
-    const cv=document.getElementById('traceCanvas');
-    if(!guide||!cv) return;
-    const rect=guide.getBoundingClientRect();
-    const dpr=window.devicePixelRatio||1;
-    [guide,cv].forEach(c=>{ c.width=rect.width*dpr; c.height=rect.height*dpr; });
-    const gx=guide.getContext('2d'); gx.setTransform(dpr,0,0,dpr,0,0);
-    gx.clearRect(0,0,rect.width,rect.height);
-    gx.fillStyle='#f0d6ea';
-    const fs=rect.height*0.72;
-    gx.font='bold '+fs+'px "Comic Sans MS","Trebuchet MS",sans-serif';
-    gx.textAlign='center'; gx.textBaseline='middle';
-    const disp=isNum(t)?t:t;
-    gx.fillText(disp, rect.width/2, rect.height/2);
-    // outline
-    gx.lineWidth=3; gx.strokeStyle='#d9a8cf'; gx.strokeText(disp, rect.width/2, rect.height/2);
-
-    // build mask grid from guide alpha
-    const img=gx.getImageData(0,0,guide.width,guide.height).data;
-    traceMask=new Array(GRID*GRID).fill(false); coveredCells=new Array(GRID*GRID).fill(false); totalCells=0;
-    const cw=guide.width/GRID, chh=guide.height/GRID;
-    for(let gyi=0;gyi<GRID;gyi++) for(let gxi=0;gxi<GRID;gxi++){
-      let hit=false;
-      const sx=Math.floor(gxi*cw+cw/2), sy=Math.floor(gyi*chh+chh/2);
-      const idx=(sy*guide.width+sx)*4+3;
-      if(img[idx]>40) hit=true;
-      if(hit){ traceMask[gyi*GRID+gxi]=true; totalCells++; }
-    }
-    // drawing canvas
-    const dx=cv.getContext('2d'); dx.setTransform(dpr,0,0,dpr,0,0);
-    dx.clearRect(0,0,rect.width,rect.height);
-    dx.lineCap='round'; dx.lineJoin='round'; dx.lineWidth=22;
-    drawing=false; lastP=null; traceDone=false;
-    cv.onpointerdown=e=>{ e.preventDefault(); drawing=true; lastP=pos(cv,e); paint(dx,rect,lastP,lastP); markSeg(lastP,lastP,rect); cv.setPointerCapture&&cv.setPointerCapture(e.pointerId); };
-    cv.onpointermove=e=>{ if(!drawing) return; e.preventDefault(); const p=pos(cv,e); paint(dx,rect,lastP,p); markSeg(lastP,p,rect); lastP=p; evalCoverage(rect); };
-    cv.onpointerup=e=>{ drawing=false; lastP=null; evalCoverage(rect); };
-    cv.onpointercancel=()=>{ drawing=false; lastP=null; };
-  }
-  function pos(cv,e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
-  let traceHue=0;
-  function paint(dx,rect,a,b){
-    traceHue=(traceHue+12)%360; dx.strokeStyle='hsl('+traceHue+',85%,60%)';
-    dx.beginPath(); dx.moveTo(a.x,a.y); dx.lineTo(b.x,b.y); dx.stroke();
-  }
-  let traceDone=false;
-  function markSeg(a,b,rect){
-    if(!traceMask||!a||!b) return;
-    const dist=Math.hypot(b.x-a.x,b.y-a.y);
-    const steps=Math.max(1,Math.ceil(dist/4));
-    for(let i=0;i<=steps;i++){
-      const x=a.x+(b.x-a.x)*i/steps, y=a.y+(b.y-a.y)*i/steps;
-      const gx=Math.floor(x/rect.width*GRID), gy=Math.floor(y/rect.height*GRID);
-      if(gx<0||gy<0||gx>=GRID||gy>=GRID) continue;
-      const k=gy*GRID+gx;
-      if(traceMask[k]&&!coveredCells[k]) coveredCells[k]=true;
-    }
-  }
-  function evalCoverage(rect){
-    if(!traceMask||traceDone||totalCells<=0) return;
-    const covered=coveredCells.reduce((s,v)=>s+(v?1:0),0);
-    if(covered/totalCells>=0.8){
-      traceDone=true;
-      celebrate('Great tracing!'); speak('Great job! You traced the '+nameOf(cur)+'!');
-      setTimeout(()=>{ traceDone=false; traceIdx=(traceIdx+1)%traceList.length; renderTrace(); },1600);
-    }
+    opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice picChoice'; b.style.animationDelay=(i*0.08)+'s';
+      const pic=document.createElement('span'); pic.className='pic'; pic.textContent=WORDS[o][1]; pic.style.animationDelay=(Math.random())+'s'; b.appendChild(pic);
+      const cw=document.createElement('span'); cw.className='cword'; cw.innerHTML='<b>'+o+'</b> is for '+WORDS[o][0]; b.appendChild(cw);
+      onTap(b,()=>{ if(roundLock) return;
+        if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+'. '+target+' is for '+WORDS[o][0]+'!'); setTimeout(soundsRound,2100); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+      ch.appendChild(b); });
+    play.appendChild(ch); sayIt();
   }
 
   // ================= COUNT IT =================
   function startCount(){ countRound(); }
   function countRound(){
-    play.innerHTML='';
+    play.innerHTML=''; roundLock=false;
     const n=1+Math.floor(Math.random()*20); cur=String(n);
     const emo=rand(OBJ);
     const sayIt=()=>speak('How many? Count them and tap the number.');
     const area=document.createElement('div'); area.id='countArea';
-    for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.textContent=emo; o.style.animationDelay=(i*0.04)+'s'; area.appendChild(o); }
+    for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.textContent=emo; o.style.animationDelay=(i*0.05)+'s'; area.appendChild(o); }
     play.appendChild(area);
     play.appendChild(makeRepeat(sayIt));
-
-    let opts=[n];
-    while(opts.length<3){ let d=Math.max(1,Math.min(20, n+(Math.floor(Math.random()*7)-3))); if(!opts.includes(d)) opts.push(d); }
-    opts=shuffle(opts);
+    let opts=[n]; while(opts.length<3){ let d=Math.max(1,Math.min(20,n+(Math.floor(Math.random()*7)-3))); if(!opts.includes(d)) opts.push(d); } opts=shuffle(opts);
     const ch=document.createElement('div'); ch.id='choices';
-    opts.forEach(o=>{
-      const b=document.createElement('button'); b.className='choice'; b.textContent=o;
-      b.addEventListener('pointerdown',e=>{ e.preventDefault();
-        if(o===n){ b.classList.add('right'); celebrate(); speak('Yes! '+n+'!'); setTimeout(countRound,1200); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),400); }
-      });
-      ch.appendChild(b);
-    });
-    play.appendChild(ch);
-    promptEl.textContent='👂';
-    sayIt();
+    opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o; b.style.animationDelay=(i*0.08)+'s';
+      onTap(b,()=>{ if(roundLock) return;
+        if(o===n){ roundLock=true; b.classList.add('right'); win('Yes! '+n+'!'); speak('Yes! '+n+'!'); setTimeout(countRound,1400); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+      ch.appendChild(b); });
+    play.appendChild(ch); sayIt();
   }
 
+  // ================= TRACE IT =================
+  let traceList=[], traceIdx=0, traceMask=null, coveredCells=null, totalCells=0, lastP=null, traceDone=false, traceActive=null, startCell=null, traceHue=0;
+  const GRID=24;
+  function startTrace(){ traceList=[...UPPER, ...LOWER, ...NUMS]; traceIdx=0; renderTrace(); }
+  function renderTrace(){
+    play.innerHTML=''; traceDone=false; traceActive=null;
+    const t=traceList[traceIdx]; cur=t;
+    const wrap=document.createElement('div'); wrap.id='traceWrap';
+    const guide=document.createElement('canvas'); guide.id='guideCanvas';
+    const cv=document.createElement('canvas'); cv.id='traceCanvas';
+    wrap.appendChild(guide); wrap.appendChild(cv); play.appendChild(wrap);
+    const row=document.createElement('div'); row.className='row';
+    const clr=document.createElement('button'); clr.className='pill'; clr.textContent='↺ Again'; onTap(clr,()=>setupTrace(t));
+    const nxt=document.createElement('button'); nxt.className='pill'; nxt.textContent='Next ▶'; onTap(nxt,()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); });
+    row.appendChild(clr); row.appendChild(nxt); play.appendChild(row);
+    speak("Let's trace the "+nameOf(t)+"!");
+    setTimeout(()=>setupTrace(t),40);
+    setTimeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
+  }
+  function setupTrace(t){
+    const wrap=document.getElementById('traceWrap'); const guide=document.getElementById('guideCanvas'); const cv=document.getElementById('traceCanvas');
+    if(!guide||!cv||!wrap) return;
+    const rect=guide.getBoundingClientRect(); if(rect.width<10) return;
+    const dpr=window.devicePixelRatio||1;
+    [guide,cv].forEach(c=>{ c.width=rect.width*dpr; c.height=rect.height*dpr; });
+    const gx=guide.getContext('2d'); gx.setTransform(dpr,0,0,dpr,0,0); gx.clearRect(0,0,rect.width,rect.height);
+    const fs=rect.height*0.74; gx.font='bold '+fs+'px "Comic Sans MS","Trebuchet MS",sans-serif'; gx.textAlign='center'; gx.textBaseline='middle';
+    gx.fillStyle='#efd7ea'; gx.fillText(t, rect.width/2, rect.height/2);
+    gx.lineWidth=3; gx.strokeStyle='#d9a8cf'; gx.strokeText(t, rect.width/2, rect.height/2);
+    // mask
+    const img=gx.getImageData(0,0,guide.width,guide.height).data;
+    traceMask=new Array(GRID*GRID).fill(false); coveredCells=new Array(GRID*GRID).fill(false); totalCells=0; startCell=null;
+    const cw=guide.width/GRID, chh=guide.height/GRID;
+    for(let gy=0;gy<GRID;gy++) for(let gxi=0;gxi<GRID;gxi++){ const sx=Math.floor(gxi*cw+cw/2), sy=Math.floor(gy*chh+chh/2); if(img[(sy*guide.width+sx)*4+3]>40){ traceMask[gy*GRID+gxi]=true; totalCells++; if(startCell===null) startCell={gx:gxi,gy:gy}; } }
+    const dx=cv.getContext('2d'); dx.setTransform(dpr,0,0,dpr,0,0); dx.clearRect(0,0,rect.width,rect.height); dx.lineCap='round'; dx.lineJoin='round'; dx.lineWidth=24;
+    lastP=null; traceActive=null; traceDone=false;
+    // start dot
+    const old=wrap.querySelector('.startDot'); if(old) old.remove();
+    if(startCell){ const sd=document.createElement('div'); sd.className='startDot'; sd.style.left=((startCell.gx+0.5)/GRID*rect.width)+'px'; sd.style.top=((startCell.gy+0.5)/GRID*rect.height)+'px'; wrap.appendChild(sd); }
+    const cellW=rect.width/GRID, cellH=rect.height/GRID;
+    function inGlyph(p){ const gxi=Math.floor(p.x/rect.width*GRID), gy=Math.floor(p.y/rect.height*GRID); if(gxi<0||gy<0||gxi>=GRID||gy>=GRID) return false; return traceMask[gy*GRID+gxi]; }
+    function hideStart(){ const s=wrap.querySelector('.startDot'); if(s) s.remove(); }
+    cv.onpointerdown=e=>{ if(traceActive!==null) return; if(e.pointerType==='touch'&&(e.width>48||e.height>48)) return; e.preventDefault(); traceActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; hideStart(); lastP=pos(cv,e); markSeg(lastP,lastP,rect); if(inGlyph(lastP)){ inkDot(dx,lastP); } };
+    cv.onpointermove=e=>{ if(e.pointerId!==traceActive) return; e.preventDefault(); const p=pos(cv,e); if(inGlyph(p)||inGlyph(lastP)){ paint(dx,lastP,p); if(Math.random()<0.5){ const r2=cv.getBoundingClientRect(); sparkAt(r2.left+p.x, r2.top+p.y); } blip(); } markSeg(lastP,p,rect); lastP=p; evalCoverage(rect,t); };
+    cv.onpointerup=e=>{ if(e.pointerId!==traceActive) return; traceActive=null; lastP=null; };
+    cv.onpointercancel=e=>{ if(e.pointerId===traceActive){ traceActive=null; lastP=null; } };
+  }
+  function pos(cv,e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+  function inkDot(dx,p){ traceHue=(traceHue+18)%360; dx.fillStyle='hsl('+traceHue+',90%,60%)'; dx.beginPath(); dx.arc(p.x,p.y,12,0,7); dx.fill(); }
+  function paint(dx,a,b){ traceHue=(traceHue+10)%360; dx.strokeStyle='hsl('+traceHue+',90%,60%)'; dx.beginPath(); dx.moveTo(a.x,a.y); dx.lineTo(b.x,b.y); dx.stroke(); }
+  function markSeg(a,b,rect){ if(!traceMask||!a||!b) return; const dist=Math.hypot(b.x-a.x,b.y-a.y); const steps=Math.max(1,Math.ceil(dist/4)); for(let i=0;i<=steps;i++){ const x=a.x+(b.x-a.x)*i/steps, y=a.y+(b.y-a.y)*i/steps; const gx=Math.floor(x/rect.width*GRID), gy=Math.floor(y/rect.height*GRID); if(gx<0||gy<0||gx>=GRID||gy>=GRID) continue; const k=gy*GRID+gx; if(traceMask[k]&&!coveredCells[k]) coveredCells[k]=true; } }
+  function evalCoverage(rect,t){ if(!traceMask||traceDone||totalCells<=0) return; let c=0; for(let i=0;i<coveredCells.length;i++) if(coveredCells[i]) c++; if(c/totalCells>=0.72){ traceDone=true; const wrap=document.getElementById('traceWrap'); const ex=isNum(t)?'⭐':WORDS[t.toUpperCase()][1];
+      win('You traced '+(isNum(t)?t:t.toUpperCase())+'!'); speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'));
+      if(wrap){ const pop=document.createElement('div'); pop.textContent=ex; pop.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:120px;z-index:6;'; pop.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:600,easing:'ease-out',fill:'forwards'}); wrap.appendChild(pop); }
+      setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); },1900); } }
+
+  // ---------- repeat button ----------
+  function makeRepeat(fn){ const b=document.createElement('button'); b.className='repeatBtn'; b.textContent='🔊'; b.setAttribute('aria-label','Repeat'); onTap(b,()=>{ initAudio(); fn(); }); return b; }
+
   // ---------- wiring ----------
-  document.querySelectorAll('.menu-btn').forEach(btn=>{
-    btn.addEventListener('pointerdown',e=>{ e.preventDefault(); openMode(btn.dataset.mode); });
-  });
-  backBtn.addEventListener('pointerdown',e=>{ e.preventDefault(); goHome(); });
-  soundBtn.addEventListener('pointerdown',e=>{ e.preventDefault();
-    soundOn=!soundOn; soundBtn.textContent=soundOn?'🔊':'🔇';
-    if(!soundOn&&'speechSynthesis' in window) speechSynthesis.cancel();
-    if(soundOn) initAudio();
-  });
+  document.querySelectorAll('.menu-btn').forEach(btn=>{ onTap(btn,()=>openMode(btn.dataset.mode)); });
+  onTap(backBtn,goHome);
+  onTap(boardBtn,showBoard);
+  onTap(starCount,showBoard);
+  onTap(soundBtn,()=>{ soundOn=!soundOn; soundBtn.textContent=soundOn?'🔊':'🔇'; if(!soundOn&&'speechSynthesis' in window) speechSynthesis.cancel(); if(soundOn) initAudio(); });
   window.addEventListener('resize',()=>{ if(mode==='trace'&&cur) setupTrace(cur); });
+  renderStars();
 })();
 </script>
 </body>
