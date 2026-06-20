@@ -74,6 +74,17 @@
   .spark { position:absolute; font-size:32px; pointer-events:none; animation:spark 0.7s ease-out forwards; }
   @keyframes spark { 0%{transform:translate(0,0) scale(0.4); opacity:1;} 100%{transform:translate(var(--dx),var(--dy)) scale(1.4); opacity:0;} }
 
+  .shake { animation:shake 0.4s; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-12px) rotate(-8deg)} 75%{transform:translateX(12px) rotate(8deg)} }
+  .match-banner {
+    position:fixed; top:72px; left:50%; transform:translateX(-50%); z-index:55;
+    background:rgba(255,255,255,0.9); border-radius:40px; padding:8px 22px;
+    font-family:inherit; font-size:22px; font-weight:bold; color:#d44ea8;
+    display:flex; align-items:center; gap:10px; pointer-events:none; white-space:nowrap;
+    box-shadow:0 4px 0 rgba(212,78,168,0.3);
+  }
+  .match-banner .big { font-size:46px; }
+
   .cheer {
     position:fixed; left:50%; top:40%; transform:translate(-50%,-50%);
     font-size:54px; font-weight:bold; color:#fff; pointer-events:none; z-index:55;
@@ -111,7 +122,7 @@
     <div class="big">🦄🐰</div>
     <h1>Avalynn's<br>Magic Games</h1>
     <div id="menu">
-      <button class="menu-btn" data-mode="friends"><span class="emo">🦄</span>Tap Friends</button>
+      <button class="menu-btn" data-mode="friends"><span class="emo">🔎</span>Match It</button>
       <button class="menu-btn" data-mode="balloons"><span class="emo">🎈</span>Pop Balloons</button>
       <button class="menu-btn" data-mode="feed"><span class="emo">🥕</span>Feed Bunny</button>
       <button class="menu-btn" data-mode="stars"><span class="emo">🌟</span>Catch Stars</button>
@@ -199,7 +210,9 @@
   // ---------- helpers ----------
   function rnd(a,b){ return Math.random()*(b-a)+a; }
   function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
-  function setScore(n){ score=n; scoreEl.textContent='⭐ '+score; }
+  function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  function setScore(n){ score=Math.max(0,n); scoreEl.textContent='⭐ '+score; }
+  function bonk(){ if(!soundOn||!audioCtx) return; const now=audioCtx.currentTime; const o=audioCtx.createOscillator(), g=audioCtx.createGain(); o.type='square'; o.frequency.setValueAtTime(200,now); o.frequency.exponentialRampToValueAtTime(90,now+.22); g.gain.setValueAtTime(.16,now); g.gain.exponentialRampToValueAtTime(.0001,now+.26); o.connect(g).connect(audioCtx.destination); o.start(now); o.stop(now+.28); }
   function trackTimer(id){ timers.push(id); }
   function clearTimers(){ timers.forEach(t=>{clearTimeout(t);clearInterval(t);}); timers=[]; }
 
@@ -243,30 +256,51 @@
     lbl.textContent = s.name;
   }
 
-  // ---------- MODE: Tap Friends ----------
-  function spawnFriend(){
-    const c=document.createElement('div'); c.className='critter'; c.textContent=pick(FRIENDS);
-    const size=rnd(74,116); c.style.fontSize=size+'px';
+  // ---------- MODE: Match It (tap the matching items) ----------
+  function spawnMatchItem(emo, target, onMatch){
+    const c=document.createElement('div'); c.className='critter'; c.textContent=emo;
+    const size=rnd(74,108); c.style.fontSize=size+'px';
     c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
-    c.style.top =rnd(74,Math.max(90,window.innerHeight-size))+'px';
+    c.style.top =rnd(140,Math.max(160,window.innerHeight-size-20))+'px';
     let t=Math.random()*6;
     function drift(){ if(!c.isConnected||c.classList.contains('pop'))return;
       t+=0.03; c.style.transform='translateY('+Math.sin(t)*10+'px)'; requestAnimationFrame(drift); }
     requestAnimationFrame(drift);
     c.addEventListener('pointerdown',e=>{
       e.preventDefault(); e.stopPropagation();
-      if(c.classList.contains('pop'))return;
-      const r=c.getBoundingClientRect();
-      burst(r.left+r.width/2, r.top+r.height/2);
-      setScore(score+1);
-      reward({count:true});
-      if(score % 8 === 0) applyScene(score/8);
-      c.classList.add('pop');
-      c.addEventListener('animationend',()=>{c.remove(); spawnFriend();},{once:true});
+      if(c.classList.contains('pop')||c.classList.contains('shake'))return;
+      if(emo===target){
+        const r=c.getBoundingClientRect();
+        burst(r.left+r.width/2, r.top+r.height/2);
+        setScore(score+1); reward({count:true});
+        c.classList.add('pop');
+        c.addEventListener('animationend',()=>{ c.remove(); onMatch(); },{once:true});
+      } else {
+        bonk(); say(pick(['Not that one','Try again','Look again']));
+        c.classList.add('shake');
+        c.addEventListener('animationend',()=>c.classList.remove('shake'),{once:true});
+      }
     });
     play.appendChild(c);
   }
-  function startFriends(){ applyScene(0); for(let i=0;i<5;i++) spawnFriend(); say('Tap the friends, '+NAME+'!'); }
+  function newMatchRound(){
+    play.innerHTML='';
+    const target=pick(FRIENDS);
+    const banner=document.createElement('div'); banner.className='match-banner';
+    banner.innerHTML='Tap all the <span class="big">'+target+'</span>';
+    play.appendChild(banner);
+    const others=shuffle(FRIENDS.filter(f=>f!==target));
+    const matchCount=2+Math.floor(Math.random()*2);   // 2-3 to find
+    const distractCount=3+Math.floor(Math.random()*3); // 3-5 others
+    const items=[]; for(let i=0;i<matchCount;i++) items.push(target);
+    for(let i=0;i<distractCount;i++) items.push(others[i%others.length]);
+    let remaining=matchCount;
+    shuffle(items).forEach(emo=>spawnMatchItem(emo,target,()=>{
+      remaining--;
+      if(remaining<=0){ cheerText(pick(CHEERS)); applyScene((score/6)|0); const t=setTimeout(newMatchRound,800); trackTimer(t); }
+    }));
+  }
+  function startFriends(){ applyScene(0); newMatchRound(); say('Tap all the ones that are the same, '+NAME+'!'); }
 
   // ---------- MODE: Pop Balloons ----------
   function spawnBalloon(){
@@ -330,38 +364,42 @@
     say('Feed the carrots to the bunny, '+NAME+'!');
   }
 
-  // ---------- MODE: Catch Stars ----------
+  // ---------- MODE: Catch Stars (catch stars, avoid rocks, don't let stars drop!) ----------
   function startStars(){
     applyScene(2);
-    function spawnStar(){
-      const e=pick(['⭐','🌟','✨','💫']);
+    const STAR=['⭐','🌟','✨','💫'];
+    const BAD=['🪨','☁️','💣','🍂'];
+    function spawnFalling(){
+      const isStar=Math.random()<0.68;
+      const e=isStar?pick(STAR):pick(BAD);
       const s=document.createElement('div'); s.className='critter'; s.textContent=e;
       const size=rnd(64,104); s.style.fontSize=size+'px';
       const x=rnd(10,Math.max(10,window.innerWidth-size));
       s.style.left=x+'px'; let y=-size; s.style.top=y+'px';
       play.appendChild(s);
-      const speed=rnd(1.2,2.6);
+      const speed=rnd(1.6,3.0);
       const id=setInterval(()=>{
         if(!s.isConnected||s.classList.contains('pop')){clearInterval(id);return;}
         y+=speed; s.style.top=y+'px';
         s.style.transform='rotate('+(y/3)+'deg)';
-        if(y>window.innerHeight){ clearInterval(id); s.remove(); }
+        if(y>window.innerHeight){ clearInterval(id);
+          if(isStar){ setScore(score-1); bonk(); cheerText('Missed! ⭐'); }
+          s.remove(); }
       },16); trackTimer(id);
       s.addEventListener('pointerdown',ev=>{
         ev.preventDefault(); ev.stopPropagation();
         if(s.classList.contains('pop'))return;
         clearInterval(id);
         const r=s.getBoundingClientRect();
-        burst(r.left+r.width/2,r.top+r.height/2);
-        setScore(score+1);
-        reward({count:true});
+        if(isStar){ burst(r.left+r.width/2,r.top+r.height/2); setScore(score+1); reward({count:true}); }
+        else { setScore(score-1); bonk(); cheerText('Oops! 💥'); say('Oops'); }
         s.classList.add('pop');
         s.addEventListener('animationend',()=>s.remove(),{once:true});
       });
     }
-    const id=setInterval(spawnStar, 900); trackTimer(id);
-    for(let i=0;i<3;i++) spawnStar();
-    say('Catch the falling stars, '+NAME+'!');
+    const id=setInterval(spawnFalling, 850); trackTimer(id);
+    for(let i=0;i<3;i++) spawnFalling();
+    say('Catch the stars! Do not tap the rocks, '+NAME+'!');
   }
 
   // ---------- navigation ----------
