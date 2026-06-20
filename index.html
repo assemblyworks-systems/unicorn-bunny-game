@@ -179,4 +179,226 @@
       const u = new SpeechSynthesisUtterance(text);
       u.rate = 0.95; u.pitch = 1.4; u.volume = 1;
       const vs = speechSynthesis.getVoices();
-      const pref = vs.find(v=>/female|samantha
+      const pref = vs.find(v=>/female|samantha|karen|zira|google uk english female|tessa/i.test(v.name))
+                 || vs.find(v=>/en/i.test(v.lang));
+      if (pref) u.voice = pref;
+      speechSynthesis.cancel();
+      speechSynthesis.speak(u);
+    } catch(e) {}
+  }
+  if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = ()=>{};
+
+  // ---------- helpers ----------
+  function rnd(a,b){ return Math.random()*(b-a)+a; }
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  function setScore(n){ score=n; scoreEl.textContent='⭐ '+score; }
+  function trackTimer(id){ timers.push(id); }
+  function clearTimers(){ timers.forEach(t=>{clearTimeout(t);clearInterval(t);}); timers=[]; }
+
+  function burst(x,y){
+    for(let i=0;i<8;i++){
+      const s=document.createElement('div'); s.className='spark'; s.textContent=pick(SPARKS);
+      s.style.left=x+'px'; s.style.top=y+'px';
+      const ang=(Math.PI*2/8)*i, d=rnd(60,120);
+      s.style.setProperty('--dx',Math.cos(ang)*d+'px');
+      s.style.setProperty('--dy',Math.sin(ang)*d+'px');
+      play.appendChild(s);
+      s.addEventListener('animationend',()=>s.remove(),{once:true});
+    }
+  }
+  function cheerText(t){
+    const el=document.createElement('div'); el.className='cheer'; el.textContent=t;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove(),{once:true});
+  }
+
+  // praise: counts, names Avalynn, says colors
+  function reward(opts){
+    opts = opts || {};
+    chime(opts.base);
+    const visual = opts.count ? String(score) : pick(CHEERS);
+    cheerText(visual);
+    // spoken: count number, sometimes name, sometimes color
+    let speech = '';
+    if (opts.count) speech = String(score);
+    if (opts.color) speech = opts.color + (Math.random()<0.5? ' '+pick(CHEERS):'');
+    if (!speech) speech = pick(CHEERS);
+    if (Math.random() < 0.4) speech = speech + ' ' + NAME + '!';
+    say(speech);
+  }
+
+  function applyScene(i){
+    const s = SCENES[i % SCENES.length];
+    app.style.background = s.bg;
+    let lbl = document.querySelector('.scene-label');
+    if(!lbl){ lbl=document.createElement('div'); lbl.className='scene-label'; document.body.appendChild(lbl); }
+    lbl.textContent = s.name;
+  }
+
+  // ---------- MODE: Tap Friends ----------
+  function spawnFriend(){
+    const c=document.createElement('div'); c.className='critter'; c.textContent=pick(FRIENDS);
+    const size=rnd(74,116); c.style.fontSize=size+'px';
+    c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
+    c.style.top =rnd(74,Math.max(90,window.innerHeight-size))+'px';
+    let t=Math.random()*6;
+    function drift(){ if(!c.isConnected||c.classList.contains('pop'))return;
+      t+=0.03; c.style.transform='translateY('+Math.sin(t)*10+'px)'; requestAnimationFrame(drift); }
+    requestAnimationFrame(drift);
+    c.addEventListener('pointerdown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(c.classList.contains('pop'))return;
+      const r=c.getBoundingClientRect();
+      burst(r.left+r.width/2, r.top+r.height/2);
+      setScore(score+1);
+      reward({count:true});
+      if(score % 8 === 0) applyScene(score/8);
+      c.classList.add('pop');
+      c.addEventListener('animationend',()=>{c.remove(); spawnFriend();},{once:true});
+    });
+    play.appendChild(c);
+  }
+  function startFriends(){ applyScene(0); for(let i=0;i<5;i++) spawnFriend(); say('Tap the friends, '+NAME+'!'); }
+
+  // ---------- MODE: Pop Balloons ----------
+  function spawnBalloon(){
+    const col=pick(BALLOON_COLORS);
+    const b=document.createElement('div'); b.className='critter'; b.textContent=col.e;
+    b.dataset.color=col.name;
+    const size=rnd(80,120); b.style.fontSize=size+'px';
+    const x=rnd(10,Math.max(10,window.innerWidth-size));
+    b.style.left=x+'px'; b.style.top=window.innerHeight+'px';
+    play.appendChild(b);
+    let y=window.innerHeight; const speed=rnd(0.8,1.8);
+    const id=setInterval(()=>{
+      if(!b.isConnected||b.classList.contains('pop')){clearInterval(id);return;}
+      y-=speed; b.style.top=y+'px';
+      b.style.transform='translateX('+Math.sin(y/40)*14+'px)';
+      if(y < -size){ clearInterval(id); b.remove(); spawnBalloon(); }
+    },16); trackTimer(id);
+    b.addEventListener('pointerdown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(b.classList.contains('pop'))return;
+      clearInterval(id);
+      const r=b.getBoundingClientRect();
+      burst(r.left+r.width/2,r.top+r.height/2);
+      setScore(score+1);
+      reward({color:b.dataset.color});
+      b.classList.add('pop');
+      b.addEventListener('animationend',()=>{b.remove(); spawnBalloon();},{once:true});
+    });
+  }
+  function startBalloons(){ applyScene(3); for(let i=0;i<4;i++){ const t=setTimeout(spawnBalloon,i*500); trackTimer(t);} say('Pop the balloons, '+NAME+'!'); }
+
+  // ---------- MODE: Feed Bunny ----------
+  function startFeed(){
+    applyScene(0);
+    const pet=document.createElement('div'); pet.id='pet'; pet.textContent='🐰'; play.appendChild(pet);
+    function spawnCarrot(){
+      const c=document.createElement('div'); c.className='critter'; c.textContent='🥕';
+      const size=rnd(64,90); c.style.fontSize=size+'px';
+      c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
+      c.style.top =rnd(80,Math.max(100,window.innerHeight-260))+'px';
+      let t=Math.random()*6;
+      function drift(){ if(!c.isConnected||c.classList.contains('pop'))return;
+        t+=0.04; c.style.transform='rotate('+Math.sin(t)*12+'deg)'; requestAnimationFrame(drift);}
+      requestAnimationFrame(drift);
+      c.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(c.classList.contains('pop'))return;
+        const r=c.getBoundingClientRect();
+        burst(r.left+r.width/2,r.top+r.height/2);
+        setScore(score+1);
+        pet.classList.remove('nom'); void pet.offsetWidth; pet.classList.add('nom');
+        chime();
+        cheerText(pick(['Yum!','Nom nom!','Thank you!','Crunch!']));
+        say(pick(['Yum yum','Thank you '+NAME,'Nom nom nom','Crunchy','Delicious']));
+        c.classList.add('pop');
+        c.addEventListener('animationend',()=>{c.remove(); spawnCarrot();},{once:true});
+      });
+      play.appendChild(c);
+    }
+    for(let i=0;i<3;i++) spawnCarrot();
+    say('Feed the carrots to the bunny, '+NAME+'!');
+  }
+
+  // ---------- MODE: Catch Stars ----------
+  function startStars(){
+    applyScene(2);
+    function spawnStar(){
+      const e=pick(['⭐','🌟','✨','💫']);
+      const s=document.createElement('div'); s.className='critter'; s.textContent=e;
+      const size=rnd(64,104); s.style.fontSize=size+'px';
+      const x=rnd(10,Math.max(10,window.innerWidth-size));
+      s.style.left=x+'px'; let y=-size; s.style.top=y+'px';
+      play.appendChild(s);
+      const speed=rnd(1.2,2.6);
+      const id=setInterval(()=>{
+        if(!s.isConnected||s.classList.contains('pop')){clearInterval(id);return;}
+        y+=speed; s.style.top=y+'px';
+        s.style.transform='rotate('+(y/3)+'deg)';
+        if(y>window.innerHeight){ clearInterval(id); s.remove(); }
+      },16); trackTimer(id);
+      s.addEventListener('pointerdown',ev=>{
+        ev.preventDefault(); ev.stopPropagation();
+        if(s.classList.contains('pop'))return;
+        clearInterval(id);
+        const r=s.getBoundingClientRect();
+        burst(r.left+r.width/2,r.top+r.height/2);
+        setScore(score+1);
+        reward({count:true});
+        s.classList.add('pop');
+        s.addEventListener('animationend',()=>s.remove(),{once:true});
+      });
+    }
+    const id=setInterval(spawnStar, 900); trackTimer(id);
+    for(let i=0;i<3;i++) spawnStar();
+    say('Catch the falling stars, '+NAME+'!');
+  }
+
+  // ---------- navigation ----------
+  function openMode(m){
+    initAudio();
+    mode=m; setScore(0);
+    play.innerHTML='';
+    home.classList.add('hidden');
+    play.classList.remove('hidden');
+    topbar.style.display='flex';
+    if(m==='friends') startFriends();
+    else if(m==='balloons') startBalloons();
+    else if(m==='feed') startFeed();
+    else if(m==='stars') startStars();
+  }
+  function goHome(){
+    clearTimers();
+    if('speechSynthesis' in window) speechSynthesis.cancel();
+    play.innerHTML='';
+    play.classList.add('hidden');
+    topbar.style.display='none';
+    const lbl=document.querySelector('.scene-label'); if(lbl) lbl.remove();
+    home.classList.remove('hidden');
+    app.style.background='#ffd6ef';
+    mode=null;
+  }
+
+  document.querySelectorAll('.menu-btn').forEach(btn=>{
+    btn.addEventListener('pointerdown',e=>{ e.preventDefault(); openMode(btn.dataset.mode); });
+  });
+  backBtn.addEventListener('pointerdown',e=>{ e.preventDefault(); goHome(); });
+  soundBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault(); soundOn=!soundOn;
+    soundBtn.textContent = soundOn ? '🔊' : '🔇';
+    if(soundOn) initAudio();
+  });
+
+  window.addEventListener('resize', ()=>{
+    play.querySelectorAll('.critter').forEach(c=>{
+      const size=parseFloat(c.style.fontSize)||90;
+      const maxX=window.innerWidth-size;
+      if(parseFloat(c.style.left)>maxX) c.style.left=Math.max(10,maxX)+'px';
+    });
+  });
+})();
+</script>
+</body>
+</html>
