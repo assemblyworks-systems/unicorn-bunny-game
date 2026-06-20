@@ -357,7 +357,8 @@
 
     promptEl.textContent='Trace the '+nameOf(t);
     speak("Let's trace the "+nameOf(t)+"!");
-    requestAnimationFrame(()=>setupTrace(t));
+    setTimeout(()=>setupTrace(t),40);
+    setTimeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
   }
   function setupTrace(t){
     const guide=document.getElementById('guideCanvas');
