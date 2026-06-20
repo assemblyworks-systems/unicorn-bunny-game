@@ -224,7 +224,7 @@
   function goFullscreen(){ const el=document.documentElement; const rfs=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen; if(rfs&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const p=rfs.call(el); if(p&&p.catch)p.catch(()=>{}); }catch(e){} } }
 
   // palm-proof tap helper for buttons
-  function onTap(el,fn){ el.addEventListener('pointerdown',e=>{ if(e.pointerType==='touch'&&(e.width>48||e.height>48)) return; e.preventDefault(); fn(e); }); }
+  function onTap(el,fn){ el.addEventListener('pointerdown',e=>{ e.preventDefault(); fn(e); }); }
 
   // ---------- navigation ----------
   function openMode(m){ goFullscreen(); initAudio(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
@@ -339,7 +339,7 @@
     const cellW=rect.width/GRID, cellH=rect.height/GRID;
     function inGlyph(p){ const gxi=Math.floor(p.x/rect.width*GRID), gy=Math.floor(p.y/rect.height*GRID); if(gxi<0||gy<0||gxi>=GRID||gy>=GRID) return false; return traceMask[gy*GRID+gxi]; }
     function hideStart(){ const s=wrap.querySelector('.startDot'); if(s) s.remove(); }
-    cv.onpointerdown=e=>{ if(traceActive!==null) return; if(e.pointerType==='touch'&&(e.width>48||e.height>48)) return; e.preventDefault(); traceActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; hideStart(); lastP=pos(cv,e); markSeg(lastP,lastP,rect); if(inGlyph(lastP)){ inkDot(dx,lastP); } };
+    cv.onpointerdown=e=>{ if(traceActive!==null) return; e.preventDefault(); traceActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; hideStart(); lastP=pos(cv,e); markSeg(lastP,lastP,rect); if(inGlyph(lastP)){ inkDot(dx,lastP); } };
     cv.onpointermove=e=>{ if(e.pointerId!==traceActive) return; e.preventDefault(); const p=pos(cv,e); if(inGlyph(p)||inGlyph(lastP)){ paint(dx,lastP,p); if(Math.random()<0.5){ const r2=cv.getBoundingClientRect(); sparkAt(r2.left+p.x, r2.top+p.y); } blip(); } markSeg(lastP,p,rect); lastP=p; evalCoverage(rect,t); };
     cv.onpointerup=e=>{ if(e.pointerId!==traceActive) return; traceActive=null; lastP=null; };
     cv.onpointercancel=e=>{ if(e.pointerId===traceActive){ traceActive=null; lastP=null; } };
