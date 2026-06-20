@@ -215,6 +215,20 @@
   function speak(text){ if(!soundOn||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=.9; u.pitch=1.3; u.volume=1; if(chosenVoice) u.voice=chosenVoice; speechSynthesis.speak(u); }catch(e){} }
   function nameOf(t){ return isNum(t)?('number '+t):('letter '+t.toUpperCase()); }
 
+  // ---- mobile audio unlock (Chrome/Safari require a user gesture) ----
+  let _audioPrimed=false;
+  function ensureAudio(){
+    initAudio();
+    if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+    if(!_audioPrimed){
+      _audioPrimed=true;
+      if(audioCtx){ try{ const b=audioCtx.createBuffer(1,1,22050), s=audioCtx.createBufferSource(); s.buffer=b; s.connect(audioCtx.destination); s.start(0); }catch(e){} }
+      if('speechSynthesis' in window){ try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
+    }
+  }
+  document.addEventListener('pointerdown', ensureAudio, true);
+  document.addEventListener('touchend', ensureAudio, true);
+
   // ---------- fx ----------
   function cheerText(msg){ const c=document.createElement('div'); c.className='cheer'; c.textContent=msg; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove(),{once:true}); }
   function confetti(n){ const set=['🎉','✨','💖','⭐','🌈','🎊','🌸','💕']; for(let i=0;i<(n||18);i++){ const d=document.createElement('div'); d.className='confetti'; d.textContent=rand(set); d.style.left=(Math.random()*100)+'vw'; document.body.appendChild(d); const dur=1200+Math.random()*900, x=(Math.random()*200-100); d.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate('+x+'px,'+(window.innerHeight+60)+'px) rotate('+(Math.random()*720-360)+'deg)',opacity:.9}],{duration:dur,easing:'ease-in'}); setTimeout(()=>d.remove(),dur); } }

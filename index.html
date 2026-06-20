@@ -207,6 +207,20 @@
   }
   if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = ()=>{};
 
+  // ---- mobile audio unlock (Chrome/Safari require a user gesture) ----
+  let _audioPrimed = false;
+  function ensureAudio(){
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    if (!_audioPrimed) {
+      _audioPrimed = true;
+      if (audioCtx) { try { const b=audioCtx.createBuffer(1,1,22050), s=audioCtx.createBufferSource(); s.buffer=b; s.connect(audioCtx.destination); s.start(0); } catch(e){} }
+      if ('speechSynthesis' in window) { try { const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); } catch(e){} }
+    }
+  }
+  document.addEventListener('pointerdown', ensureAudio, true);
+  document.addEventListener('touchend', ensureAudio, true);
+
   // ---------- helpers ----------
   function rnd(a,b){ return Math.random()*(b-a)+a; }
   function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
