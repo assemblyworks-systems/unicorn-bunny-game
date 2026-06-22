@@ -238,12 +238,14 @@
   }
 
   // ---------- audio ----------
-  function initAudio(){ if(!audioCtx){ try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ audioCtx=null; } } if(audioCtx&&audioCtx.state==='suspended') audioCtx.resume(); }
-  function tone(f,t0,dur,vol){ const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sine'; o.frequency.value=f; g.gain.setValueAtTime(.0001,t0); g.gain.exponentialRampToValueAtTime(vol||.2,t0+.02); g.gain.exponentialRampToValueAtTime(.0001,t0+dur); o.connect(g).connect(audioCtx.destination); o.start(t0); o.stop(t0+dur+.02); }
-  function chime(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; [523.25,659.25,783.99].forEach((f,i)=>tone(f,n+i*.07,.32,.22)); }
-  function fanfare(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; [523,659,784,1047].forEach((f,i)=>tone(f,n+i*.12,.4,.22)); }
-  function boop(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; const o=audioCtx.createOscillator(),g=audioCtx.createGain(); o.type='sine'; o.frequency.setValueAtTime(330,n); o.frequency.exponentialRampToValueAtTime(220,n+.18); g.gain.setValueAtTime(.16,n); g.gain.exponentialRampToValueAtTime(.0001,n+.22); o.connect(g).connect(audioCtx.destination); o.start(n); o.stop(n+.24); }
-  function blip(){ if(!soundOn||!audioCtx) return; const n=audioCtx.currentTime; tone(880,n,.08,.08); }
+  function initAudio(){}
+  function makeWav(segs){ const rate=11025; let total=0; segs.forEach(s=>total+=Math.floor(rate*s.ms/1000)); const buf=new Uint8Array(44+total*2), dv=new DataView(buf.buffer); const w=(o,str)=>{for(let i=0;i<str.length;i++)dv.setUint8(o+i,str.charCodeAt(i));}; w(0,'RIFF');dv.setUint32(4,36+total*2,true);w(8,'WAVE');w(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,rate,true);dv.setUint32(28,rate*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,total*2,true); let off=44; segs.forEach(s=>{const n=Math.floor(rate*s.ms/1000); for(let i=0;i<n;i++){const env=Math.min(1,i/(rate*0.01))*Math.min(1,(n-i)/(rate*0.05)); const v=Math.sin(2*Math.PI*s.f*i/rate)*0.5*env; dv.setInt16(off,v*32767,true); off+=2;}}); let bin=''; for(let i=0;i<buf.length;i++)bin+=String.fromCharCode(buf[i]); return 'data:audio/wav;base64,'+btoa(bin); }
+  const SND={ good:makeWav([{f:523,ms:90},{f:659,ms:90},{f:784,ms:170}]), win:makeWav([{f:523,ms:110},{f:659,ms:110},{f:784,ms:110},{f:1047,ms:260}]), wrong:makeWav([{f:300,ms:130},{f:200,ms:170}]), tap:makeWav([{f:880,ms:70}]) };
+  function playSnd(uri,vol){ if(!soundOn) return; try{ const a=new Audio(uri); a.volume=vol==null?1:vol; const p=a.play(); if(p&&p.catch)p.catch(()=>{}); }catch(e){} }
+  function chime(){ playSnd(SND.good); }
+  function fanfare(){ playSnd(SND.win); }
+  function boop(){ playSnd(SND.wrong,0.7); }
+  function blip(){ playSnd(SND.tap,0.4); }
 
   let chosenVoice=null;
   function pickVoice(){ if(!('speechSynthesis' in window)) return; const vs=speechSynthesis.getVoices(); chosenVoice=vs.find(v=>/female|samantha|karen|zira|tessa|google uk english female|google us english/i.test(v.name))||vs.find(v=>/en[-_]/i.test(v.lang))||vs[0]||null; }
