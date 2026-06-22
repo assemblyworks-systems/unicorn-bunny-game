@@ -436,7 +436,6 @@
       });
       grid.appendChild(el);
     });
-    promptEl.textContent='🧠 Find the pairs';
     speak(useNum?'Match the number to the dots!':'Match the big and little letters!');
   }
 
@@ -462,7 +461,6 @@
     play.appendChild(makeRepeat(sayIt));
     setTimeout(()=>setupDots(wrap,cv),60);
     setTimeout(()=>{ if(!wrap.querySelector('.dot')) setupDots(wrap,cv); },320);
-    promptEl.textContent='🔗 Connect 1, 2, 3…';
     speak('Connect the dots to make '+dotShape.name+'! Start at number one.');
   }
   function setupDots(wrap,cv){
@@ -533,7 +531,6 @@
       makeDraggable(el,bins,(binKey)=>{ if(binKey===it.key){ el.remove(); win(); remaining--; if(remaining<=0){ const t=setTimeout(sortRound,1100); trackT(t);} return true; } return false; });
       items.appendChild(el); });
     play.appendChild(items); play.appendChild(makeRepeat(sayIt)); play.appendChild(bins);
-    promptEl.textContent= useColor?'🗂️ Sort by color':'🗂️ Letters & numbers';
     sayIt();
   }
 
