@@ -173,7 +173,7 @@
   // ---------- audio ----------
   function initAudio() {}
   function makeWav(segs){ const rate=11025; let total=0; segs.forEach(s=>total+=Math.floor(rate*s.ms/1000)); const buf=new Uint8Array(44+total*2), dv=new DataView(buf.buffer); const w=(o,str)=>{for(let i=0;i<str.length;i++)dv.setUint8(o+i,str.charCodeAt(i));}; w(0,'RIFF');dv.setUint32(4,36+total*2,true);w(8,'WAVE');w(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);dv.setUint32(24,rate,true);dv.setUint32(28,rate*2,true);dv.setUint16(32,2,true);dv.setUint16(34,16,true);w(36,'data');dv.setUint32(40,total*2,true); let off=44; segs.forEach(s=>{const n=Math.floor(rate*s.ms/1000); for(let i=0;i<n;i++){const env=Math.min(1,i/(rate*0.01))*Math.min(1,(n-i)/(rate*0.05)); const v=Math.sin(2*Math.PI*s.f*i/rate)*0.5*env; dv.setInt16(off,v*32767,true); off+=2;}}); let bin=''; for(let i=0;i<buf.length;i++)bin+=String.fromCharCode(buf[i]); return 'data:audio/wav;base64,'+btoa(bin); }
-  const SND={ good:makeWav([{f:523,ms:90},{f:659,ms:90},{f:784,ms:170}]), wrong:makeWav([{f:300,ms:130},{f:200,ms:170}]) };
+  const SND={ good:makeWav([{f:523,ms:90},{f:659,ms:90},{f:784,ms:170}]), wrong:makeWav([{f:300,ms:130},{f:200,ms:170}]), tap:makeWav([{f:880,ms:70}]) };
   function playSnd(uri,vol){ if(!soundOn) return; try{ const a=new Audio(uri); a.volume=vol==null?1:vol; const p=a.play(); if(p&&p.catch)p.catch(()=>{}); }catch(e){} }
   function chime(base) { playSnd(SND.good); }
   function say(text) {
@@ -198,7 +198,7 @@
     if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
     if (!_audioPrimed) {
       _audioPrimed = true;
-      if (audioCtx) { try { const b=audioCtx.createBuffer(1,1,22050), s=audioCtx.createBufferSource(); s.buffer=b; s.connect(audioCtx.destination); s.start(0); } catch(e){} }
+      playSnd(SND.tap,0.5);
       if ('speechSynthesis' in window) { try { const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); } catch(e){} }
     }
   }

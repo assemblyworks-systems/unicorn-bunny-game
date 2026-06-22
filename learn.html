@@ -260,7 +260,7 @@
     if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
     if(!_audioPrimed){
       _audioPrimed=true;
-      if(audioCtx){ try{ const b=audioCtx.createBuffer(1,1,22050), s=audioCtx.createBufferSource(); s.buffer=b; s.connect(audioCtx.destination); s.start(0); }catch(e){} }
+      playSnd(SND.tap,0.5);
       if('speechSynthesis' in window){ try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){} }
     }
   }
