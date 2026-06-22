@@ -30,9 +30,9 @@
   .hidden{ display:none !important; }
 
   /* home */
-  #home{ display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:18px; text-align:center; }
-  #home h1{ font-size:34px; color:#d44ea8; text-shadow:0 3px 0 #fff; line-height:1.1; }
-  #home .hero{ font-size:78px; animation:bob 1.7s ease-in-out infinite; filter:drop-shadow(0 8px 8px rgba(0,0,0,.15)); }
+  #home{ display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:10px; padding:22px 18px 30px; text-align:center; overflow-y:auto; }
+  #home h1{ font-size:30px; color:#d44ea8; text-shadow:0 3px 0 #fff; line-height:1.1; }
+  #home .hero{ font-size:62px; animation:bob 1.7s ease-in-out infinite; filter:drop-shadow(0 8px 8px rgba(0,0,0,.15)); }
   @keyframes bob{ 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-14px) rotate(3deg)} }
   #menu{ display:grid; grid-template-columns:1fr 1fr; gap:14px; width:100%; max-width:560px; }
   .menu-btn{ font-family:inherit; font-size:21px; font-weight:bold; color:#7a2e6b; border:none; border-radius:28px; padding:16px 10px; cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:6px; box-shadow:0 6px 0 rgba(0,0,0,.12); transition:transform .1s; }
@@ -103,6 +103,34 @@
   #stickerGrid{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:680px; }
   #stickerGrid .st{ font-size:46px; background:#fff; border-radius:20px; width:74px; height:74px; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 rgba(0,0,0,.1); animation:popin .4s backwards; }
   #board .empty{ font-size:20px; color:#9b6f93; max-width:420px; text-align:center; }
+
+  /* memory match */
+  .memGrid{ display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:520px; }
+  .memCard{ position:relative; width:108px; height:108px; border:none; border-radius:20px; background:linear-gradient(160deg,#b985e0,#9a63cf); box-shadow:0 6px 0 #7d49a8; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; }
+  .memCard:active{ transform:translateY(3px); box-shadow:0 3px 0 #7d49a8; }
+  .memCard .memBack{ font-size:46px; }
+  .memCard .memFront{ display:none; font-size:54px; font-weight:bold; color:#7a2e6b; flex-wrap:wrap; gap:5px; align-items:center; justify-content:center; width:100%; height:100%; padding:8px; }
+  .memCard .memFront .d{ width:18px; height:18px; border-radius:50%; background:#d44ea8; }
+  .memCard.open{ background:#fff; box-shadow:0 6px 0 rgba(212,78,168,.3); }
+  .memCard.open .memBack{ display:none; }
+  .memCard.open .memFront{ display:flex; }
+  .memCard.done{ background:#d9ffd9; box-shadow:0 6px 0 rgba(120,200,120,.45); animation:rightpop .5s; }
+
+  /* dot to dot */
+  #dotWrap{ position:relative; width:min(82vw,460px); height:min(82vw,460px); background:#fff; border-radius:28px; box-shadow:0 8px 0 rgba(212,78,168,.3); touch-action:none; }
+  #dotCanvas{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .dot{ position:absolute; width:48px; height:48px; margin:-24px 0 0 -24px; border-radius:50%; background:#fff; border:4px solid #d44ea8; color:#7a2e6b; font-family:inherit; font-weight:bold; font-size:22px; display:flex; align-items:center; justify-content:center; cursor:pointer; z-index:3; }
+  .dot.next{ background:#3ec46d; color:#fff; border-color:#2f9e55; animation:spulse 1s ease-in-out infinite; }
+  .dot.done{ background:#ffd84d; border-color:#e0b400; }
+
+  /* sort it */
+  .sortBins{ display:flex; gap:22px; justify-content:center; width:100%; max-width:560px; }
+  .bin{ flex:1; min-height:150px; border-radius:24px; border:5px dashed #b98fd6; background:rgba(255,255,255,.5); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; font-family:inherit; font-weight:bold; font-size:20px; color:#7a2e6b; transition:background .15s; }
+  .bin .binlbl{ font-size:44px; }
+  .bin.hot{ background:rgba(217,255,217,.95); border-color:#3ec46d; border-style:solid; }
+  #sortItems{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; min-height:110px; align-items:center; }
+  .sortItem{ font-size:54px; font-weight:bold; color:#7a2e6b; background:#fff; border-radius:20px; width:92px; height:92px; display:flex; align-items:center; justify-content:center; box-shadow:0 5px 0 rgba(0,0,0,.15); cursor:grab; touch-action:none; }
+  .sortItem.dragging{ position:fixed; z-index:90; box-shadow:0 12px 20px rgba(0,0,0,.28); cursor:grabbing; }
 </style>
 </head>
 <body>
@@ -123,6 +151,10 @@
       <button class="menu-btn m2" data-mode="sounds"><span class="emo">🍎</span>A is for…</button>
       <button class="menu-btn m3" data-mode="trace"><span class="emo">✏️</span>Trace It</button>
       <button class="menu-btn m4" data-mode="count"><span class="emo">🍓</span>Count It</button>
+      <button class="menu-btn m3" data-mode="memory"><span class="emo">🧠</span>Memory</button>
+      <button class="menu-btn m4" data-mode="dots"><span class="emo">🔗</span>Dot to Dot</button>
+      <button class="menu-btn m1" data-mode="sort"><span class="emo">🗂️</span>Sort It</button>
+      <button class="menu-btn m2" data-mode="shapes"><span class="emo">🔷</span>Shapes</button>
     </div>
     <div class="homeRow">
       <button class="link-btn purple" id="boardBtn">🎁 My Stickers</button>
@@ -178,6 +210,9 @@
   const rand=a=>a[Math.floor(Math.random()*a.length)];
   const isNum=t=>/^[0-9]+$/.test(t);
   function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+  let pendingTimers=[];
+  function trackT(id){ pendingTimers.push(id); return id; }
+  function clearPending(){ pendingTimers.forEach(clearTimeout); pendingTimers=[]; }
 
   // ---------- stickers (persistent) ----------
   const SKEY='avalynn_stickers_v1';
@@ -241,9 +276,10 @@
   function onTap(el,fn){ el.addEventListener('pointerdown',e=>{ e.preventDefault(); fn(e); }); }
 
   // ---------- navigation ----------
-  function openMode(m){ goFullscreen(); initAudio(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
-    if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='count') startCount(); }
-  function goHome(){ if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='linear-gradient(160deg,#ffe3f3,#e7d9ff)'; mode=null; }
+  function openMode(m){ goFullscreen(); initAudio(); clearPending(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
+    if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='count') startCount();
+    else if(m==='memory') startMemory(); else if(m==='dots') startDots(); else if(m==='sort') startSort(); else if(m==='shapes') startShapes(); }
+  function goHome(){ clearPending(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='linear-gradient(160deg,#ffe3f3,#e7d9ff)'; mode=null; }
   function showBoard(){ initAudio(); home.classList.add('hidden'); play.classList.add('hidden'); board.classList.remove('hidden'); topbar.style.display='flex'; buddy.style.display='none'; mode='board';
     document.getElementById('boardCount').textContent='You have earned '+store.count+' stars!';
     const grid=document.getElementById('stickerGrid'); grid.innerHTML='';
@@ -366,6 +402,161 @@
       win('You traced '+(isNum(t)?t:t.toUpperCase())+'!'); speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'));
       if(wrap){ const pop=document.createElement('div'); pop.textContent=ex; pop.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:120px;z-index:6;'; pop.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:600,easing:'ease-out',fill:'forwards'}); wrap.appendChild(pop); }
       setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); },1900); } }
+
+  // ================= MEMORY MATCH =================
+  function startMemory(){ memoryRound(); }
+  function memoryRound(){
+    play.innerHTML=''; roundLock=false;
+    const useNum=Math.random()<0.5;
+    const grid=document.createElement('div'); grid.className='memGrid'; play.appendChild(grid);
+    let cards=[];
+    if(useNum){ shuffle(['1','2','3','4','5']).slice(0,4).forEach(n=>{ cards.push({key:n,type:'text',val:n}); cards.push({key:n,type:'dots',val:+n}); }); }
+    else { shuffle(UPPER).slice(0,4).forEach(l=>{ cards.push({key:l,type:'text',val:l}); cards.push({key:l,type:'text',val:l.toLowerCase()}); }); }
+    cards=shuffle(cards);
+    let flipped=[], matched=0;
+    cards.forEach(c=>{
+      const el=document.createElement('button'); el.className='memCard'; el.dataset.key=c.key;
+      const back=document.createElement('span'); back.className='memBack'; back.textContent='❓';
+      const front=document.createElement('span'); front.className='memFront';
+      if(c.type==='dots'){ for(let i=0;i<c.val;i++){ const d=document.createElement('span'); d.className='d'; front.appendChild(d); } }
+      else front.textContent=c.val;
+      el.appendChild(back); el.appendChild(front);
+      onTap(el,()=>{
+        if(roundLock||el.classList.contains('open')||el.classList.contains('done')) return;
+        el.classList.add('open'); blip(); flipped.push(el);
+        if(flipped.length===2){
+          roundLock=true; const a=flipped[0], b=flipped[1];
+          if(a.dataset.key===b.dataset.key){
+            setTimeout(()=>{ a.classList.add('done'); b.classList.add('done'); win(); matched++; flipped=[]; roundLock=false; if(matched>=cards.length/2){ const t=setTimeout(memoryRound,1300); trackT(t);} },450);
+          } else {
+            setTimeout(()=>{ a.classList.remove('open'); b.classList.remove('open'); boop(); flipped=[]; roundLock=false; },950);
+          }
+        }
+      });
+      grid.appendChild(el);
+    });
+    promptEl.textContent='🧠 Find the pairs';
+    speak(useNum?'Match the number to the dots!':'Match the big and little letters!');
+  }
+
+  // ================= DOT TO DOT =================
+  const DOTSHAPES=[
+    {name:'a triangle', emoji:'🔺', pts:[[0.5,0.22],[0.8,0.75],[0.2,0.75]]},
+    {name:'a square', emoji:'🟦', pts:[[0.28,0.28],[0.72,0.28],[0.72,0.72],[0.28,0.72]]},
+    {name:'a diamond', emoji:'🔷', pts:[[0.5,0.18],[0.82,0.5],[0.5,0.82],[0.18,0.5]]},
+    {name:'a house', emoji:'🏠', pts:[[0.5,0.16],[0.8,0.42],[0.8,0.8],[0.2,0.8],[0.2,0.42]]},
+    {name:'a boat', emoji:'⛵', pts:[[0.5,0.2],[0.85,0.62],[0.7,0.82],[0.3,0.82],[0.15,0.62]]},
+    {name:'a fish', emoji:'🐟', pts:[[0.18,0.5],[0.45,0.32],[0.7,0.45],[0.85,0.3],[0.85,0.7],[0.7,0.55],[0.45,0.68]]},
+    {name:'a star', emoji:'⭐', pts:[[0.5,0.12],[0.61,0.38],[0.9,0.38],[0.67,0.57],[0.76,0.86],[0.5,0.68],[0.24,0.86],[0.33,0.57],[0.1,0.38],[0.39,0.38]]}
+  ];
+  let dotShape=null, dotNext=1;
+  function startDots(){ dotsRound(); }
+  function dotsRound(){
+    play.innerHTML=''; roundLock=false;
+    dotShape=pick(DOTSHAPES); dotNext=1;
+    const wrap=document.createElement('div'); wrap.id='dotWrap';
+    const cv=document.createElement('canvas'); cv.id='dotCanvas'; wrap.appendChild(cv);
+    play.appendChild(wrap);
+    const sayIt=()=>speak('Connect the dots! Start at number one.');
+    play.appendChild(makeRepeat(sayIt));
+    setTimeout(()=>setupDots(wrap,cv),60);
+    setTimeout(()=>{ if(!wrap.querySelector('.dot')) setupDots(wrap,cv); },320);
+    promptEl.textContent='🔗 Connect 1, 2, 3…';
+    speak('Connect the dots to make '+dotShape.name+'! Start at number one.');
+  }
+  function setupDots(wrap,cv){
+    const rect=wrap.getBoundingClientRect(); if(rect.width<10) return;
+    const dpr=window.devicePixelRatio||1; cv.width=rect.width*dpr; cv.height=rect.height*dpr;
+    const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); ctx.clearRect(0,0,rect.width,rect.height);
+    ctx.lineWidth=6; ctx.strokeStyle='#ff79c6'; ctx.lineCap='round'; ctx.lineJoin='round';
+    wrap.querySelectorAll('.dot').forEach(d=>d.remove());
+    dotShape.pts.forEach((p,i)=>{
+      const b=document.createElement('button'); b.className='dot'+(i===0?' next':''); b.textContent=(i+1); b.dataset.idx=(i+1);
+      b.style.left=(p[0]*rect.width)+'px'; b.style.top=(p[1]*rect.height)+'px';
+      onTap(b,()=>{
+        const idx=+b.dataset.idx;
+        if(idx!==dotNext){ boop(); b.animate([{transform:'translate(-24px,-24px) scale(1)'},{transform:'translate(-24px,-24px) scale(1.25)'},{transform:'translate(-24px,-24px) scale(1)'}],{duration:300}); return; }
+        blip(); speak(String(idx)); b.classList.remove('next'); b.classList.add('done');
+        if(idx>1){ const pr=dotShape.pts[idx-2], cu=dotShape.pts[idx-1]; ctx.beginPath(); ctx.moveTo(pr[0]*rect.width,pr[1]*rect.height); ctx.lineTo(cu[0]*rect.width,cu[1]*rect.height); ctx.stroke(); }
+        dotNext++;
+        if(dotNext>dotShape.pts.length){
+          const a=dotShape.pts[dotShape.pts.length-1], z=dotShape.pts[0];
+          ctx.beginPath(); ctx.moveTo(a[0]*rect.width,a[1]*rect.height); ctx.lineTo(z[0]*rect.width,z[1]*rect.height); ctx.stroke();
+          const em=document.createElement('div'); em.textContent=dotShape.emoji; em.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:130px;z-index:6;';
+          wrap.appendChild(em); em.animate([{opacity:0,transform:'translate(-50%,-50%) scale(0)'},{opacity:1,transform:'translate(-50%,-50%) scale(1.1)'}],{duration:600,fill:'forwards'});
+          win('You made '+dotShape.name+'!'); speak('Yay! You made '+dotShape.name+'!');
+          const t=setTimeout(dotsRound,2300); trackT(t);
+        } else { const nx=wrap.querySelector('.dot[data-idx="'+dotNext+'"]'); if(nx) nx.classList.add('next'); }
+      });
+      wrap.appendChild(b);
+    });
+  }
+
+  // ================= SORT IT =================
+  function mkBin(lbl,name,word){ const b=document.createElement('div'); b.className='bin'; b.dataset.key=name; const s=document.createElement('div'); s.className='binlbl'; s.textContent=lbl; b.appendChild(s); const n=document.createElement('div'); n.textContent=word; b.appendChild(n); return b; }
+  function binAt(bins,x,y){ let f=null; bins.querySelectorAll('.bin').forEach(b=>{ const r=b.getBoundingClientRect(); if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom) f=b; }); return f; }
+  function makeDraggable(el,bins,onDrop){
+    let active=null, ox=0, oy=0;
+    el.addEventListener('pointerdown',e=>{ if(active!==null) return; e.preventDefault(); active=e.pointerId;
+      const r=el.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
+      el.classList.add('dragging'); el.style.width=r.width+'px'; el.style.height=r.height+'px'; el.style.left=r.left+'px'; el.style.top=r.top+'px';
+      try{el.setPointerCapture(e.pointerId);}catch(_){}}, false);
+    el.addEventListener('pointermove',e=>{ if(e.pointerId!==active) return; e.preventDefault();
+      el.style.left=(e.clientX-ox)+'px'; el.style.top=(e.clientY-oy)+'px';
+      const ob=binAt(bins,e.clientX,e.clientY); bins.querySelectorAll('.bin').forEach(b=>b.classList.toggle('hot',b===ob)); });
+    el.addEventListener('pointerup',e=>{ if(e.pointerId!==active) return; active=null;
+      bins.querySelectorAll('.bin').forEach(b=>b.classList.remove('hot'));
+      const ob=binAt(bins,e.clientX,e.clientY); let ok=false; if(ob) ok=onDrop(ob.dataset.key);
+      if(!ok){ el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width=''; el.style.height=''; boop(); } });
+    el.addEventListener('pointercancel',()=>{ active=null; el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width=''; el.style.height=''; });
+  }
+  function startSort(){ sortRound(); }
+  function sortRound(){
+    play.innerHTML=''; roundLock=false;
+    const useColor=Math.random()<0.4;
+    const items=document.createElement('div'); items.id='sortItems';
+    const bins=document.createElement('div'); bins.className='sortBins';
+    let list=[]; let sayIt;
+    if(useColor){
+      const two=shuffle([['red','🔴'],['blue','🔵'],['yellow','🟡'],['green','🟢']]).slice(0,2);
+      bins.appendChild(mkBin(two[0][1],two[0][0],two[0][0])); bins.appendChild(mkBin(two[1][1],two[1][0],two[1][0]));
+      for(let i=0;i<6;i++){ const t=pick(two); list.push({emo:t[1],key:t[0]}); }
+      sayIt=()=>speak('Drag each one to the matching color box!');
+    } else {
+      bins.appendChild(mkBin('🔤','letters','letters')); bins.appendChild(mkBin('🔢','numbers','numbers'));
+      shuffle([...shuffle(UPPER).slice(0,3),...shuffle(NUMS).slice(0,3)]).forEach(v=>list.push({emo:v,key:isNum(v)?'numbers':'letters'}));
+      sayIt=()=>speak('Put the letters and numbers in the right box!');
+    }
+    let remaining=list.length;
+    list.forEach(it=>{ const el=document.createElement('div'); el.className='sortItem'; el.textContent=it.emo;
+      makeDraggable(el,bins,(binKey)=>{ if(binKey===it.key){ el.remove(); win(); remaining--; if(remaining<=0){ const t=setTimeout(sortRound,1100); trackT(t);} return true; } return false; });
+      items.appendChild(el); });
+    play.appendChild(items); play.appendChild(makeRepeat(sayIt)); play.appendChild(bins);
+    promptEl.textContent= useColor?'🗂️ Sort by color':'🗂️ Letters & numbers';
+    sayIt();
+  }
+
+  // ================= SHAPES & COLORS =================
+  const SHP=[['circle','🔵'],['square','🟦'],['triangle','🔺'],['star','⭐'],['heart','❤️'],['diamond','🔷']];
+  const COL=[['red','🔴'],['orange','🟠'],['yellow','🟡'],['green','🟢'],['blue','🔵'],['purple','🟣']];
+  function startShapes(){ shapesRound(); }
+  function shapesRound(){
+    play.innerHTML=''; roundLock=false;
+    const useColor=Math.random()<0.5; const set=useColor?COL:SHP;
+    const tgt=pick(set);
+    const opts=shuffle([tgt,...shuffle(set.filter(s=>s[0]!==tgt[0])).slice(0,2)]);
+    const sayIt=()=>speak('Find the '+tgt[0]+(useColor?' one':'')+'!');
+    const head=document.createElement('div'); head.className='targetCard';
+    const g=document.createElement('div'); g.style.cssText='font-size:26px;color:#7a2e6b;font-weight:bold;padding:6px 10px;'; g.textContent=useColor?'Which color?':'Which shape?'; head.appendChild(g);
+    play.appendChild(head); play.appendChild(makeRepeat(sayIt));
+    const ch=document.createElement('div'); ch.id='choices';
+    opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o[1]; b.style.animationDelay=(i*0.08)+'s';
+      onTap(b,()=>{ if(roundLock) return;
+        if(o[0]===tgt[0]){ roundLock=true; b.classList.add('right'); win(); speak('Yes! '+tgt[0]+'!'); const t=setTimeout(shapesRound,1300); trackT(t); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+      ch.appendChild(b); });
+    play.appendChild(ch); sayIt();
+  }
 
   // ---------- repeat button ----------
   function makeRepeat(fn){ const b=document.createElement('button'); b.className='repeatBtn'; b.textContent='🔊'; b.setAttribute('aria-label','Repeat'); onTap(b,()=>{ initAudio(); fn(); }); return b; }
