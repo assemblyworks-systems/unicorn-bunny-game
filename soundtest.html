@@ -79,19 +79,23 @@
   // ---- 3: Speech synthesis (the talking voice) ----
   document.getElementById('b3').addEventListener('pointerdown',function(e){
     e.preventDefault(); clearL();
-    if(!('speechSynthesis' in window)){ L('speechSynthesis NOT supported on this browser','bad'); return; }
+    if(!('speechSynthesis' in window)){ L('speechSynthesis NOT supported','bad'); return; }
     const voices=speechSynthesis.getVoices();
-    L('speechSynthesis supported. Voices available: '+voices.length, voices.length?'ok':'bad');
-    if(voices.length===0) L('No voices = no talking. The tablet may need a Text-to-Speech engine.','bad');
+    L('Voices available: '+voices.length, voices.length?'ok':'bad');
     try{
-      const u=new SpeechSynthesisUtterance('Hello! Can you hear me talking?');
-      u.rate=0.9; u.pitch=1.2; u.volume=1;
-      u.onstart=()=>L('Speech STARTED. Did you hear talking?','ok');
-      u.onend=()=>L('Speech ended.');
-      u.onerror=(ev)=>L('Speech ERROR: '+ev.error,'bad');
+      speechSynthesis.cancel();   // clear any stuck state
+      speechSynthesis.resume();   // un-pause the engine
+      const u=new SpeechSynthesisUtterance('Hello! Can you hear me talking now?');
+      u.rate=0.95; u.pitch=1.1; u.volume=1; u.lang='en-US';
+      const v=voices.find(x=>/en[-_]US/i.test(x.lang)) || voices.find(x=>/^en/i.test(x.lang));
+      if(v){ u.voice=v; L('Using voice: '+v.name+' ('+v.lang+')'); }
+      u.onstart=()=>L('STARTED — do you hear it?','ok');
+      u.onend=()=>L('ended');
+      u.onerror=(ev)=>L('ERROR: '+(ev.error||'unknown'),'bad');
       speechSynthesis.speak(u);
-      L('Asked it to speak…');
-    }catch(err){ L('Speech ERROR: '+err,'bad'); }
+      L('asked to speak…');
+      setTimeout(function(){ L('state → speaking='+speechSynthesis.speaking+' pending='+speechSynthesis.pending+' paused='+speechSynthesis.paused); }, 900);
+    }catch(err){ L('throw: '+err,'bad'); }
   });
 
   if('speechSynthesis' in window) speechSynthesis.onvoiceschanged=function(){};
