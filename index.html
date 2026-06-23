@@ -179,7 +179,7 @@
   const SND={ good:makeWav([{f:523,ms:90},{f:659,ms:90},{f:784,ms:170}]), wrong:makeWav([{f:300,ms:130},{f:200,ms:170}]), tap:makeWav([{f:880,ms:70}]) };
   function playSnd(uri,vol){ if(!soundOn) return; try{ const a=new Audio(uri); a.volume=vol==null?1:vol; const p=a.play(); if(p&&p.catch)p.catch(()=>{}); }catch(e){} }
   function chime(base) { playSnd(SND.good); }
-  function say(text) {
+  function ttsSay(text) {
     if (!soundOn || !('speechSynthesis' in window)) return;
     try {
       const u = new SpeechSynthesisUtterance(text);
@@ -191,6 +191,15 @@
       speechSynthesis.cancel();
       speechSynthesis.speak(u);
     } catch(e) {}
+  }
+  function slugify(t){ return t.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,''); }
+  let curClip=null;
+  function say(text){
+    if(!soundOn) return;
+    if(curClip){ try{ curClip.pause(); }catch(e){} curClip=null; }
+    let fell=false; const a=new Audio('voice/'+slugify(text)+'.mp3'); curClip=a; a.volume=1;
+    a.addEventListener('error', function(){ if(!fell){ fell=true; ttsSay(text); } });
+    const p=a.play(); if(p&&p.catch) p.catch(function(){ if(!fell){ fell=true; ttsSay(text); } });
   }
   if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = ()=>{};
 
@@ -240,13 +249,8 @@
     chime(opts.base);
     const visual = opts.count ? String(score) : pick(CHEERS);
     cheerText(visual);
-    // spoken: count number, sometimes name, sometimes color
-    let speech = '';
-    if (opts.count) speech = String(score);
-    if (opts.color) speech = opts.color + (Math.random()<0.5? ' '+pick(CHEERS):'');
-    if (!speech) speech = pick(CHEERS);
-    if (Math.random() < 0.4) speech = speech + ' ' + NAME + '!';
-    say(speech);
+    // spoken: balloon color name, otherwise a cheer (bounded clip set)
+    say(opts.color ? opts.color : pick(CHEERS));
   }
 
   function applyScene(i){
