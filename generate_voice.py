@@ -30,7 +30,8 @@ WORDS = {'A':'apple','B':'banana','C':'cat','D':'dog','E':'elephant','F':'fish',
  'U':'umbrella','V':'violin','W':'watermelon','X':'fox','Y':'yo-yo','Z':'zebra'}
 SHP = ['circle','square','triangle','star','heart','diamond']
 COL = ['red','orange','yellow','green','blue','purple']
-DOTS = ['a triangle','a square','a diamond','a house','a boat','a fish','a star']
+DOTS = ['a triangle','a square','a diamond','a house','a boat','a fish','a star','a dinosaur']
+NAMES = ['Avalynn','Raynice']   # arcade voice lines are generated for every allowed profile
 PRAISE = ['Yay!','Great job!','Wonderful!','You did it!','Amazing!','Hooray!','Super!',
           'Well done!','Brilliant!','Awesome!']
 TRYAGAIN = ['Try again!','Almost!','You can do it!','Keep trying!','So close!']
@@ -64,15 +65,22 @@ for c in COL: add('Yes! '+c+'!')
 for p in PRAISE + TRYAGAIN: add(p)
 
 # ===== Arcade games (index.html) =====
-add('Tap all the ones that are the same, Avalynn!')
-add('Pop the balloons, Avalynn!')
-add('Feed the carrots to the bunny, Avalynn!')
-add('Catch the stars! Do not tap the rocks, Avalynn!')
+# Name-bearing lines: one clip per allowed profile name (index.html speaks profile.first).
+for nm in NAMES:
+    add('Tap all the ones that are the same, '+nm+'!')
+    add('Pop the balloons, '+nm+'!')
+    add('Feed the carrots to the bunny, '+nm+'!')
+    add('Catch the stars! Do not tap the rocks, '+nm+'!')
+    add('Hatch the dino eggs, '+nm+'!')
+    add('Dig up the dinosaur, '+nm+'!')
+    add('Thank you '+nm)
 for c in ['red','orange','yellow','green','blue','purple','pink']: add(c)
 for ch in ['Yay!','Wow!','Yippee!','Hooray!','Magic!','So pretty!','Amazing!']: add(ch)
 for m in ['Not that one','Try again','Look again']: add(m)
-for f in ['Yum yum','Thank you Avalynn','Nom nom nom','Crunchy','Delicious']: add(f)
+for f in ['Yum yum','Nom nom nom','Crunchy','Delicious']: add(f)
 add('Oops')
+add('Roar')
+add('You found a dinosaur')
 
 byslug = {}
 for t in phrases:

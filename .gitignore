@@ -1,0 +1,11 @@
+# Python cache from running generate_voice.py
+__pycache__/
+*.pyc
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local Claude Code tooling (preview server config, etc.)
+.claude/

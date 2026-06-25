@@ -1,6 +1,6 @@
 {
-  "name": "Avalynn's Unicorn & Bunny Games",
-  "short_name": "Avalynn's Games",
+  "name": "Playbox",
+  "short_name": "Playbox",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",

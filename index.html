@@ -6,13 +6,13 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Avalynn's Unicorn & Bunny Games</title>
+<title>Playbox</title>
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#ffd6ef">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Avalynn's Games">
+<meta name="apple-mobile-web-app-title" content="Playbox">
 <link rel="apple-touch-icon" href="icon.png">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -109,10 +109,79 @@
     background:rgba(255,255,255,0.6); color:#7a2e6b; font-size:18px; font-weight:bold;
     padding:6px 18px; border-radius:30px; z-index:50; pointer-events:none;
   }
+
+  /* ===== Home links row (Learn / Change Profile) ===== */
+  .homeRow{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:18px; }
+  .homeLink{
+    display:inline-flex; align-items:center; gap:8px; text-decoration:none;
+    font-family:inherit; font-size:18px; font-weight:bold; color:#fff;
+    background:#a86bd6; border:none; border-radius:40px; padding:12px 22px;
+    box-shadow:0 5px 0 #7d49a8; cursor:pointer;
+  }
+  .homeLink:active{ transform:translateY(3px); box-shadow:0 2px 0 #7d49a8; }
+  .homeLink.alt{ background:#ff9ad5; box-shadow:0 5px 0 #d44ea8; }
+  .homeLink.alt:active{ box-shadow:0 2px 0 #d44ea8; }
+  #homeSub{ font-size:18px; font-weight:bold; color:#a8458f; margin-top:-8px; }
+
+  /* ===== Profile gate ===== */
+  #gate{
+    display:flex; align-items:center; justify-content:center; padding:24px; z-index:100;
+    background:linear-gradient(160deg,#ffe3f3,#e7d9ff);
+  }
+  .gateCard{
+    background:rgba(255,255,255,0.92); border-radius:32px; padding:30px 26px;
+    max-width:420px; width:100%; text-align:center; box-shadow:0 10px 0 rgba(212,78,168,.25);
+    display:flex; flex-direction:column; gap:14px; align-items:center;
+  }
+  .gateHero{ font-size:64px; animation:bob 1.6s ease-in-out infinite; }
+  .gateTitle{ font-size:32px; color:#d44ea8; text-shadow:0 2px 0 #fff; }
+  .gateSub{ font-size:20px; color:#7a2e6b; }
+  #gateName{
+    font-family:inherit; font-size:24px; text-align:center; padding:14px 18px;
+    border:3px solid #ffb3e0; border-radius:20px; width:100%; outline:none; color:#7a2e6b;
+  }
+  #gateName:focus{ border-color:#ff79c6; }
+  .gateBtn{
+    font-family:inherit; font-size:24px; font-weight:bold; color:#fff; background:#ff79c6;
+    border:none; border-radius:40px; padding:14px 30px; box-shadow:0 5px 0 #d44ea8; cursor:pointer;
+  }
+  .gateBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 #d44ea8; }
+  .gateErr{ font-size:18px; font-weight:bold; color:#e23b6d; min-height:22px; }
+
+  /* ===== Dino Dig ===== */
+  #digWrap{
+    position:absolute; left:50%; top:54%; transform:translate(-50%,-50%);
+    width:min(80vw,440px); height:min(80vw,440px); border-radius:28px; overflow:hidden;
+    box-shadow:0 8px 0 rgba(212,78,168,.3); background:#f3e2c7; touch-action:none;
+  }
+  .digDino{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:190px; line-height:1; filter:drop-shadow(0 6px 6px rgba(0,0,0,.18));
+  }
+  .digDino.reveal{ animation:digpop .6s; }
+  @keyframes digpop{ 0%{transform:scale(.6)} 55%{transform:scale(1.18)} 100%{transform:scale(1)} }
+  #digCanvas{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
+  .digHint{
+    position:absolute; bottom:10px; left:50%; transform:translateX(-50%); z-index:5;
+    background:rgba(255,255,255,.75); color:#7a2e6b; font-size:18px; font-weight:bold;
+    padding:6px 16px; border-radius:30px; pointer-events:none; white-space:nowrap;
+  }
 </style>
 </head>
 <body>
 <div id="app">
+
+  <!-- GATE (shown until a valid profile is entered) -->
+  <div id="gate" class="screen">
+    <div class="gateCard">
+      <div class="gateHero">🦄🦕</div>
+      <h1 class="gateTitle">Welcome!</h1>
+      <p class="gateSub">Who's playing today?</p>
+      <input id="gateName" type="text" inputmode="text" autocomplete="off" autocapitalize="words" placeholder="Type your name" />
+      <button id="gateGo" class="gateBtn">Let's Play! ▶</button>
+      <div id="gateErr" class="gateErr"></div>
+    </div>
+  </div>
 
   <div id="topbar">
     <button id="backBtn">⟵ Home</button>
@@ -121,16 +190,22 @@
   </div>
 
   <!-- HOME -->
-  <div id="home" class="screen">
-    <div class="big">🦄🐰</div>
-    <h1>Avalynn's<br>Magic Games</h1>
+  <div id="home" class="screen hidden">
+    <div class="big">🦄🦕</div>
+    <h1 id="homeTitle">Playbox</h1>
+    <div id="homeSub">🎮 Fun Games</div>
     <div id="menu">
       <button class="menu-btn" data-mode="friends"><span class="emo">🔎</span>Match It</button>
       <button class="menu-btn" data-mode="balloons"><span class="emo">🎈</span>Pop Balloons</button>
       <button class="menu-btn" data-mode="feed"><span class="emo">🥕</span>Feed Bunny</button>
       <button class="menu-btn" data-mode="stars"><span class="emo">🌟</span>Catch Stars</button>
+      <button class="menu-btn" data-mode="eggs"><span class="emo">🥚</span>Dino Eggs</button>
+      <button class="menu-btn" data-mode="dig"><span class="emo">🦴</span>Dino Dig</button>
     </div>
-    <a href="learn.html" style="margin-top:18px;display:inline-flex;align-items:center;gap:8px;text-decoration:none;font-family:inherit;font-size:20px;font-weight:bold;color:#fff;background:#a86bd6;border-radius:40px;padding:12px 26px;box-shadow:0 5px 0 #7d49a8;">📚 Learn ABC &amp; 123</a>
+    <div class="homeRow">
+      <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
+      <button id="profileBtn" class="homeLink alt">👤 Change Profile</button>
+    </div>
   </div>
 
   <!-- PLAY AREA -->
@@ -147,8 +222,54 @@
   const backBtn = document.getElementById('backBtn');
   const soundBtn = document.getElementById('soundBtn');
   const scoreEl = document.getElementById('score');
+  const gate = document.getElementById('gate');
+  const gateName = document.getElementById('gateName');
+  const gateGo = document.getElementById('gateGo');
+  const gateErr = document.getElementById('gateErr');
+  const profileBtn = document.getElementById('profileBtn');
+  const homeTitle = document.getElementById('homeTitle');
 
-  const NAME = 'Avalynn';
+  let NAME = 'Avalynn';
+
+  // ---------- profile gate (client-side soft gate; shared with learn.html) ----------
+  const PKEY = 'playbox_profile_v1';
+  const ALLOWED = ['Avalynn','Raynice'];
+  function loadProfile(){ try{ return JSON.parse(localStorage.getItem(PKEY)); }catch(e){ return null; } }
+  function saveProfile(p){ try{ localStorage.setItem(PKEY, JSON.stringify(p)); }catch(e){} }
+  function matchProfile(input){
+    const s = (input||'').trim().replace(/\s+/g,' ');
+    const low = s.toLowerCase();
+    let first = null;
+    for(const n of ALLOWED){ if(low.indexOf(n.toLowerCase())===0){ first=n; break; } }
+    if(!first) return null;
+    const full = s.split(' ').map(w=> w ? w.charAt(0).toUpperCase()+w.slice(1).toLowerCase() : w).join(' ');
+    return { full: full, first: first };
+  }
+  function applyProfile(p){
+    NAME = p.first;
+    homeTitle.textContent = p.full + "'s Playbox";
+    try{ document.title = p.full + "'s Playbox"; }catch(e){}
+    gate.classList.add('hidden');
+    home.classList.remove('hidden');
+  }
+  function showGate(){
+    home.classList.add('hidden');
+    play.classList.add('hidden');
+    topbar.style.display = 'none';
+    gate.classList.remove('hidden');
+    gateErr.textContent = '';
+    if(gateName){ gateName.value=''; try{ gateName.focus(); }catch(e){} }
+  }
+  function submitGate(){
+    const p = matchProfile(gateName.value);
+    if(!p){ gateErr.textContent = 'Profile not authorised.'; return; }
+    saveProfile(p); applyProfile(p);
+  }
+  function changeProfile(){
+    try{ localStorage.removeItem(PKEY); }catch(e){}
+    goHome();
+    showGate();
+  }
 
   // ---- content pools ----
   const FRIENDS = ['🦄','🐰','🐱','🐶','🦋','🌷','🌈','⭐','🐥','🐢'];
@@ -410,6 +531,88 @@
     say('Catch the stars! Do not tap the rocks, '+NAME+'!');
   }
 
+  // ---------- MODE: Dino Eggs (tap eggs to hatch baby dinos) ----------
+  function startEggs(){
+    applyScene(1);
+    const BABIES=['🦕','🦖','🦴'];
+    function spawnEgg(){
+      const c=document.createElement('div'); c.className='critter'; c.textContent='🥚';
+      const size=rnd(76,108); c.style.fontSize=size+'px';
+      c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
+      c.style.top =rnd(140,Math.max(160,window.innerHeight-size-20))+'px';
+      let t=Math.random()*6;
+      function drift(){ if(!c.isConnected||c.classList.contains('pop'))return;
+        t+=0.04; c.style.transform='translateY('+Math.sin(t)*9+'px) rotate('+Math.sin(t)*8+'deg)'; requestAnimationFrame(drift); }
+      requestAnimationFrame(drift);
+      c.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(c.classList.contains('pop'))return;
+        const r=c.getBoundingClientRect();
+        burst(r.left+r.width/2, r.top+r.height/2);
+        setScore(score+1);
+        c.textContent=pick(BABIES); chime();
+        cheerText(pick(['Roar! 🦕','It hatched! 🥚','Baby dino! 🦖']));
+        say('Roar');
+        c.classList.add('pop');
+        c.addEventListener('animationend',()=>{ c.remove(); spawnEgg(); },{once:true});
+      });
+      play.appendChild(c);
+    }
+    for(let i=0;i<4;i++) spawnEgg();
+    say('Hatch the dino eggs, '+NAME+'!');
+  }
+
+  // ---------- MODE: Dino Dig (brush away dirt to reveal a dinosaur) ----------
+  function startDig(){
+    applyScene(0);
+    play.innerHTML='';
+    const wrap=document.createElement('div'); wrap.id='digWrap';
+    const dino=document.createElement('div'); dino.className='digDino'; dino.textContent=pick(['🦕','🦖','🦴']);
+    const cv=document.createElement('canvas'); cv.id='digCanvas';
+    const hint=document.createElement('div'); hint.className='digHint'; hint.textContent='👆 Rub to dig!';
+    wrap.appendChild(dino); wrap.appendChild(cv); wrap.appendChild(hint);
+    play.appendChild(wrap);
+    let digDone=false, digActive=null, lastP=null, lastEval=0;
+    function setup(){
+      const rect=cv.getBoundingClientRect(); if(rect.width<10) return;
+      if(cv.width>300 && cv.dataset.ready==='1') return;
+      const dpr=window.devicePixelRatio||1; cv.width=rect.width*dpr; cv.height=rect.height*dpr; cv.dataset.ready='1';
+      const ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.clearRect(0,0,rect.width,rect.height);
+      ctx.fillStyle='#b07a4f'; ctx.fillRect(0,0,rect.width,rect.height);
+      ctx.fillStyle='rgba(90,60,35,.45)';
+      for(let i=0;i<150;i++){ const x=Math.random()*rect.width, y=Math.random()*rect.height, r=Math.random()*6+2; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+      function pos(e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+      function scratch(a,b){ ctx.globalCompositeOperation='destination-out'; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=58;
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+        ctx.beginPath(); ctx.arc(b.x,b.y,29,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over'; }
+      function evalDig(){
+        if(digDone) return;
+        let img; try{ img=ctx.getImageData(0,0,cv.width,cv.height).data; }catch(e){ return; }
+        let clear=0, tot=0; const step=8;
+        for(let y=0;y<cv.height;y+=step) for(let x=0;x<cv.width;x+=step){ tot++; if(img[(y*cv.width+x)*4+3]<20) clear++; }
+        if(tot && clear/tot>=0.5) finishDig();
+      }
+      function finishDig(){
+        if(digDone) return; digDone=true;
+        ctx.clearRect(0,0,rect.width,rect.height); const h=wrap.querySelector('.digHint'); if(h) h.remove();
+        dino.classList.add('reveal');
+        setScore(score+1); chime();
+        const r=wrap.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+        cheerText('You found a dinosaur! 🦴');
+        say('You found a dinosaur');
+        const t=setTimeout(()=>{ if(mode==='dig') startDig(); }, 1900); trackTimer(t);
+      }
+      cv.onpointerdown=e=>{ if(digActive!==null) return; e.preventDefault(); digActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; lastP=pos(e); scratch(lastP,lastP); };
+      cv.onpointermove=e=>{ if(e.pointerId!==digActive) return; e.preventDefault(); const p=pos(e); scratch(lastP||p,p); lastP=p; playSnd(SND.tap,0.18); const now=Date.now(); if(now-lastEval>300){ lastEval=now; evalDig(); } };
+      cv.onpointerup=e=>{ if(e.pointerId!==digActive) return; digActive=null; lastP=null; evalDig(); };
+      cv.onpointercancel=e=>{ if(e.pointerId===digActive){ digActive=null; lastP=null; } };
+    }
+    setTimeout(setup,40);
+    setTimeout(()=>{ if(cv.dataset.ready!=='1') setup(); },300);
+    say('Dig up the dinosaur, '+NAME+'!');
+  }
+
   // ---------- navigation ----------
   function goFullscreen(){
     const el = document.documentElement;
@@ -430,6 +633,8 @@
     else if(m==='balloons') startBalloons();
     else if(m==='feed') startFeed();
     else if(m==='stars') startStars();
+    else if(m==='eggs') startEggs();
+    else if(m==='dig') startDig();
   }
   function goHome(){
     clearTimers();
@@ -452,6 +657,12 @@
     soundBtn.textContent = soundOn ? '🔊' : '🔇';
     if(soundOn) initAudio();
   });
+
+  // gate + profile wiring
+  if(gateGo){ gateGo.addEventListener('click',e=>{ e.preventDefault(); submitGate(); }); }
+  if(gateName){ gateName.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitGate(); } }); }
+  if(profileBtn){ profileBtn.addEventListener('pointerdown',e=>{ e.preventDefault(); changeProfile(); }); }
+  (function(){ const _p=loadProfile(); if(_p && _p.first) applyProfile(_p); else showGate(); })();
 
   window.addEventListener('resize', ()=>{
     play.querySelectorAll('.critter').forEach(c=>{
