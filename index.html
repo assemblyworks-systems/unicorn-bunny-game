@@ -545,7 +545,7 @@
     const hint=document.createElement('div'); hint.className='digHint'; hint.textContent='👆 Rub to dig!';
     wrap.appendChild(dino); wrap.appendChild(cv); wrap.appendChild(hint);
     play.appendChild(wrap);
-    let digDone=false, digActive=null, lastP=null, lastEval=0;
+    let digDone=false, digActive=null, lastP=null, lastEval=0, lastBlip=0;
     function setup(){
       const rect=cv.getBoundingClientRect(); if(rect.width<10) return;
       if(cv.width>300 && cv.dataset.ready==='1') return;
@@ -577,7 +577,7 @@
         const t=setTimeout(()=>{ if(mode==='dig') startDig(); }, 1900); trackTimer(t);
       }
       cv.onpointerdown=e=>{ if(digActive!==null) return; e.preventDefault(); digActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; lastP=pos(e); scratch(lastP,lastP); };
-      cv.onpointermove=e=>{ if(e.pointerId!==digActive) return; e.preventDefault(); const p=pos(e); scratch(lastP||p,p); lastP=p; playSnd(SND.tap,0.18); const now=Date.now(); if(now-lastEval>300){ lastEval=now; evalDig(); } };
+      cv.onpointermove=e=>{ if(e.pointerId!==digActive) return; e.preventDefault(); const p=pos(e); scratch(lastP||p,p); lastP=p; const now=Date.now(); if(now-lastBlip>120){ lastBlip=now; playSnd(SND.tap,0.18); } if(now-lastEval>320){ lastEval=now; evalDig(); } };
       cv.onpointerup=e=>{ if(e.pointerId!==digActive) return; digActive=null; lastP=null; evalDig(); };
       cv.onpointercancel=e=>{ if(e.pointerId===digActive){ digActive=null; lastP=null; } };
     }

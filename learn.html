@@ -495,7 +495,7 @@
     if(startCell){ const sd=document.createElement('div'); sd.className='startDot'; sd.style.left=((startCell.gx+0.5)/GRID*rect.width)+'px'; sd.style.top=((startCell.gy+0.5)/GRID*rect.height)+'px'; wrap.appendChild(sd); }
     function inGlyph(p){ const gxi=Math.floor(p.x/rect.width*GRID), gy=Math.floor(p.y/rect.height*GRID); if(gxi<0||gy<0||gxi>=GRID||gy>=GRID) return false; return traceMask[gy*GRID+gxi]; }
     function hideStart(){ const s=wrap.querySelector('.startDot'); if(s) s.remove(); }
-    let lastEval=0;
+    let lastEval=0, lastBlip=0, traceRect=null;
     function evalPixels(){
       if(traceDone||totalCells<=0) return;
       let img; try{ img=dx.getImageData(0,0,cv.width,cv.height).data; }catch(e){ return; }
@@ -507,8 +507,15 @@
       }
       if(inked/totalCells>=0.6) finishTrace(t);
     }
-    cv.onpointerdown=e=>{ if(traceActive!==null) return; e.preventDefault(); traceActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; hideStart(); lastP=pos(cv,e); if(inGlyph(lastP)) inkDot(dx,lastP); };
-    cv.onpointermove=e=>{ if(e.pointerId!==traceActive) return; e.preventDefault(); const p=pos(cv,e); if(inGlyph(p)||inGlyph(lastP)){ paint(dx,lastP||p,p); if(Math.random()<0.35){ const r2=cv.getBoundingClientRect(); sparkAt(r2.left+p.x, r2.top+p.y); } } blip(); lastP=p; const now=Date.now(); if(now-lastEval>350){ lastEval=now; evalPixels(); } };
+    cv.onpointerdown=e=>{ if(traceActive!==null) return; e.preventDefault(); traceActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; traceRect=cv.getBoundingClientRect(); hideStart(); lastP={x:e.clientX-traceRect.left,y:e.clientY-traceRect.top}; if(inGlyph(lastP)) inkDot(dx,lastP); };
+    cv.onpointermove=e=>{ if(e.pointerId!==traceActive) return; e.preventDefault();
+      const p={x:e.clientX-traceRect.left, y:e.clientY-traceRect.top};
+      if(inGlyph(p)||inGlyph(lastP)) paint(dx,lastP||p,p);
+      lastP=p;
+      const now=Date.now();
+      if(now-lastBlip>110){ lastBlip=now; blip(); sparkAt(traceRect.left+p.x, traceRect.top+p.y); }   // throttle sound+spark (was every move → laggy)
+      if(now-lastEval>400){ lastEval=now; evalPixels(); }
+    };
     cv.onpointerup=e=>{ if(e.pointerId!==traceActive) return; traceActive=null; lastP=null; evalPixels(); };
     cv.onpointercancel=e=>{ if(e.pointerId===traceActive){ traceActive=null; lastP=null; } };
   }
