@@ -1,0 +1,32 @@
+<svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Boxy, the PlayBox mascot">
+  
+  <ellipse cx="110" cy="196" rx="62" ry="11" fill="#3D2C56" opacity="0.12"></ellipse>
+  
+  <rect x="78" y="168" width="24" height="26" rx="11" fill="#E64178"></rect>
+  <rect x="118" y="168" width="24" height="26" rx="11" fill="#E64178"></rect>
+  
+  <rect x="48" y="78" width="124" height="104" rx="30" fill="#FF5C8A"></rect>
+  
+  <rect x="103" y="78" width="14" height="104" fill="#FF7FA5" opacity="0.7"></rect>
+  <rect x="48" y="118" width="124" height="13" fill="#FF7FA5" opacity="0.55"></rect>
+  
+  <rect x="26" y="104" width="22" height="46" rx="11" fill="#E64178"></rect>
+  <rect x="172" y="104" width="22" height="46" rx="11" fill="#E64178"></rect>
+  
+  <path d="M48 90 Q42 56 66 50 L92 62 Q70 70 78 92 Z" fill="#FFC93C"></path>
+  <path d="M172 90 Q178 56 154 50 L128 62 Q150 70 142 92 Z" fill="#38BDF8"></path>
+  
+  <rect x="68" y="98" width="84" height="64" rx="22" fill="#FFF9F0"></rect>
+  
+  <circle cx="92" cy="122" r="9" fill="#3D2C56"></circle>
+  <circle cx="128" cy="122" r="9" fill="#3D2C56"></circle>
+  <circle cx="95" cy="119" r="3" fill="#FFFFFF"></circle>
+  <circle cx="131" cy="119" r="3" fill="#FFFFFF"></circle>
+  
+  <circle cx="80" cy="138" r="7" fill="#FFB3C9" opacity="0.8"></circle>
+  <circle cx="140" cy="138" r="7" fill="#FFB3C9" opacity="0.8"></circle>
+  
+  <path d="M100 138 Q110 150 120 138" stroke="#3D2C56" stroke-width="4" stroke-linecap="round" fill="none"></path>
+  
+  <path d="M150 36 l4 10 10 4 -10 4 -4 10 -4 -10 -10 -4 10 -4 z" fill="#FFC93C"></path>
+</svg>

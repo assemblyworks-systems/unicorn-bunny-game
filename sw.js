@@ -1,6 +1,6 @@
 // Service worker for Avalynn's app — NETWORK-FIRST so it always pulls the
 // latest version from GitHub when online, and falls back to cache offline.
-const CACHE = 'avalynn-cache-v1';
+const CACHE = 'playbox-cache-v2';
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();

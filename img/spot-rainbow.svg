@@ -1,0 +1,6 @@
+<svg width="160" height="100" viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rainbow">
+  <path d="M16 92 a64 64 0 0 1 128 0" stroke="#FF5C8A" stroke-width="14" fill="none" stroke-linecap="round"></path>
+  <path d="M30 92 a50 50 0 0 1 100 0" stroke="#FF9446" stroke-width="14" fill="none" stroke-linecap="round"></path>
+  <path d="M44 92 a36 36 0 0 1 72 0" stroke="#FFC93C" stroke-width="14" fill="none" stroke-linecap="round"></path>
+  <path d="M58 92 a22 22 0 0 1 44 0" stroke="#5FCF80" stroke-width="14" fill="none" stroke-linecap="round"></path>
+</svg>

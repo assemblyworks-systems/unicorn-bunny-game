@@ -11,6 +11,8 @@ Access is gated by a **profile name**: the app asks "Who's playing today?" and o
 
 - **`index.html`** — arcade games (home page): Match It, Pop Balloons, Feed Bunny, Catch Stars, Dino Eggs, Dino Dig.
 - **`learn.html`** — learning games: Find It, A is for…, Trace It, Count It, Memory, Dot to Dot, Sort It, Shapes, Count Dinos. Covers A–Z (upper & lower) and numbers 1–20, with spoken prompts, a sticker reward board (resets each session), and a friendly mascot.
+- **`playbox.css` + `img/`** — the **PlayBox** design system: shared color/type/shape tokens, the rounded "toy-block" look, and the mascots (Boxy, Rex, Hop, Pip) + spot illustrations.
+- **`ASSETS.md`** — wishlist of additional illustrations to add (e.g. a full dinosaur herd), with the brand style spec.
 - **`voice/`** — ~289 pre-recorded voice clips (natural neural voice) that the games play for spoken prompts.
 - **`generate_voice.py`** — script that generates the voice clips.
 - **`sw.js`, `manifest.webmanifest`, `icon*.png`** — PWA support (installable, fullscreen, offline).

@@ -1,0 +1,26 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pip the pig, PlayBox mascot">
+  
+  <path d="M74 64 q-10 -30 14 -28 q8 14 2 30 Z" fill="#FF6B6B"></path>
+  <path d="M146 64 q10 -30 -14 -28 q-8 14 -2 30 Z" fill="#FF6B6B"></path>
+  
+  <ellipse cx="110" cy="148" rx="58" ry="50" fill="#FF8A8A"></ellipse>
+  
+  <rect x="78" y="180" width="24" height="22" rx="11" fill="#E24848"></rect>
+  <rect x="118" y="180" width="24" height="22" rx="11" fill="#E24848"></rect>
+  
+  <circle cx="110" cy="104" r="52" fill="#FF8A8A"></circle>
+  
+  <circle cx="76" cy="116" r="11" fill="#E24848" opacity="0.4"></circle>
+  <circle cx="144" cy="116" r="11" fill="#E24848" opacity="0.4"></circle>
+  
+  <circle cx="92" cy="96" r="8" fill="#43352F"></circle>
+  <circle cx="128" cy="96" r="8" fill="#43352F"></circle>
+  <circle cx="94.5" cy="93.5" r="2.5" fill="#FFFFFF"></circle>
+  <circle cx="130.5" cy="93.5" r="2.5" fill="#FFFFFF"></circle>
+  
+  <ellipse cx="110" cy="124" rx="26" ry="19" fill="#FF6B6B"></ellipse>
+  <ellipse cx="101" cy="124" rx="5" ry="7" fill="#E24848"></ellipse>
+  <ellipse cx="119" cy="124" rx="5" ry="7" fill="#E24848"></ellipse>
+  
+  <path d="M88 148 q22 18 44 0" stroke="#E24848" stroke-width="4" fill="none" stroke-linecap="round"></path>
+</svg>

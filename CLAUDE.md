@@ -25,6 +25,29 @@ A full-screen gate (`#gate` in both files) blocks the app until a name is entere
 - **Learning app:** https://assemblyworks-systems.github.io/unicorn-bunny-game/learn.html
 - **Repo:** https://github.com/assemblyworks-systems/unicorn-bunny-game (cloned locally at `C:\Repo\unicorn-bunny-game`)
 
+## Visual design — PlayBox design system (rebranded 2026-06)
+
+The app uses the **PlayBox** design system (from the `playbox-design` skill). Look = "soft toys
+made of light": flat **cream** canvas (`--surface-app`, no gradients), big pillowy radii,
+rounded display font **Baloo 2** (titles/buttons) + **Nunito** (body), and the signature
+**"toy lip"** press — a solid `-deep` colored bottom edge (`box-shadow:0 var(--chunk-depth) 0
+…`) that collapses to `--chunk-depth-press` on `:active`.
+
+- **Tokens** live in `playbox.css` (linked in both `<head>`s). **Never hardcode hex** — use
+  `--color-*` / semantic aliases (`--surface-app`, `--text-body`, etc.). Fonts load via a
+  Google Fonts `<link>` (system fallback offline).
+- **Tones.** Add a `t-<tone>` class (coral/sky/grass/grape/sunshine/tangerine/teal/bubblegum)
+  to set `--tone`/`--tone-deep`/`--tone-on` for any toy-lip element. `--tone-on` is the label
+  color (white for saturated tones, **ink for sunshine** — yellow needs dark text).
+- **Art.** Mascots & spots are SVG in `img/`. Heroes/buddy use Boxy + Rex; Feed Bunny pet is
+  Hop; Pop Balloons uses the derived `balloon-<color>.svg`; Catch Stars uses `spot-star`.
+- **Dinosaurs.** `const DINOS=['rex-dino']` in `index.html` drives Dino Dig + Dino Eggs.
+  **Drop a new dino SVG in `img/` and add its filename to `DINOS`** → it auto-appears (this is
+  how we end the repetition). The full wishlist of art to add is in `ASSETS.md`.
+- Scene backgrounds (`SCENES`) are flat `--color-*-soft` washes, not gradients.
+- ⚠️ Keep the iPad audio/touch rules below — the rebrand changed *looks only*, not the audio,
+  voice, or pointer handling.
+
 ## Primary target device: iPad
 
 The main device is an **iPad** (Avalynn's). Most hard-won lessons below are iPad/Safari quirks. **Always reason about iPad Safari first.** Desktop "works" is not sufficient proof.
@@ -33,8 +56,11 @@ The main device is an **iPad** (Avalynn's). Most hard-won lessons below are iPad
 
 | File | Purpose |
 |---|---|
-| `index.html` | Arcade games (home page). Self-contained HTML/CSS/JS. |
-| `learn.html` | Learning games. Self-contained HTML/CSS/JS. |
+| `index.html` | Arcade games (home page). HTML/CSS/JS; links `playbox.css`. |
+| `learn.html` | Learning games. HTML/CSS/JS; links `playbox.css`. |
+| `playbox.css` | **Shared design tokens** (PlayBox colors/type/spacing/effects) + tone helpers. Linked by both pages. |
+| `img/*.svg` | **Brand art** — mascots (Boxy, Rex, Hop, Pip), spot illustrations, derived `balloon-<color>` set. |
+| `ASSETS.md` | **Art wishlist** — additional illustrations to add (dino herd, etc.) with style spec. |
 | `manifest.webmanifest` | PWA manifest (name, icons, `display:fullscreen`, `start_url:"./"`). |
 | `sw.js` | Service worker — **network-first** (always fetch latest, cache as offline fallback). |
 | `icon.png` (512), `icon-192.png` | App icons (drawn rainbow+star). |

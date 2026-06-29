@@ -8,68 +8,63 @@
 <meta http-equiv="Expires" content="0">
 <title>Playbox</title>
 <link rel="manifest" href="manifest.webmanifest">
-<meta name="theme-color" content="#ffd6ef">
+<meta name="theme-color" content="#FFF9F0">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Playbox">
 <link rel="apple-touch-icon" href="icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="playbox.css">
 <style>
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
   html, body { height:100%; overflow:hidden; touch-action:manipulation; }
-  body {
-    font-family:"Comic Sans MS","Trebuchet MS",sans-serif;
-    background:#ffd6ef; cursor:pointer;
-  }
-  #app { position:fixed; inset:0; transition:background 0.8s ease; }
+  body { font-family:var(--font-body); background:var(--surface-app); color:var(--text-body); cursor:pointer; }
+  #app { position:fixed; inset:0; transition:background .6s ease; background:var(--surface-app); }
 
   /* ===== Top bar ===== */
-  #topbar {
-    position:fixed; top:0; left:0; right:0; height:64px; z-index:60;
-    display:none; align-items:center; justify-content:space-between; padding:0 12px;
-  }
+  #topbar { position:fixed; top:0; left:0; right:0; height:68px; z-index:60; display:none; align-items:center; justify-content:space-between; padding:10px 14px 0; }
   #backBtn {
-    font-family:inherit; font-size:24px; font-weight:bold; color:#fff;
-    background:#ff79c6; border:none; border-radius:40px; padding:8px 20px;
-    box-shadow:0 4px 0 #d44ea8; cursor:pointer;
+    font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--text-on-color);
+    background:var(--color-grape); border:none; border-radius:var(--radius-pill); padding:10px 22px;
+    box-shadow:0 var(--chunk-depth) 0 var(--color-grape-deep); cursor:pointer;
+    transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
   }
-  #backBtn:active { transform:translateY(3px); box-shadow:0 1px 0 #d44ea8; }
+  #backBtn:active { transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-grape-deep); }
   #score {
-    background:rgba(255,255,255,0.7); border-radius:40px; padding:8px 22px;
-    font-size:28px; font-weight:bold; color:#d44ea8; white-space:nowrap;
+    font-family:var(--font-display); background:var(--color-white); border-radius:var(--radius-pill);
+    padding:8px 22px; font-size:24px; font-weight:800; color:var(--color-sunshine-deep);
+    white-space:nowrap; box-shadow:var(--shadow-soft);
   }
-  #soundBtn {
-    font-family:inherit; font-size:24px; background:rgba(255,255,255,0.7);
-    border:none; border-radius:40px; padding:8px 16px; cursor:pointer;
-  }
+  #soundBtn { font-family:var(--font-display); font-size:22px; background:var(--color-white); border:none; border-radius:var(--radius-pill); padding:9px 15px; cursor:pointer; box-shadow:var(--shadow-soft); }
 
   /* ===== Screens ===== */
   .screen { position:fixed; inset:0; }
   .hidden { display:none !important; }
 
   /* ===== Home menu ===== */
-  #home {
-    display:flex; flex-direction:column; align-items:center; justify-content:center;
-    gap:18px; padding:20px; text-align:center;
-  }
-  #home h1 { font-size:38px; color:#d44ea8; text-shadow:0 3px 0 #fff; }
-  #home .big { font-size:84px; animation:bob 1.5s ease-in-out infinite; }
-  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
-  #menu { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; max-width:520px; }
+  #home { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:20px; text-align:center; overflow-y:auto; }
+  #home .big { display:flex; gap:6px; align-items:flex-end; justify-content:center; animation:bob 1.8s ease-in-out infinite; }
+  #home .big img { width:104px; height:104px; filter:drop-shadow(0 8px 8px var(--tint-ink)); }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+  #home h1 { font-family:var(--font-display); font-size:40px; font-weight:800; color:var(--color-ink); }
+  #homeSub{ font-family:var(--font-display); font-size:19px; font-weight:700; color:var(--color-grape); margin-top:-6px; }
+  #menu { display:grid; grid-template-columns:1fr 1fr; gap:var(--tile-gap); width:100%; max-width:540px; }
   .menu-btn {
-    font-family:inherit; font-size:22px; font-weight:bold; color:#7a2e6b;
-    background:rgba(255,255,255,0.85); border:none; border-radius:26px;
-    padding:18px 10px; box-shadow:0 6px 0 rgba(212,78,168,0.4); cursor:pointer;
+    font-family:var(--font-display); font-size:21px; font-weight:800; color:var(--tone-on,var(--text-on-color));
+    background:var(--tone,var(--color-sky)); border:none; border-radius:var(--radius-lg);
+    padding:16px 10px 18px; box-shadow:0 var(--chunk-depth) 0 var(--tone-deep,var(--color-sky-deep)); cursor:pointer;
     display:flex; flex-direction:column; align-items:center; gap:6px;
+    transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
   }
-  .menu-btn .emo { font-size:54px; }
-  .menu-btn:active { transform:translateY(4px); box-shadow:0 2px 0 rgba(212,78,168,0.4); }
+  .menu-btn .emo { font-size:52px; line-height:1; }
+  .menu-btn .emo img { width:58px; height:58px; vertical-align:middle; }
+  .menu-btn:active { transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--tone-deep,var(--color-sky-deep)); }
 
   /* ===== Critters & effects ===== */
-  .critter {
-    position:absolute; font-size:90px; line-height:1; will-change:transform;
-    filter:drop-shadow(0 6px 6px rgba(0,0,0,0.18)); transition:transform 0.08s ease;
-  }
+  .critter { position:absolute; font-size:90px; line-height:1; will-change:transform; filter:drop-shadow(0 6px 6px var(--tint-ink)); transition:transform 0.08s ease; }
+  .critter img { width:1em; height:1em; pointer-events:none; display:block; }
   .critter:active { transform:scale(1.2); }
   .pop { animation:pop 0.45s forwards; pointer-events:none; }
   @keyframes pop { 0%{transform:scale(1.3)} 100%{transform:scale(0) rotate(40deg); opacity:0;} }
@@ -80,92 +75,68 @@
   .shake { animation:shake 0.4s; }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-12px) rotate(-8deg)} 75%{transform:translateX(12px) rotate(8deg)} }
   .match-banner {
-    position:fixed; top:72px; left:50%; transform:translateX(-50%); z-index:55;
-    background:rgba(255,255,255,0.9); border-radius:40px; padding:8px 22px;
-    font-family:inherit; font-size:22px; font-weight:bold; color:#d44ea8;
-    display:flex; align-items:center; gap:10px; pointer-events:none; white-space:nowrap;
-    box-shadow:0 4px 0 rgba(212,78,168,0.3);
+    position:fixed; top:78px; left:50%; transform:translateX(-50%); z-index:55;
+    background:var(--color-white); border-radius:var(--radius-pill); padding:8px 24px;
+    font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--color-ink);
+    display:flex; align-items:center; gap:10px; pointer-events:none; white-space:nowrap; box-shadow:var(--shadow-soft);
   }
   .match-banner .big { font-size:46px; }
+  .match-banner .big img { width:46px; height:46px; vertical-align:middle; }
 
   .cheer {
     position:fixed; left:50%; top:40%; transform:translate(-50%,-50%);
-    font-size:54px; font-weight:bold; color:#fff; pointer-events:none; z-index:55;
-    text-shadow:0 3px 0 #ff9ad5, 0 0 14px rgba(255,255,255,0.8);
+    font-family:var(--font-display); font-size:54px; font-weight:800; color:var(--color-white); pointer-events:none; z-index:55;
+    text-shadow:0 3px 0 var(--color-bubblegum), 0 0 14px rgba(255,255,255,0.6);
     animation:cheer 1s ease-out forwards; white-space:nowrap; text-align:center;
   }
   @keyframes cheer { 0%{transform:translate(-50%,-50%) scale(0.3); opacity:0;} 25%{transform:translate(-50%,-50%) scale(1.1); opacity:1;} 100%{transform:translate(-50%,-72%) scale(1.1); opacity:0;} }
 
   /* Feed-the-bunny pet */
-  #pet {
-    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
-    font-size:130px; z-index:20; filter:drop-shadow(0 8px 8px rgba(0,0,0,0.2));
-  }
+  #pet { position:absolute; bottom:24px; left:50%; transform:translateX(-50%); z-index:20; filter:drop-shadow(0 8px 8px var(--tint-ink)); }
+  #pet img { width:150px; height:150px; display:block; }
   .nom { animation:nom 0.4s ease; }
-  @keyframes nom { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.25)} }
+  @keyframes nom { 0%,100%{transform:translateX(-50%) scale(1)} 50%{transform:translateX(-50%) scale(1.22)} }
 
   .scene-label {
     position:fixed; bottom:14px; left:50%; transform:translateX(-50%);
-    background:rgba(255,255,255,0.6); color:#7a2e6b; font-size:18px; font-weight:bold;
-    padding:6px 18px; border-radius:30px; z-index:50; pointer-events:none;
+    background:var(--color-white); color:var(--text-muted); font-family:var(--font-display); font-size:17px; font-weight:700;
+    padding:6px 18px; border-radius:var(--radius-pill); z-index:50; pointer-events:none; box-shadow:var(--shadow-soft);
   }
 
   /* ===== Home links row (Learn / Change Profile) ===== */
-  .homeRow{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:18px; }
+  .homeRow{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
   .homeLink{
     display:inline-flex; align-items:center; gap:8px; text-decoration:none;
-    font-family:inherit; font-size:18px; font-weight:bold; color:#fff;
-    background:#a86bd6; border:none; border-radius:40px; padding:12px 22px;
-    box-shadow:0 5px 0 #7d49a8; cursor:pointer;
+    font-family:var(--font-display); font-size:18px; font-weight:800; color:var(--text-on-color);
+    background:var(--color-sky); border:none; border-radius:var(--radius-pill); padding:12px 22px;
+    box-shadow:0 var(--chunk-depth) 0 var(--color-sky-deep); cursor:pointer;
+    transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
   }
-  .homeLink:active{ transform:translateY(3px); box-shadow:0 2px 0 #7d49a8; }
-  .homeLink.alt{ background:#ff9ad5; box-shadow:0 5px 0 #d44ea8; }
-  .homeLink.alt:active{ box-shadow:0 2px 0 #d44ea8; }
-  #homeSub{ font-size:18px; font-weight:bold; color:#a8458f; margin-top:-8px; }
+  .homeLink:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-sky-deep); }
+  .homeLink.alt{ background:var(--color-bubblegum); box-shadow:0 var(--chunk-depth) 0 var(--color-bubblegum-deep); }
+  .homeLink.alt:active{ box-shadow:0 var(--chunk-depth-press) 0 var(--color-bubblegum-deep); }
 
   /* ===== Profile gate ===== */
-  #gate{
-    display:flex; align-items:center; justify-content:center; padding:24px; z-index:100;
-    background:linear-gradient(160deg,#ffe3f3,#e7d9ff);
-  }
-  .gateCard{
-    background:rgba(255,255,255,0.92); border-radius:32px; padding:30px 26px;
-    max-width:420px; width:100%; text-align:center; box-shadow:0 10px 0 rgba(212,78,168,.25);
-    display:flex; flex-direction:column; gap:14px; align-items:center;
-  }
-  .gateHero{ font-size:64px; animation:bob 1.6s ease-in-out infinite; }
-  .gateTitle{ font-size:32px; color:#d44ea8; text-shadow:0 2px 0 #fff; }
-  .gateSub{ font-size:20px; color:#7a2e6b; }
-  #gateName{
-    font-family:inherit; font-size:24px; text-align:center; padding:14px 18px;
-    border:3px solid #ffb3e0; border-radius:20px; width:100%; outline:none; color:#7a2e6b;
-  }
-  #gateName:focus{ border-color:#ff79c6; }
-  .gateBtn{
-    font-family:inherit; font-size:24px; font-weight:bold; color:#fff; background:#ff79c6;
-    border:none; border-radius:40px; padding:14px 30px; box-shadow:0 5px 0 #d44ea8; cursor:pointer;
-  }
-  .gateBtn:active{ transform:translateY(3px); box-shadow:0 2px 0 #d44ea8; }
-  .gateErr{ font-size:18px; font-weight:bold; color:#e23b6d; min-height:22px; }
+  #gate{ display:flex; align-items:center; justify-content:center; padding:24px; z-index:100; background:var(--surface-app); }
+  .gateCard{ background:var(--color-white); border-radius:var(--radius-xl); padding:32px 26px; max-width:430px; width:100%; text-align:center; box-shadow:var(--shadow-pop); display:flex; flex-direction:column; gap:16px; align-items:center; }
+  .gateHero{ display:flex; gap:4px; align-items:flex-end; animation:bob 1.7s ease-in-out infinite; }
+  .gateHero img{ width:88px; height:88px; }
+  .gateTitle{ font-family:var(--font-display); font-size:34px; font-weight:800; color:var(--color-ink); }
+  .gateSub{ font-family:var(--font-body); font-size:20px; font-weight:700; color:var(--text-muted); }
+  #gateName{ font-family:var(--font-body); font-weight:700; font-size:22px; text-align:center; padding:14px 18px; border:3px solid var(--color-line); border-radius:var(--radius-md); width:100%; outline:none; color:var(--color-ink); background:var(--surface-sunk); }
+  #gateName:focus{ border-color:var(--color-sky); }
+  .gateBtn{ font-family:var(--font-display); font-size:24px; font-weight:800; color:var(--text-on-color); background:var(--color-coral); border:none; border-radius:var(--radius-pill); padding:14px 32px; box-shadow:0 var(--chunk-depth) 0 var(--color-coral-deep); cursor:pointer; transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+  .gateBtn:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-coral-deep); }
+  .gateErr{ font-family:var(--font-body); font-size:18px; font-weight:700; color:var(--color-coral-deep); min-height:22px; }
 
   /* ===== Dino Dig ===== */
-  #digWrap{
-    position:absolute; left:50%; top:54%; transform:translate(-50%,-50%);
-    width:min(80vw,440px); height:min(80vw,440px); border-radius:28px; overflow:hidden;
-    box-shadow:0 8px 0 rgba(212,78,168,.3); background:#f3e2c7; touch-action:none;
-  }
-  .digDino{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:190px; line-height:1; filter:drop-shadow(0 6px 6px rgba(0,0,0,.18));
-  }
+  #digWrap{ position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); width:min(80vw,440px); height:min(80vw,440px); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-pop); background:#E9D2A8; touch-action:none; }
+  .digDino{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:190px; line-height:1; filter:drop-shadow(0 6px 6px var(--tint-ink)); }
+  .digDino img{ width:74%; height:74%; }
   .digDino.reveal{ animation:digpop .6s; }
   @keyframes digpop{ 0%{transform:scale(.6)} 55%{transform:scale(1.18)} 100%{transform:scale(1)} }
   #digCanvas{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
-  .digHint{
-    position:absolute; bottom:10px; left:50%; transform:translateX(-50%); z-index:5;
-    background:rgba(255,255,255,.75); color:#7a2e6b; font-size:18px; font-weight:bold;
-    padding:6px 16px; border-radius:30px; pointer-events:none; white-space:nowrap;
-  }
+  .digHint{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%); z-index:5; background:var(--color-white); color:var(--text-muted); font-family:var(--font-display); font-size:17px; font-weight:700; padding:6px 16px; border-radius:var(--radius-pill); pointer-events:none; white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -174,7 +145,7 @@
   <!-- GATE (shown until a valid profile is entered) -->
   <div id="gate" class="screen">
     <div class="gateCard">
-      <div class="gateHero">🦄🦕</div>
+      <div class="gateHero"><img src="img/rex-dino.svg" alt=""><img src="img/mascot-boxy.svg" alt=""></div>
       <h1 class="gateTitle">Welcome!</h1>
       <p class="gateSub">Who's playing today?</p>
       <input id="gateName" type="text" inputmode="text" autocomplete="off" autocapitalize="words" placeholder="Type your name" />
@@ -191,16 +162,16 @@
 
   <!-- HOME -->
   <div id="home" class="screen hidden">
-    <div class="big">🦄🦕</div>
+    <div class="big"><img src="img/rex-dino.svg" alt=""><img src="img/mascot-boxy.svg" alt=""></div>
     <h1 id="homeTitle">Playbox</h1>
-    <div id="homeSub">🎮 Fun Games</div>
+    <div id="homeSub">Pick a box to play!</div>
     <div id="menu">
-      <button class="menu-btn" data-mode="friends"><span class="emo">🔎</span>Match It</button>
-      <button class="menu-btn" data-mode="balloons"><span class="emo">🎈</span>Pop Balloons</button>
-      <button class="menu-btn" data-mode="feed"><span class="emo">🥕</span>Feed Bunny</button>
-      <button class="menu-btn" data-mode="stars"><span class="emo">🌟</span>Catch Stars</button>
-      <button class="menu-btn" data-mode="eggs"><span class="emo">🥚</span>Dino Eggs</button>
-      <button class="menu-btn" data-mode="dig"><span class="emo">🦴</span>Dino Dig</button>
+      <button class="menu-btn t-grape" data-mode="friends"><span class="emo">🔎</span>Match It</button>
+      <button class="menu-btn t-coral" data-mode="balloons"><span class="emo"><img src="img/balloon-red.svg" alt=""></span>Pop Balloons</button>
+      <button class="menu-btn t-bubblegum" data-mode="feed"><span class="emo"><img src="img/hop-bunny.svg" alt=""></span>Feed Bunny</button>
+      <button class="menu-btn t-sunshine" data-mode="stars"><span class="emo"><img src="img/spot-star.svg" alt=""></span>Catch Stars</button>
+      <button class="menu-btn t-teal" data-mode="eggs"><span class="emo">🥚</span>Dino Eggs</button>
+      <button class="menu-btn t-tangerine" data-mode="dig"><span class="emo"><img src="img/rex-dino.svg" alt=""></span>Dino Dig</button>
     </div>
     <div class="homeRow">
       <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
@@ -274,17 +245,19 @@
   // ---- content pools ----
   const FRIENDS = ['🦄','🐰','🐱','🐶','🦋','🌷','🌈','⭐','🐥','🐢'];
   const SPARKS  = ['✨','💖','⭐','🌟','💕','🌸'];
+  // Dinosaur art filenames in img/ (add more here as new dino SVGs are dropped in — see ASSETS.md wishlist)
+  const DINOS   = ['rex-dino'];
   const CHEERS  = ['Yay!','Wow!','Yippee!','Hooray!','Magic!','So pretty!','Amazing!'];
   const BALLOON_COLORS = [
     {e:'🔴', name:'red'}, {e:'🟠', name:'orange'}, {e:'🟡', name:'yellow'},
     {e:'🟢', name:'green'}, {e:'🔵', name:'blue'}, {e:'🟣', name:'purple'}, {e:'🩷', name:'pink'}
   ];
   const SCENES = [
-    {name:'🌸 Flower Garden', bg:'linear-gradient(160deg,#d6ffe0,#fff6c2)'},
-    {name:'🏰 Magic Castle',  bg:'linear-gradient(160deg,#e3d6ff,#ffd6ef)'},
-    {name:'🌙 Starry Night',  bg:'linear-gradient(160deg,#3a2a6b,#7a5ec2)'},
-    {name:'🌈 Rainbow Sky',   bg:'linear-gradient(160deg,#ffd6ef,#d6e8ff,#e3d6ff)'},
-    {name:'☀️ Sunny Meadow',  bg:'linear-gradient(160deg,#fff4c2,#bdeaff)'}
+    {name:'🌸 Flower Garden', bg:'var(--color-grass-soft)'},
+    {name:'🏰 Magic Castle',  bg:'var(--color-grape-soft)'},
+    {name:'🌙 Starry Night',  bg:'var(--color-sky-soft)'},
+    {name:'🌈 Rainbow Sky',   bg:'var(--color-bubblegum-soft)'},
+    {name:'☀️ Sunny Meadow',  bg:'var(--color-sunshine-soft)'}
   ];
 
   let score = 0;
@@ -434,7 +407,7 @@
   // ---------- MODE: Pop Balloons ----------
   function spawnBalloon(){
     const col=pick(BALLOON_COLORS);
-    const b=document.createElement('div'); b.className='critter'; b.textContent=col.e;
+    const b=document.createElement('div'); b.className='critter'; b.innerHTML='<img src="img/balloon-'+col.name+'.svg" alt="">';
     b.dataset.color=col.name;
     const size=rnd(80,120); b.style.fontSize=size+'px';
     const x=rnd(10,Math.max(10,window.innerWidth-size));
@@ -464,7 +437,7 @@
   // ---------- MODE: Feed Bunny ----------
   function startFeed(){
     applyScene(0);
-    const pet=document.createElement('div'); pet.id='pet'; pet.textContent='🐰'; play.appendChild(pet);
+    const pet=document.createElement('div'); pet.id='pet'; pet.innerHTML='<img src="img/hop-bunny.svg" alt="">'; play.appendChild(pet);
     function spawnCarrot(){
       const c=document.createElement('div'); c.className='critter'; c.textContent='🥕';
       const size=rnd(64,90); c.style.fontSize=size+'px';
@@ -534,7 +507,7 @@
   // ---------- MODE: Dino Eggs (tap eggs to hatch baby dinos) ----------
   function startEggs(){
     applyScene(1);
-    const BABIES=['🦕','🦖','🦴'];
+    const BABIES=DINOS;
     function spawnEgg(){
       const c=document.createElement('div'); c.className='critter'; c.textContent='🥚';
       const size=rnd(76,108); c.style.fontSize=size+'px';
@@ -550,7 +523,7 @@
         const r=c.getBoundingClientRect();
         burst(r.left+r.width/2, r.top+r.height/2);
         setScore(score+1);
-        c.textContent=pick(BABIES); chime();
+        c.innerHTML='<img src="img/'+pick(BABIES)+'.svg" alt="">'; chime();
         cheerText(pick(['Roar! 🦕','It hatched! 🥚','Baby dino! 🦖']));
         say('Roar');
         c.classList.add('pop');
@@ -567,7 +540,7 @@
     applyScene(0);
     play.innerHTML='';
     const wrap=document.createElement('div'); wrap.id='digWrap';
-    const dino=document.createElement('div'); dino.className='digDino'; dino.textContent=pick(['🦕','🦖','🦴']);
+    const dino=document.createElement('div'); dino.className='digDino'; dino.innerHTML='<img src="img/'+pick(DINOS)+'.svg" alt="">';
     const cv=document.createElement('canvas'); cv.id='digCanvas';
     const hint=document.createElement('div'); hint.className='digHint'; hint.textContent='👆 Rub to dig!';
     wrap.appendChild(dino); wrap.appendChild(cv); wrap.appendChild(hint);
@@ -644,7 +617,7 @@
     topbar.style.display='none';
     const lbl=document.querySelector('.scene-label'); if(lbl) lbl.remove();
     home.classList.remove('hidden');
-    app.style.background='#ffd6ef';
+    app.style.background='var(--surface-app)';
     mode=null;
   }
 
