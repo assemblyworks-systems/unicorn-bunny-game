@@ -75,6 +75,7 @@
 
   .picChoice{ flex-direction:column; gap:2px; width:auto; min-width:122px; max-width:165px; height:auto; min-height:122px; padding:12px 10px; }
   .picChoice .pic{ font-size:62px; line-height:1; animation:floaty 2.4s ease-in-out infinite; }
+  .picChoice .pic img{ width:66px; height:66px; display:block; }
   .picChoice .cword{ font-family:var(--font-body); font-size:18px; font-weight:700; color:var(--text-muted); opacity:0; height:0; overflow:hidden; white-space:normal; transition:opacity .3s; }
   .picChoice .cword.show{ opacity:1; height:auto; margin-top:4px; }
   .picChoice .cword b{ color:var(--color-grape); font-size:24px; }
@@ -82,6 +83,7 @@
 
   #countArea{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; max-width:92vw; max-height:36vh; overflow:hidden; }
   #countArea .obj{ font-size:46px; animation:dropin .4s backwards; }
+  #countArea .obj img{ width:46px; height:46px; display:block; }
   @keyframes dropin{ 0%{transform:translateY(-40px) scale(0); opacity:0} 60%{transform:translateY(6px) scale(1.15)} 100%{transform:translateY(0) scale(1); opacity:1} }
 
   .repeatBtn{ font-family:var(--font-display); font-size:48px; background:var(--color-bubblegum); color:var(--text-on-color); border:none; border-radius:50%; width:112px; height:112px; box-shadow:0 var(--chunk-depth) 0 var(--color-bubblegum-deep); cursor:pointer; display:flex; align-items:center; justify-content:center; animation:rpulse 1.7s ease-in-out infinite; }
@@ -286,8 +288,10 @@
     P:['pig','🐷'],Q:['queen','👑'],R:['rainbow','🌈'],S:['sun','☀️'],T:['turtle','🐢'],
     U:['umbrella','☂️'],V:['violin','🎻'],W:['watermelon','🍉'],X:['fox','🦊'],Y:['yo-yo','🪀'],Z:['zebra','🦓']
   };
-  const OBJ=['🍓','⭐','🐠','🌸','🍎','🦋','🐥','🎈','🍒','🐞'];
-  const DINO_OBJ=['🦕','🦖','🥚','🦴','🐊'];
+  const OBJ=['count-strawberry.png','count-apple.png','count-fish.png','count-flower.png','count-cherry.png','count-ladybug.png'];
+  const DINO_OBJ=['dino-triceratops.png','dino-stegosaurus.png','dino-brontosaurus.png','dino-velociraptor.png','dino-hatchling.png','dino-pterodactyl.png'];
+  const imgOf = f => '<img src="img/'+f+'" alt="">';
+  const abcFile = L => 'abc-'+WORDS[L][0].replace(/\s+/g,'-')+'.png';   // letter → its "A is for…" picture
   const STICKERS=['⭐','🌈','🦄','🐰','🍭','🎀','🌸','🦋','🍓','🧁','🐱','🌟','💖','🎈','🐥','🦊','🐢','🌷'];
   const SCENES=['var(--color-grass-soft)','var(--color-grape-soft)','var(--color-sky-soft)','var(--color-sunshine-soft)','var(--color-bubblegum-soft)'];
   const PRAISE=['Yay!','Great job!','Wonderful!','You did it!','Amazing!','Hooray!','Super!','Well done!','Brilliant!','Awesome!'];
@@ -423,7 +427,7 @@
     play.appendChild(makeRepeat(sayIt));
     const ch=document.createElement('div'); ch.id='choices';
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice picChoice'; b.style.animationDelay=(i*0.08)+'s';
-      const pic=document.createElement('span'); pic.className='pic'; pic.textContent=WORDS[o][1]; pic.style.animationDelay=(Math.random())+'s'; b.appendChild(pic);
+      const pic=document.createElement('span'); pic.className='pic'; pic.innerHTML=imgOf(abcFile(o)); pic.style.animationDelay=(Math.random())+'s'; b.appendChild(pic);
       const cw=document.createElement('span'); cw.className='cword'; cw.innerHTML='<b>'+o+'</b> is for '+WORDS[o][0]; b.appendChild(cw);
       onTap(b,()=>{ if(roundLock) return;
         if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+'. '+target+' is for '+WORDS[o][0]+'!', function(){ setTimeout(soundsRound,600); }); }
@@ -441,7 +445,7 @@
     const emo=rand(pool||OBJ);
     const sayIt=()=>speak('How many? Count them and tap the number.');
     const area=document.createElement('div'); area.id='countArea';
-    for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.textContent=emo; o.style.animationDelay=(i*0.05)+'s'; area.appendChild(o); }
+    for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.innerHTML=imgOf(emo); o.style.animationDelay=(i*0.05)+'s'; area.appendChild(o); }
     play.appendChild(area);
     play.appendChild(makeRepeat(sayIt));
     let opts=[n]; while(opts.length<3){ let d=Math.max(1,Math.min(20,n+(Math.floor(Math.random()*7)-3))); if(!opts.includes(d)) opts.push(d); } opts=shuffle(opts);
@@ -495,16 +499,15 @@
     if(startCell){ const sd=document.createElement('div'); sd.className='startDot'; sd.style.left=((startCell.gx+0.5)/GRID*rect.width)+'px'; sd.style.top=((startCell.gy+0.5)/GRID*rect.height)+'px'; wrap.appendChild(sd); }
     function inGlyph(p){ const gxi=Math.floor(p.x/rect.width*GRID), gy=Math.floor(p.y/rect.height*GRID); if(gxi<0||gy<0||gxi>=GRID||gy>=GRID) return false; return traceMask[gy*GRID+gxi]; }
     function hideStart(){ const s=wrap.querySelector('.startDot'); if(s) s.remove(); }
-    let lastEval=0, lastBlip=0, traceRect=null;
+    let lastEval=0, lastSpark=0, traceRect=null, smallCv=null, smallCx=null;
+    // coverage check via a tiny GRIDxGRID downscale (reads ~2KB, not the full ~3MB canvas → no per-move stall)
     function evalPixels(){
       if(traceDone||totalCells<=0) return;
-      let img; try{ img=dx.getImageData(0,0,cv.width,cv.height).data; }catch(e){ return; }
+      if(!smallCv){ smallCv=document.createElement('canvas'); smallCv.width=GRID; smallCv.height=GRID; smallCx=smallCv.getContext('2d',{willReadFrequently:true}); }
+      smallCx.clearRect(0,0,GRID,GRID); smallCx.drawImage(cv,0,0,GRID,GRID);
+      let img; try{ img=smallCx.getImageData(0,0,GRID,GRID).data; }catch(e){ return; }
       let inked=0;
-      for(let gy=0;gy<GRID;gy++) for(let gxi=0;gxi<GRID;gxi++){
-        if(!traceMask[gy*GRID+gxi]) continue;
-        const sx=Math.floor((gxi+0.5)/GRID*cv.width), sy=Math.floor((gy+0.5)/GRID*cv.height);
-        if(img[(sy*cv.width+sx)*4+3]>20) inked++;
-      }
+      for(let i=0;i<GRID*GRID;i++){ if(traceMask[i] && img[i*4+3]>20) inked++; }
       if(inked/totalCells>=0.6) finishTrace(t);
     }
     cv.onpointerdown=e=>{ if(traceActive!==null) return; e.preventDefault(); traceActive=e.pointerId; try{cv.setPointerCapture(e.pointerId);}catch(_){}; traceRect=cv.getBoundingClientRect(); hideStart(); lastP={x:e.clientX-traceRect.left,y:e.clientY-traceRect.top}; if(inGlyph(lastP)) inkDot(dx,lastP); };
@@ -513,8 +516,8 @@
       if(inGlyph(p)||inGlyph(lastP)) paint(dx,lastP||p,p);
       lastP=p;
       const now=Date.now();
-      if(now-lastBlip>110){ lastBlip=now; blip(); sparkAt(traceRect.left+p.x, traceRect.top+p.y); }   // throttle sound+spark (was every move → laggy)
-      if(now-lastEval>400){ lastEval=now; evalPixels(); }
+      if(now-lastSpark>140){ lastSpark=now; sparkAt(traceRect.left+p.x, traceRect.top+p.y); }   // gentle sparkle only — no per-move beep (was noisy + laggy)
+      if(now-lastEval>220){ lastEval=now; evalPixels(); }
     };
     cv.onpointerup=e=>{ if(e.pointerId!==traceActive) return; traceActive=null; lastP=null; evalPixels(); };
     cv.onpointercancel=e=>{ if(e.pointerId===traceActive){ traceActive=null; lastP=null; } };
@@ -525,9 +528,10 @@
   function finishTrace(t){
     if(traceDone) return; traceDone=true;
     const wrap=document.getElementById('traceWrap');
-    const ex=isNum(t)?'⭐':WORDS[t.toUpperCase()][1];
     win('You traced '+(isNum(t)?t:t.toUpperCase())+'!');
-    if(wrap){ const pop=document.createElement('div'); pop.textContent=ex; pop.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:120px;z-index:6;'; pop.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:600,easing:'ease-out',fill:'forwards'}); wrap.appendChild(pop); }
+    if(wrap){ const pop=document.createElement('div');
+      if(isNum(t)) pop.textContent='⭐'; else pop.innerHTML='<img src="img/'+abcFile(t.toUpperCase())+'" style="width:140px;height:140px;display:block;">';
+      pop.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:120px;z-index:6;'; pop.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:600,easing:'ease-out',fill:'forwards'}); wrap.appendChild(pop); }
     speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'), function(){ trackT(setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); }, 600)); });
   }
 

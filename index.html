@@ -243,10 +243,13 @@
   }
 
   // ---- content pools ----
-  const FRIENDS = ['🦄','🐰','🐱','🐶','🦋','🌷','🌈','⭐','🐥','🐢'];
+  // Match It "friends" — brand art filenames (in img/). Compared by filename string.
+  const FRIENDS = ['friend-cat.png','friend-dog.png','friend-butterfly.png','friend-flower.png','friend-chick.png','friend-turtle.png','friend-fox.png','rex-dino.svg','hop-bunny.svg','pip-pig.svg'];
+  const imgOf = f => '<img src="img/'+f+'" alt="">';
   const SPARKS  = ['✨','💖','⭐','🌟','💕','🌸'];
-  // Dinosaur art filenames in img/ (add more here as new dino SVGs are dropped in — see ASSETS.md wishlist)
-  const DINOS   = ['rex-dino'];
+  // Dinosaur art filenames in img/ (add more here as new dino art is dropped in — see ASSETS.md)
+  const DINOS   = ['rex-dino.svg','dino-triceratops.png','dino-stegosaurus.png','dino-brontosaurus.png','dino-pterodactyl.png','dino-velociraptor.png','dino-ankylosaurus.png','dino-parasaurolophus.png','dino-spinosaurus.png','dino-hatchling.png'];
+  const FOSSILS = ['fossil-trex.png','fossil-triceratops.png','fossil-stegosaurus.png'];
   const CHEERS  = ['Yay!','Wow!','Yippee!','Hooray!','Magic!','So pretty!','Amazing!'];
   const BALLOON_COLORS = [
     {e:'🔴', name:'red'}, {e:'🟠', name:'orange'}, {e:'🟡', name:'yellow'},
@@ -360,7 +363,7 @@
 
   // ---------- MODE: Match It (tap the matching items) ----------
   function spawnMatchItem(emo, target, onMatch){
-    const c=document.createElement('div'); c.className='critter'; c.textContent=emo;
+    const c=document.createElement('div'); c.className='critter'; c.innerHTML=imgOf(emo);
     const size=rnd(74,108); c.style.fontSize=size+'px';
     c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
     c.style.top =rnd(140,Math.max(160,window.innerHeight-size-20))+'px';
@@ -389,7 +392,7 @@
     play.innerHTML='';
     const target=pick(FRIENDS);
     const banner=document.createElement('div'); banner.className='match-banner';
-    banner.innerHTML='Tap all the <span class="big">'+target+'</span>';
+    banner.innerHTML='Tap all the <span class="big">'+imgOf(target)+'</span>';
     play.appendChild(banner);
     const others=shuffle(FRIENDS.filter(f=>f!==target));
     const matchCount=2+Math.floor(Math.random()*2);   // 2-3 to find
@@ -439,7 +442,7 @@
     applyScene(0);
     const pet=document.createElement('div'); pet.id='pet'; pet.innerHTML='<img src="img/hop-bunny.svg" alt="">'; play.appendChild(pet);
     function spawnCarrot(){
-      const c=document.createElement('div'); c.className='critter'; c.textContent='🥕';
+      const c=document.createElement('div'); c.className='critter'; c.innerHTML=imgOf('carrot.png');
       const size=rnd(64,90); c.style.fontSize=size+'px';
       c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
       c.style.top =rnd(80,Math.max(100,window.innerHeight-260))+'px';
@@ -469,12 +472,12 @@
   // ---------- MODE: Catch Stars (catch stars, avoid rocks, don't let stars drop!) ----------
   function startStars(){
     applyScene(2);
-    const STAR=['⭐','🌟','✨','💫'];
-    const BAD=['🪨','☁️','💣','🍂'];
+    const STAR=['spot-star.svg'];
+    const BAD=['rock.png','bomb.png','spot-cloud.svg'];
     function spawnFalling(){
       const isStar=Math.random()<0.68;
       const e=isStar?pick(STAR):pick(BAD);
-      const s=document.createElement('div'); s.className='critter'; s.textContent=e;
+      const s=document.createElement('div'); s.className='critter'; s.innerHTML=imgOf(e);
       const size=rnd(64,104); s.style.fontSize=size+'px';
       const x=rnd(10,Math.max(10,window.innerWidth-size));
       s.style.left=x+'px'; let y=-size; s.style.top=y+'px';
@@ -509,7 +512,7 @@
     applyScene(1);
     const BABIES=DINOS;
     function spawnEgg(){
-      const c=document.createElement('div'); c.className='critter'; c.textContent='🥚';
+      const c=document.createElement('div'); c.className='critter'; c.innerHTML=imgOf(pick(['egg-spotted.png','egg-cracking.png']));
       const size=rnd(76,108); c.style.fontSize=size+'px';
       c.style.left=rnd(10,Math.max(10,window.innerWidth-size))+'px';
       c.style.top =rnd(140,Math.max(160,window.innerHeight-size-20))+'px';
@@ -523,7 +526,7 @@
         const r=c.getBoundingClientRect();
         burst(r.left+r.width/2, r.top+r.height/2);
         setScore(score+1);
-        c.innerHTML='<img src="img/'+pick(BABIES)+'.svg" alt="">'; chime();
+        c.innerHTML=imgOf(pick(BABIES)); chime();
         cheerText(pick(['Roar! 🦕','It hatched! 🥚','Baby dino! 🦖']));
         say('Roar');
         c.classList.add('pop');
@@ -540,7 +543,7 @@
     applyScene(0);
     play.innerHTML='';
     const wrap=document.createElement('div'); wrap.id='digWrap';
-    const dino=document.createElement('div'); dino.className='digDino'; dino.innerHTML='<img src="img/'+pick(DINOS)+'.svg" alt="">';
+    const dino=document.createElement('div'); dino.className='digDino'; dino.innerHTML=imgOf(pick(DINOS.concat(FOSSILS)));
     const cv=document.createElement('canvas'); cv.id='digCanvas';
     const hint=document.createElement('div'); hint.className='digHint'; hint.textContent='👆 Rub to dig!';
     wrap.appendChild(dino); wrap.appendChild(cv); wrap.appendChild(hint);
@@ -559,12 +562,16 @@
       function scratch(a,b){ ctx.globalCompositeOperation='destination-out'; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=58;
         ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
         ctx.beginPath(); ctx.arc(b.x,b.y,29,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over'; }
+      // cleared-fraction check via a tiny downscale (reads ~6KB, not the full ~3MB canvas → no per-move stall)
+      const smallCv=document.createElement('canvas'); smallCv.width=40; smallCv.height=40;
+      const smallCx=smallCv.getContext('2d',{willReadFrequently:true});
       function evalDig(){
         if(digDone) return;
-        let img; try{ img=ctx.getImageData(0,0,cv.width,cv.height).data; }catch(e){ return; }
-        let clear=0, tot=0; const step=8;
-        for(let y=0;y<cv.height;y+=step) for(let x=0;x<cv.width;x+=step){ tot++; if(img[(y*cv.width+x)*4+3]<20) clear++; }
-        if(tot && clear/tot>=0.5) finishDig();
+        smallCx.clearRect(0,0,40,40); smallCx.drawImage(cv,0,0,40,40);
+        let img; try{ img=smallCx.getImageData(0,0,40,40).data; }catch(e){ return; }
+        let clear=0; const tot=40*40;
+        for(let i=3;i<img.length;i+=4){ if(img[i]<40) clear++; }
+        if(clear/tot>=0.5) finishDig();
       }
       function finishDig(){
         if(digDone) return; digDone=true;
