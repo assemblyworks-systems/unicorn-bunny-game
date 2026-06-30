@@ -63,7 +63,7 @@
   .menu-btn:active { transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--tone-deep,var(--color-sky-deep)); }
 
   /* ===== Critters & effects ===== */
-  .critter { position:absolute; font-size:90px; line-height:1; will-change:transform; filter:drop-shadow(0 6px 6px var(--tint-ink)); transition:transform 0.08s ease; }
+  .critter { position:absolute; font-size:90px; line-height:1; will-change:transform; filter:drop-shadow(0 6px 6px var(--tint-ink)); }
   .critter img { width:1em; height:1em; pointer-events:none; display:block; }
   .critter:active { transform:scale(1.2); }
   .pop { animation:pop 0.45s forwards; pointer-events:none; }
@@ -555,7 +555,7 @@
       ctx.fillStyle='#b07a4f'; ctx.fillRect(0,0,rect.width,rect.height);
       ctx.fillStyle='rgba(90,60,35,.45)';
       for(let i=0;i<150;i++){ const x=Math.random()*rect.width, y=Math.random()*rect.height, r=Math.random()*6+2; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
-      function pos(e){ const r=cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
+      function pos(e){ return {x:e.clientX-rect.left, y:e.clientY-rect.top}; }   // reuse cached rect (no per-move layout read)
       function scratch(a,b){ ctx.globalCompositeOperation='destination-out'; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=58;
         ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
         ctx.beginPath(); ctx.arc(b.x,b.y,29,0,7); ctx.fill(); ctx.globalCompositeOperation='source-over'; }

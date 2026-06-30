@@ -620,21 +620,23 @@
 
   // ================= SORT IT =================
   function mkBin(lbl,name,word){ const b=document.createElement('div'); b.className='bin'; b.dataset.key=name; const s=document.createElement('div'); s.className='binlbl'; s.textContent=lbl; b.appendChild(s); const n=document.createElement('div'); n.textContent=word; b.appendChild(n); return b; }
-  function binAt(bins,x,y){ let f=null; bins.querySelectorAll('.bin').forEach(b=>{ const r=b.getBoundingClientRect(); if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom) f=b; }); return f; }
   function makeDraggable(el,bins,onDrop){
-    let active=null, ox=0, oy=0;
+    let active=null, ox=0, oy=0, binCache=null;   // binCache: bin rects captured once per drag (no per-move layout reads)
+    function hitBin(x,y){ if(!binCache) return null; for(const b of binCache){ const r=b.r; if(x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom) return b; } return null; }
+    function reset(){ el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width=''; el.style.height=''; }
     el.addEventListener('pointerdown',e=>{ if(active!==null) return; e.preventDefault(); active=e.pointerId;
       const r=el.getBoundingClientRect(); ox=e.clientX-r.left; oy=e.clientY-r.top;
       el.classList.add('dragging'); el.style.width=r.width+'px'; el.style.height=r.height+'px'; el.style.left=r.left+'px'; el.style.top=r.top+'px';
+      binCache=[...bins.querySelectorAll('.bin')].map(b=>({el:b, key:b.dataset.key, r:b.getBoundingClientRect()}));
       try{el.setPointerCapture(e.pointerId);}catch(_){}}, false);
     el.addEventListener('pointermove',e=>{ if(e.pointerId!==active) return; e.preventDefault();
       el.style.left=(e.clientX-ox)+'px'; el.style.top=(e.clientY-oy)+'px';
-      const ob=binAt(bins,e.clientX,e.clientY); bins.querySelectorAll('.bin').forEach(b=>b.classList.toggle('hot',b===ob)); });
+      const ob=hitBin(e.clientX,e.clientY); if(binCache) binCache.forEach(b=>b.el.classList.toggle('hot',b===ob)); });
     el.addEventListener('pointerup',e=>{ if(e.pointerId!==active) return; active=null;
-      bins.querySelectorAll('.bin').forEach(b=>b.classList.remove('hot'));
-      const ob=binAt(bins,e.clientX,e.clientY); let ok=false; if(ob) ok=onDrop(ob.dataset.key);
-      if(!ok){ el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width=''; el.style.height=''; boop(); } });
-    el.addEventListener('pointercancel',()=>{ active=null; el.classList.remove('dragging'); el.style.left=''; el.style.top=''; el.style.width=''; el.style.height=''; });
+      if(binCache) binCache.forEach(b=>b.el.classList.remove('hot'));
+      const ob=hitBin(e.clientX,e.clientY); binCache=null; let ok=false; if(ob) ok=onDrop(ob.key);
+      if(!ok){ reset(); boop(); } });
+    el.addEventListener('pointercancel',()=>{ active=null; binCache=null; reset(); });
   }
   function startSort(){ sortRound(); }
   function sortRound(){
