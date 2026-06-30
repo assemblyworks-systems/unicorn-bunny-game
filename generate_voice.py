@@ -31,7 +31,7 @@ WORDS = {'A':'apple','B':'banana','C':'cat','D':'dog','E':'elephant','F':'fish',
 SHP = ['circle','square','triangle','star','heart','diamond']
 COL = ['red','orange','yellow','green','blue','purple']
 DOTS = ['a triangle','a square','a diamond','a house','a boat','a fish','a star','a dinosaur']
-NAMES = ['Avalynn','Raynice']   # arcade voice lines are generated for every allowed profile
+NAMES = ['Avalynn','Raynice','Sophia']   # arcade voice lines are generated for every allowed profile
 PRAISE = ['Yay!','Great job!','Wonderful!','You did it!','Amazing!','Hooray!','Super!',
           'Well done!','Brilliant!','Awesome!']
 TRYAGAIN = ['Try again!','Almost!','You can do it!','Keep trying!','So close!']

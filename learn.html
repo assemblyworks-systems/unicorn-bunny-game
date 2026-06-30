@@ -240,7 +240,7 @@
 
   // ---------- profile gate (client-side soft gate; shared with index.html) ----------
   const PKEY='playbox_profile_v1';
-  const ALLOWED=['Avalynn','Raynice'];
+  const ALLOWED=['Avalynn','Raynice','Sophia'];
   function loadProfile(){ try{ return JSON.parse(localStorage.getItem(PKEY)); }catch(e){ return null; } }
   function saveProfile(p){ try{ localStorage.setItem(PKEY, JSON.stringify(p)); }catch(e){} }
   function matchProfile(input){
