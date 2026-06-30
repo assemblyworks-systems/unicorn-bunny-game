@@ -1,5 +1,11 @@
 # Playbox — Art Asset Wishlist
 
+> **Status (2026-06):** Tiers 1–4 below have been generated and **integrated** — 56 PNGs
+> are in `img/` and wired into Dino Eggs/Dig, Match It, Feed Bunny, Catch Stars, Count It,
+> Count Dinos, and "A is for…". This file remains the style spec for any future additions
+> (drop a new file in `img/` and add it to the relevant array — e.g. `DINOS` in index.html).
+
+
 This is the running list of illustration assets to add to the app, in the **PlayBox**
 brand style. The app already ships the design-system originals (`img/rex-dino.svg`,
 `mascot-boxy.svg`, `hop-bunny.svg`, `pip-pig.svg`, `spot-star/cloud/rainbow/balloon`,

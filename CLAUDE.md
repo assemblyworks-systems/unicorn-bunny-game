@@ -41,9 +41,12 @@ rounded display font **Baloo 2** (titles/buttons) + **Nunito** (body), and the s
   color (white for saturated tones, **ink for sunshine** — yellow needs dark text).
 - **Art.** Mascots & spots are SVG in `img/`. Heroes/buddy use Boxy + Rex; Feed Bunny pet is
   Hop; Pop Balloons uses the derived `balloon-<color>.svg`; Catch Stars uses `spot-star`.
-- **Dinosaurs.** `const DINOS=['rex-dino']` in `index.html` drives Dino Dig + Dino Eggs.
-  **Drop a new dino SVG in `img/` and add its filename to `DINOS`** → it auto-appears (this is
-  how we end the repetition). The full wishlist of art to add is in `ASSETS.md`.
+- **Dinosaurs.** `const DINOS` in `index.html` (filenames *with extension*, e.g.
+  `'dino-triceratops.png'`, `'rex-dino.svg'`) drives Dino Eggs (hatch) + Dino Dig (reveal;
+  dig also mixes in `FOSSILS`). **Drop a new file in `img/` and add its filename to `DINOS`**
+  → it auto-appears. Match It `FRIENDS`, Count It `OBJ`, `DINO_OBJ` are likewise filename
+  arrays rendered via the `imgOf()` helper; "A is for…" maps letters via `abcFile()`.
+  Spec for any new art is in `ASSETS.md`.
 - Scene backgrounds (`SCENES`) are flat `--color-*-soft` washes, not gradients.
 - ⚠️ Keep the iPad audio/touch rules below — the rebrand changed *looks only*, not the audio,
   voice, or pointer handling.
@@ -59,7 +62,7 @@ The main device is an **iPad** (Avalynn's). Most hard-won lessons below are iPad
 | `index.html` | Arcade games (home page). HTML/CSS/JS; links `playbox.css`. |
 | `learn.html` | Learning games. HTML/CSS/JS; links `playbox.css`. |
 | `playbox.css` | **Shared design tokens** (PlayBox colors/type/spacing/effects) + tone helpers. Linked by both pages. |
-| `img/*.svg` | **Brand art** — mascots (Boxy, Rex, Hop, Pip), spot illustrations, derived `balloon-<color>` set. |
+| `img/*` | **Brand art** — mascot/spot **SVGs** (Boxy, Rex, Hop, Pip, derived `balloon-<color>`) + the generated **PNG** set (dino herd, fossils, eggs, friends, carrot/rock/bomb, count-*, abc-*). |
 | `ASSETS.md` | **Art wishlist** — additional illustrations to add (dino herd, etc.) with style spec. |
 | `manifest.webmanifest` | PWA manifest (name, icons, `display:fullscreen`, `start_url:"./"`). |
 | `sw.js` | Service worker — **network-first** (always fetch latest, cache as offline fallback). |
@@ -107,6 +110,21 @@ Creating `new Audio()` for every sound/word accumulates and makes the app laggy 
 
 ### 7. Mobile audio unlock
 On first `pointerdown`, `ensureAudio()` plays a tiny click and primes things, satisfying the browser's "audio needs a user gesture" rule so later sounds work.
+
+### 8. Never do expensive work on every `pointermove` (the lag trap)
+`pointermove` fires 60–120×/sec on iPad. Anything heavy there = lag. Concretely, in the
+games:
+- **No sound per move.** A `playSnd()`/`blip()` on each move floods the audio pool and
+  stutters. Trace/Dig throttle any move-sound to ~9/sec (or drop it — tracing has no
+  move-beep now). Sound belongs on discrete taps/answers.
+- **No `getBoundingClientRect()` per move.** It forces a layout read after style writes
+  (reflow). Cache the rect once at `pointerdown` (trace, dig, Sort It all do this).
+- **No full-canvas `getImageData()` per move.** Reading a ~3MB canvas back from the GPU
+  stalls the pipeline. Trace/Dig completion checks `drawImage` the canvas down to a tiny
+  buffer (GRID×GRID / 40×40) and read *that* (~2–6KB). Keep this pattern.
+- **Don't `transition` a property you rewrite every frame.** `.critter` dropped its
+  `transition:transform` because the drift/fall loops set `transform` each frame, which
+  restarted the transition every frame (constant style recalc).
 
 ## Key mechanics by feature
 
