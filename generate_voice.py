@@ -28,6 +28,11 @@ WORDS = {'A':'apple','B':'banana','C':'cat','D':'dog','E':'elephant','F':'fish',
  'G':'grapes','H':'hat','I':'ice cream','J':'juice','K':'kite','L':'lion','M':'moon',
  'N':'nose','O':'orange','P':'pig','Q':'queen','R':'rainbow','S':'sun','T':'turtle',
  'U':'umbrella','V':'violin','W':'watermelon','X':'fox','Y':'yo-yo','Z':'zebra'}
+# letter sounds (phonics) — phoneme spellings human-auditioned against the Jenny voice
+# (Jon, 2026-07); must stay identical to SOUND in learn.html.
+SOUND = {'A':'aah','B':'bh','C':'cuh','D':'dh','E':'eh','F':'fff','G':'gh','H':'hh',
+ 'I':'eye','J':'jh','K':'kuh','L':'lll','M':'mm','N':'nn','O':'o','P':'ph','Q':'kw',
+ 'R':'rrr','S':'ss','T':'th','U':'uhh','V':'vv','W':'wuh','X':'ex','Y':'yuh','Z':'zzz'}
 SHP = ['circle','square','triangle','star','heart','diamond']
 COL = ['red','orange','yellow','green','blue','purple']
 DOTS = ['a triangle','a square','a diamond','a house','a boat','a fish','a star','a dinosaur']
@@ -43,13 +48,12 @@ def add(t): phrases.append(t)
 for L in UPPER: add('Can you find the letter '+L+'?')
 for n in NUMS:  add('Can you find the number '+n+'?')
 for L in UPPER:
-    add(L+'. Which picture starts with '+L+'?')
-    add(L+'. '+L+' is for '+WORDS[L]+'!')
+    add(L+' says '+SOUND[L]+'! Which picture starts with '+L+'?')   # A is for… prompt
+    add(L+' says '+SOUND[L]+'! '+L+' is for '+WORDS[L]+'!')          # A is for… praise + Trace It finish
 add('How many? Count them and tap the number.')
 for n in NUMS: add('Yes! '+n+'!')
 for L in UPPER: add("Let's trace the letter "+L+"!")
 for n in NUMS:  add("Let's trace the number "+n+"!")
-for L in UPPER: add(L+'! '+L+' is for '+WORDS[L]+'!')
 for n in NUMS:  add('You traced '+n+'!')
 add('Match the number to the dots!'); add('Match the big and little letters!')
 add('Connect the dots! Start at number one.')

@@ -303,6 +303,9 @@
     P:['pig','🐷'],Q:['queen','👑'],R:['rainbow','🌈'],S:['sun','☀️'],T:['turtle','🐢'],
     U:['umbrella','☂️'],V:['violin','🎻'],W:['watermelon','🍉'],X:['fox','🦊'],Y:['yo-yo','🪀'],Z:['zebra','🦓']
   };
+  // letter sounds (phonics) — phoneme spellings human-auditioned against the Jenny voice
+  // (2026-07); don't tweak casually, and keep in sync with SOUND in generate_voice.py.
+  const SOUND={A:'aah',B:'bh',C:'cuh',D:'dh',E:'eh',F:'fff',G:'gh',H:'hh',I:'eye',J:'jh',K:'kuh',L:'lll',M:'mm',N:'nn',O:'o',P:'ph',Q:'kw',R:'rrr',S:'ss',T:'th',U:'uhh',V:'vv',W:'wuh',X:'ex',Y:'yuh',Z:'zzz'};
   const OBJ=['count-strawberry.png','count-apple.png','count-fish.png','count-flower.png','count-cherry.png','count-ladybug.png'];
   const DINO_OBJ=['dino-triceratops.png','dino-stegosaurus.png','dino-brontosaurus.png','dino-velociraptor.png','dino-hatchling.png','dino-pterodactyl.png'];
   const imgOf = f => '<img src="img/'+f+'" alt="">';
@@ -444,7 +447,7 @@
     play.innerHTML=''; roundLock=false;
     const target=rand(UPPER); cur=target;
     const opts=shuffle([target,...shuffle(UPPER.filter(l=>l!==target)).slice(0,2)]);
-    const sayIt=()=>speak(target+'. Which picture starts with '+target+'?');
+    const sayIt=()=>speak(target+' says '+SOUND[target]+'! Which picture starts with '+target+'?');
     const head=document.createElement('div'); head.className='targetCard';
     const g=document.createElement('div'); g.className='glyph'; g.textContent=target+' '+target.toLowerCase(); head.appendChild(g);
     onTap(head,sayIt); play.appendChild(head);
@@ -456,7 +459,7 @@
       const pic=document.createElement('span'); pic.className='pic'; pic.innerHTML=imgOf(abcFile(o)); pic.style.animationDelay=(Math.random())+'s'; b.appendChild(pic);
       const cw=document.createElement('span'); cw.className='cword'; cw.innerHTML='<b>'+o+'</b> is for '+WORDS[o][0]; b.appendChild(cw);
       onTap(b,()=>{ if(roundLock) return;
-        if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+'. '+target+' is for '+WORDS[o][0]+'!', function(){ setTimeout(soundsRound,600); }); }
+        if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+' says '+SOUND[target]+'! '+target+' is for '+WORDS[o][0]+'!', function(){ setTimeout(soundsRound,600); }); }
         else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
     play.appendChild(ch); sayIt(); armIdle(sayIt);
@@ -578,7 +581,7 @@
     if(wrap){ const pop=document.createElement('div');
       if(isNum(t)) pop.textContent='⭐'; else pop.innerHTML='<img src="img/'+abcFile(t.toUpperCase())+'" style="width:140px;height:140px;display:block;">';
       pop.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:120px;z-index:6;'; pop.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:600,easing:'ease-out',fill:'forwards'}); wrap.appendChild(pop); }
-    speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'), function(){ trackT(setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); }, 600)); });
+    speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+' says '+SOUND[t.toUpperCase()]+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'), function(){ trackT(setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); }, 600)); });
   }
 
   // ================= MEMORY MATCH =================
