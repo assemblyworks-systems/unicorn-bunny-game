@@ -132,7 +132,17 @@ games:
 - **Trace completion:** measured by **painted pixel coverage** of the glyph (`evalPixels()` reads the canvas, samples glyph-mask cell centers, completes at ~60% inked). Don't revert to counting fingertip cells (it under-counted; kids had to over-colour).
 - **Stickers / stars (learn.html):** **session-only — NOT persisted.** `store={count:0,board:[]}` lives in memory; it resets on reload and on profile change (and the old `avalynn_stickers_v1` localStorage key is proactively removed). This was a deliberate requirement (stars shouldn't carry across sessions or between profiles). Don't reintroduce `localStorage` persistence here.
 - **Scores (arcade)** floor at 0 and are in-memory per game (reset on `openMode`). Catch Stars deducts for tapping rocks or letting a star fall.
-- **Dino games:** *Dino Eggs* (index.html) reuses the floating-critter tap-to-pop pattern (egg → baby dino). *Dino Dig* (index.html) is a scratch-to-reveal canvas — single-pointer (palm-proof like trace), erases dirt with `destination-out`, completes at ~50% cleared. *Count Dinos* (learn.html) is `countRound(DINO_OBJ)` — same engine as Count It with a dino emoji pool. *Dino dot-to-dot* is just an extra entry in `DOTSHAPES`.
+- **Dino games:** *Dino Eggs* (index.html) reuses the floating-critter tap-to-pop pattern (egg → baby dino). *Dino Dig* (index.html) is a scratch-to-reveal canvas — single-pointer (palm-proof like trace), erases dirt with `destination-out`, completes at ~50% cleared. *Count Dinos* (learn.html) is `countRound(DINO_OBJ)` — same engine as Count It with a dino emoji pool. *Dino dot-to-dot* is just an extra entry in `DOTSHAPES`. Eggs/Dig **speak the species name** (`dinoName()` derives it from the filename, `DINO_NAMES` overrides the odd ones) — ⚠️ a new dino file needs its name added to `DINO_SPOKEN` in `generate_voice.py` + clips regenerated, or that line is silent on iPad.
+
+### Learning scaffolds (added 2026-07 — tuned for age 3, don't remove)
+
+- **Adaptive difficulty (Count It / Count Dinos):** `countMax` starts at 5 (counts 1–5), +2 after every 3 correct in a row (max 20), −2 after a round with 2+ wrong answers (min 5). Session-only, shared by both count games. Answer distractors stay within `1..max(5,countMax)`.
+- **Tap-to-count:** each Count It object is tappable once — it gets a numbered badge (`.cnum`) and speaks the running count (clips `1`–`20` exist). One-to-one correspondence practice; doesn't answer the round.
+- **Hint pulse:** in Find It / A is for / Count It / Shapes, after **2 wrong taps** the correct choice gets `.hint` (pulsing sunshine glow) so a child is never stuck.
+- **Teaching wrong-answers (Find It):** a wrong tap speaks `'That is the '+nameOf(o)` (clips exist for all 26 letters + numbers 1–20) instead of a bare "try again".
+- **Idle re-prompt (learn.html):** `armIdle(sayIt)` per round repeats the instruction after 15s of no taps, max 2 nudges; any `pointerdown` resets the timer; `stopIdle()` runs on `openMode`/`goHome`.
+- **Balloon color challenge (index.html):** after every 5 free pops, `setBalloonChallenge()` picks a color **currently on screen**, shows a `match-banner` + speaks `'Can you pop the <color> balloon?'`; the right color earns +2 and clears it; wrong colors still pop normally (no punishment). `spawnBalloon()` force-spawns the challenge color if it leaves the screen.
+- **Feed Bunny counting:** the first 10 carrots speak the running count (`say(String(score))`), then revert to yum lines.
 
 ## Regenerating voice clips
 
