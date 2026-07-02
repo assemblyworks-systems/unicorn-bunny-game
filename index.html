@@ -644,6 +644,13 @@
   if(profileBtn){ profileBtn.addEventListener('pointerdown',e=>{ e.preventDefault(); changeProfile(); }); }
   (function(){ const _p=loadProfile(); if(_p && _p.first) applyProfile(_p); else showGate(); })();
 
+  // Warm the image cache once idle → smoother first play + offline-ready (SW caches them).
+  (function(){
+    const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','spot-cloud.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
+    const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
+    if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
+  })();
+
   window.addEventListener('resize', ()=>{
     play.querySelectorAll('.critter').forEach(c=>{
       const size=parseFloat(c.style.fontSize)||90;
