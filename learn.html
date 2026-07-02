@@ -167,6 +167,18 @@
   .sortItem{ font-family:var(--font-display); font-size:54px; font-weight:800; color:var(--color-ink); background:var(--color-white); border-radius:var(--radius-md); width:92px; height:92px; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow-soft); cursor:grab; touch-action:none; }
   .sortItem.dragging{ position:fixed; z-index:90; box-shadow:var(--shadow-float); cursor:grabbing; }
 
+  /* books */
+  #shelf{ display:flex; gap:18px; flex-wrap:wrap; justify-content:center; }
+  .bookCard{ width:170px; background:var(--color-white); border:none; border-radius:var(--radius-lg); box-shadow:0 var(--chunk-depth) 0 var(--color-cream-deep); padding:18px 12px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--color-ink); animation:popin .4s backwards; }
+  .bookCard img{ width:92px; height:92px; }
+  .bookCard:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-cream-deep); }
+  #pageCard{ background:var(--color-white); border:none; border-radius:var(--radius-xl); box-shadow:var(--shadow-pop); padding:26px 30px; display:flex; flex-direction:column; align-items:center; gap:14px; max-width:480px; animation:popin .35s; cursor:pointer; }
+  #pageCard img{ width:min(40vw,170px); height:min(40vw,170px); }
+  #pageCard .sentence{ font-family:var(--font-display); font-size:26px; font-weight:800; color:var(--color-ink); text-align:center; }
+  #pageCard .pageNum{ font-family:var(--font-body); font-size:15px; font-weight:700; color:var(--text-muted); }
+  .bigNext{ font-family:var(--font-display); font-size:26px; font-weight:800; color:var(--text-on-color); background:var(--color-grass); border:none; border-radius:var(--radius-pill); padding:14px 34px; box-shadow:0 var(--chunk-depth) 0 var(--color-grass-deep); cursor:pointer; }
+  .bigNext:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-grass-deep); }
+
   /* profile gate */
   #homeSub{ font-family:var(--font-display); font-size:18px; font-weight:700; color:var(--color-grape); margin-top:-4px; }
   #gate{ display:flex; align-items:center; justify-content:center; padding:24px; z-index:100; background:var(--surface-app); }
@@ -212,6 +224,7 @@
     <div id="menu">
       <button class="menu-btn m1" data-mode="find"><span class="emo">🔍</span>Find It</button>
       <button class="menu-btn m2" data-mode="sounds"><span class="emo">🍎</span>A is for…</button>
+      <button class="menu-btn m1" data-mode="books"><span class="emo">📖</span>Books</button>
       <button class="menu-btn m3" data-mode="trace"><span class="emo">✏️</span>Trace It</button>
       <button class="menu-btn m2" data-mode="name"><span class="emo">✍️</span>My Name</button>
       <button class="menu-btn m4" data-mode="count"><span class="emo">🍓</span>Count It</button>
@@ -420,7 +433,7 @@
   function openMode(m){ goFullscreen(); initAudio(); clearPending(); stopIdle(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
     if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='name') startName(); else if(m==='count') startCount();
     else if(m==='memory') startMemory(); else if(m==='dots') startDots(); else if(m==='sort') startSort(); else if(m==='shapes') startShapes();
-    else if(m==='dinocount') startDinoCount(); }
+    else if(m==='dinocount') startDinoCount(); else if(m==='books') startBooks(); }
   function goHome(){ clearPending(); stopIdle(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='var(--surface-app)'; mode=null; }
   function showBoard(){ initAudio(); home.classList.add('hidden'); play.classList.add('hidden'); board.classList.remove('hidden'); topbar.style.display='flex'; buddy.style.display='none'; mode='board';
     document.getElementById('boardCount').textContent='You have earned '+store.count+' stars!';
@@ -761,6 +774,58 @@
         else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
     play.appendChild(ch); sayIt(); armIdle(sayIt);
+  }
+
+  // ================= BOOKS (read-aloud picture stories) =================
+  // Every sentence + title needs a matching clip in generate_voice.py (BOOK_LINES).
+  const BOOKS=[
+    {title:"Hop's Carrot", cover:'hop-bunny.svg', pages:[
+      ['hop-bunny.svg','This is Hop the bunny.'],
+      ['hop-bunny.svg','Hop is very hungry.'],
+      ['carrot.png','Hop finds a big carrot.'],
+      ['hop-bunny.svg','Munch, munch, munch!'],
+      ['hop-bunny.svg','Happy Hop! The end.']]},
+    {title:'The Dino Egg', cover:'egg-spotted.png', pages:[
+      ['egg-spotted.png','Look! A dino egg.'],
+      ['egg-cracking.png','Crack, crack, crack!'],
+      ['dino-hatchling.png','A baby dino!'],
+      ['rex-dino.svg','The baby dino says roar!'],
+      ['dino-hatchling.png','Good night, little dino. The end.']]},
+    {title:'The Little Star', cover:'spot-star.svg', pages:[
+      ['abc-moon.png','It is night time.'],
+      ['spot-star.svg','A little star twinkles.'],
+      ['star-pink.svg','The star falls down!'],
+      ['mascot-boxy.svg','Boxy catches the star.'],
+      ['spot-star.svg','Hooray! The end.']]}
+  ];
+  function startBooks(){ showShelf(); }
+  function showShelf(){
+    play.innerHTML=''; roundLock=false;
+    const sh=document.createElement('div'); sh.id='shelf';
+    BOOKS.forEach((bk,i)=>{ const c=document.createElement('button'); c.className='bookCard'; c.style.animationDelay=(i*0.08)+'s';
+      c.innerHTML=imgOf(bk.cover)+'<span>'+bk.title+'</span>';
+      onTap(c,()=>renderPage(bk,0)); sh.appendChild(c); });
+    play.appendChild(sh);
+    const sayIt=()=>speak('Pick a book!');
+    sayIt(); armIdle(sayIt);
+  }
+  function renderPage(bk,i){
+    play.innerHTML=''; roundLock=false;
+    const pg=bk.pages[i];
+    const card=document.createElement('div'); card.id='pageCard';
+    card.innerHTML=imgOf(pg[0])+'<div class="sentence">'+pg[1]+'</div><div class="pageNum">'+(i+1)+' / '+bk.pages.length+'</div>';
+    const sayIt=()=>speak(pg[1]);
+    onTap(card,sayIt);   // tapping the page reads it again
+    play.appendChild(card);
+    const row=document.createElement('div'); row.className='row';
+    const shelfBtn=document.createElement('button'); shelfBtn.className='pill'; shelfBtn.textContent='📚 Books'; onTap(shelfBtn,showShelf);
+    const nxt=document.createElement('button'); nxt.className='bigNext'; nxt.textContent = i<bk.pages.length-1 ? 'Next ▶' : '🎉 The End';
+    onTap(nxt,()=>{ if(roundLock) return;
+      if(i<bk.pages.length-1) renderPage(bk,i+1);
+      else { roundLock=true; win(); speak(rand(PRAISE), function(){ trackT(setTimeout(showShelf,600)); }); } });
+    row.appendChild(shelfBtn); row.appendChild(nxt); play.appendChild(row);
+    if(i===0) speak(bk.title, sayIt); else sayIt();
+    armIdle(sayIt);
   }
 
   // ---------- repeat button ----------

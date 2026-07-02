@@ -56,6 +56,15 @@ for L in UPPER: add("Let's trace the letter "+L+"!")
 for n in NUMS:  add("Let's trace the number "+n+"!")
 for n in NUMS:  add('You traced '+n+'!')
 add("Let's trace your name!"); add('You traced your name!')   # My Name mode (name is shown, never spoken)
+# Books — must mirror BOOKS in learn.html (titles + every page sentence)
+add('Pick a book!')
+BOOK_LINES = ["Hop's Carrot",'This is Hop the bunny.','Hop is very hungry.','Hop finds a big carrot.',
+ 'Munch, munch, munch!','Happy Hop! The end.',
+ 'The Dino Egg','Look! A dino egg.','Crack, crack, crack!','A baby dino!','The baby dino says roar!',
+ 'Good night, little dino. The end.',
+ 'The Little Star','It is night time.','A little star twinkles.','The star falls down!',
+ 'Boxy catches the star.','Hooray! The end.']
+for s in BOOK_LINES: add(s)
 add('Match the number to the dots!'); add('Match the big and little letters!')
 add('Connect the dots! Start at number one.')
 for d in DOTS: add('Connect the dots to make '+d+'! Start at number one.')
@@ -84,10 +93,13 @@ for nm in NAMES:
     add('Hatch the dino eggs, '+nm+'!')
     add('Dig up the dinosaur, '+nm+'!')
     add('Draw a picture, '+nm+'!')
+    add('Dress the princess, '+nm+'!')
     add('Thank you '+nm)
 for c in ['red','orange','yellow','green','blue','purple','pink']: add(c)
 # Draw mode: crayon colors (brown/black new) + stamp names
 for w in ['brown','black','cat','dog','butterfly','bunny','dinosaur','star']: add(w)
+# Princess dress-up: crowns + accessories + twirl praise
+for w in ['crown','tiara','flower crown','wand','bow','necklace','Beautiful!']: add(w)
 for ch in ['Yay!','Wow!','Yippee!','Hooray!','Magic!','So pretty!','Amazing!']: add(ch)
 for m in ['Not that one','Try again','Look again']: add(m)
 for f in ['Yum yum','Nom nom nom','Crunchy','Delicious']: add(f)

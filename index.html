@@ -139,6 +139,13 @@
   .gateBtn:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-coral-deep); }
   .gateErr{ font-family:var(--font-body); font-size:18px; font-weight:700; color:var(--color-coral-deep); min-height:22px; }
 
+  /* ===== Princess dress-up ===== */
+  #dressWrap{ position:absolute; left:50%; top:47%; transform:translate(-50%,-50%); width:min(58vw,300px); }
+  #dressWrap svg{ width:100%; height:auto; display:block; filter:drop-shadow(0 8px 8px var(--tint-ink)); }
+  #dressWrap svg.twirl{ animation:twirl .9s ease; }
+  @keyframes twirl{ 0%{transform:rotate(0) scale(1)} 30%{transform:rotate(-14deg) scale(1.06)} 70%{transform:rotate(372deg) scale(1.1)} 100%{transform:rotate(360deg) scale(1)} }
+  #dressBar{ position:absolute; left:0; right:0; bottom:10px; display:flex; gap:9px; justify-content:center; align-items:center; flex-wrap:wrap; padding:0 10px; z-index:30; }
+
   /* ===== Draw ===== */
   #drawWrap{ position:absolute; left:12px; right:12px; top:78px; bottom:132px; background:#FFFFFF; border-radius:var(--radius-lg); box-shadow:var(--shadow-pop); overflow:hidden; touch-action:none; }
   #drawCanvas{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
@@ -194,6 +201,7 @@
       <button class="menu-btn t-teal" data-mode="eggs"><span class="emo">🥚</span>Dino Eggs</button>
       <button class="menu-btn t-tangerine" data-mode="dig"><span class="emo"><img src="img/rex-dino.svg" alt=""></span>Dino Dig</button>
       <button class="menu-btn t-grass" data-mode="draw"><span class="emo">🖍️</span>Draw</button>
+      <button class="menu-btn t-bubblegum" data-mode="princess"><span class="emo">👸</span>Princess</button>
     </div>
     <div class="homeRow">
       <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
@@ -648,6 +656,88 @@
     say('Dig up the dinosaur, '+NAME+'!');
   }
 
+  // ---------- MODE: Princess (dress-up; inline SVG in PlayBox style — no art files) ----------
+  const PRINCESS_SVG =
+    '<svg viewBox="0 0 220 270" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Princess">'
+    +'<ellipse cx="110" cy="260" rx="58" ry="9" fill="#3D2C56" opacity=".12"/>'
+    +'<rect x="56" y="84" width="20" height="74" rx="10" fill="#7A4E33"/>'
+    +'<rect x="144" y="84" width="20" height="74" rx="10" fill="#7A4E33"/>'
+    +'<circle cx="110" cy="84" r="48" fill="#7A4E33"/>'
+    +'<ellipse cx="92" cy="254" rx="13" ry="7" fill="#E64178"/>'
+    +'<ellipse cx="128" cy="254" rx="13" ry="7" fill="#E64178"/>'
+    +'<path class="dressFill" d="M110 130 L66 238 Q110 252 154 238 Z" fill="#9B5DE5"/>'
+    +'<circle class="dressFill" cx="80" cy="240" r="11" fill="#9B5DE5"/>'
+    +'<circle class="dressFill" cx="110" cy="246" r="11" fill="#9B5DE5"/>'
+    +'<circle class="dressFill" cx="140" cy="240" r="11" fill="#9B5DE5"/>'
+    +'<rect class="dressFill" x="92" y="118" width="36" height="34" rx="12" fill="#9B5DE5"/>'
+    +'<path d="M96 134 Q74 152 70 172" stroke="#FFDFC2" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    +'<path d="M124 134 Q146 152 150 172" stroke="#FFDFC2" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    +'<g id="pWand" style="display:none"><line x1="150" y1="172" x2="176" y2="120" stroke="#FFC93C" stroke-width="5" stroke-linecap="round"/><path d="M178 96 l5 10 11 1.6 -8 7.8 1.9 11 -9.9 -5.2 -9.9 5.2 1.9 -11 -8 -7.8 11 -1.6 Z" fill="#FFC93C"/><circle cx="174" cy="106" r="2" fill="#FFFFFF"/></g>'
+    +'<circle cx="70" cy="172" r="7" fill="#FFDFC2"/>'
+    +'<circle cx="150" cy="172" r="7" fill="#FFDFC2"/>'
+    +'<circle cx="110" cy="84" r="38" fill="#FFDFC2"/>'
+    +'<path d="M72 74 Q82 52 110 50 Q138 52 148 74 Q129 64 110 64 Q91 64 72 74 Z" fill="#7A4E33"/>'
+    +'<circle cx="96" cy="82" r="5.5" fill="#43352F"/><circle cx="124" cy="82" r="5.5" fill="#43352F"/>'
+    +'<circle cx="98" cy="80" r="2" fill="#FFFFFF"/><circle cx="126" cy="80" r="2" fill="#FFFFFF"/>'
+    +'<circle cx="87" cy="96" r="5.5" fill="#FFB3C9" opacity=".8"/><circle cx="133" cy="96" r="5.5" fill="#FFB3C9" opacity=".8"/>'
+    +'<path d="M100 98 Q110 108 120 98" stroke="#43352F" stroke-width="3.5" stroke-linecap="round" fill="none"/>'
+    +'<g id="pNeck" style="display:none"><circle cx="98" cy="122" r="3" fill="#FFC93C"/><circle cx="104" cy="126" r="3" fill="#FFC93C"/><circle cx="110" cy="127" r="3" fill="#FFC93C"/><circle cx="116" cy="126" r="3" fill="#FFC93C"/><circle cx="122" cy="122" r="3" fill="#FFC93C"/></g>'
+    +'<g id="pCrown1"><path d="M84 46 L92 22 L101 40 L110 16 L119 40 L128 22 L136 46 Z" fill="#FFC93C"/><rect x="84" y="44" width="52" height="9" rx="4" fill="#FFC93C"/><circle cx="110" cy="48" r="4" fill="#FF6B6B"/></g>'
+    +'<g id="pCrown2" style="display:none"><rect x="86" y="46" width="48" height="7" rx="3.5" fill="#FFC93C"/><path d="M110 22 c-3 -7 -14 -6 -14 2 c0 6 8 10 14 15 c6 -5 14 -9 14 -15 c0 -8 -11 -9 -14 -2 Z" fill="#FF8FB1"/></g>'
+    +'<g id="pCrown3" style="display:none"><circle cx="88" cy="48" r="6" fill="#FF6B6B"/><circle cx="99" cy="46" r="6" fill="#FFC93C"/><circle cx="110" cy="45" r="6" fill="#FF8FB1"/><circle cx="121" cy="46" r="6" fill="#FFC93C"/><circle cx="132" cy="48" r="6" fill="#FF6B6B"/><circle cx="88" cy="48" r="2" fill="#FFFFFF"/><circle cx="99" cy="46" r="2" fill="#FFFFFF"/><circle cx="110" cy="45" r="2" fill="#FFFFFF"/><circle cx="121" cy="46" r="2" fill="#FFFFFF"/><circle cx="132" cy="48" r="2" fill="#FFFFFF"/></g>'
+    +'<g id="pBow" style="display:none"><circle cx="146" cy="52" r="8" fill="#FF8FB1"/><circle cx="162" cy="52" r="8" fill="#FF8FB1"/><circle cx="154" cy="52" r="4.5" fill="#E64178"/></g>'
+    +'</svg>';
+  function startPrincess(){
+    applyScene(1);
+    play.innerHTML='';
+    const wrap=document.createElement('div'); wrap.id='dressWrap'; wrap.innerHTML=PRINCESS_SVG;
+    play.appendChild(wrap);
+    const svg=wrap.querySelector('svg');
+    const bar=document.createElement('div'); bar.id='dressBar'; play.appendChild(bar);
+    const COLORS=[['red','#FF6B6B'],['orange','#FF924C'],['yellow','#FFC93C'],['green','#5FC97B'],['blue','#45ADE8'],['purple','#9B5DE5'],['pink','#FF8FB1']];
+    function sparkle(){ const r=wrap.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2); }
+    // dress colors
+    COLORS.forEach(c=>{
+      const b=document.createElement('button'); b.className='crayon'; b.style.background=c[1];
+      if(c[0]==='purple') b.classList.add('sel');
+      b.addEventListener('pointerdown',e=>{ e.preventDefault();
+        svg.querySelectorAll('.dressFill').forEach(el=>el.setAttribute('fill',c[1]));
+        bar.querySelectorAll('.crayon.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+        say(c[0]); sparkle(); });
+      bar.appendChild(b);
+    });
+    // crowns (pick one)
+    const CROWNS=[['crown','👑','pCrown1'],['tiara','💖','pCrown2'],['flower crown','🌸','pCrown3']];
+    CROWNS.forEach((cr,i)=>{
+      const b=document.createElement('button'); b.className='stampBtn'; b.textContent=cr[1];
+      if(i===0) b.classList.add('sel');
+      b.addEventListener('pointerdown',e=>{ e.preventDefault();
+        CROWNS.forEach(x=>svg.querySelector('#'+x[2]).style.display='none');
+        svg.querySelector('#'+cr[2]).style.display='';
+        bar.querySelectorAll('.stampBtn.crownSel').forEach(x=>{x.classList.remove('sel');x.classList.remove('crownSel');});
+        b.classList.add('sel'); b.classList.add('crownSel');
+        say(cr[0]); sparkle(); });
+      b.classList.toggle('crownSel',i===0);
+      bar.appendChild(b);
+    });
+    // accessories (toggle on/off)
+    [['wand','🪄','pWand'],['bow','🎀','pBow'],['necklace','📿','pNeck']].forEach(ac=>{
+      const b=document.createElement('button'); b.className='stampBtn'; b.textContent=ac[1];
+      b.addEventListener('pointerdown',e=>{ e.preventDefault();
+        const el=svg.querySelector('#'+ac[2]); const on=el.style.display==='none';
+        el.style.display=on?'':'none'; b.classList.toggle('sel',on);
+        if(on){ say(ac[0]); sparkle(); } else playSnd(SND.tap,0.5); });
+      bar.appendChild(b);
+    });
+    // twirl!
+    const tw=document.createElement('button'); tw.className='stampBtn'; tw.textContent='💃';
+    tw.addEventListener('pointerdown',e=>{ e.preventDefault();
+      svg.classList.remove('twirl'); void svg.getBoundingClientRect(); svg.classList.add('twirl');
+      chime(); sparkle(); const t=pick(['So pretty!','Beautiful!']); cheerText(t); say(t); });
+    bar.appendChild(tw);
+    say('Dress the princess, '+NAME+'!');
+  }
+
   // ---------- MODE: Draw (free drawing with crayons + stamps) ----------
   function startDraw(){
     applyScene(4);
@@ -739,6 +829,7 @@
     else if(m==='eggs') startEggs();
     else if(m==='dig') startDig();
     else if(m==='draw') startDraw();
+    else if(m==='princess') startPrincess();
   }
   function goHome(){
     clearTimers();
