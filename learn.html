@@ -79,6 +79,8 @@
   .choice:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-cream-deep); }
   .choice.wrong{ animation:wiggle .4s; }
   .choice.right{ animation:rightpop .6s; background:var(--color-grass-soft); box-shadow:0 var(--chunk-depth) 0 var(--color-grass-deep); }
+  .choice.hint{ animation:hintpulse 1s ease-in-out infinite; }
+  @keyframes hintpulse{ 0%,100%{transform:scale(1); box-shadow:0 var(--chunk-depth) 0 var(--color-cream-deep)} 50%{transform:scale(1.09); box-shadow:0 var(--chunk-depth) 0 var(--color-cream-deep),0 0 0 7px var(--color-sunshine)} }
   @keyframes popin{ 0%{transform:scale(.3); opacity:0} 70%{transform:scale(1.1)} 100%{transform:scale(1); opacity:1} }
   @keyframes wiggle{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-10px) rotate(-5deg)} 75%{transform:translateX(10px) rotate(5deg)} }
   @keyframes rightpop{ 0%{transform:scale(1)} 40%{transform:scale(1.3) rotate(6deg)} 100%{transform:scale(1)} }
@@ -92,8 +94,10 @@
   @keyframes floaty{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
 
   #countArea{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; align-items:center; max-width:92vw; max-height:36vh; overflow:hidden; }
-  #countArea .obj{ font-size:46px; animation:dropin .4s backwards; }
+  #countArea .obj{ position:relative; font-size:46px; animation:dropin .4s backwards; cursor:pointer; }
   #countArea .obj img{ width:46px; height:46px; display:block; }
+  #countArea .obj.counted img{ transform:scale(1.15); }
+  #countArea .obj .cnum{ position:absolute; top:-10px; right:-9px; min-width:23px; height:23px; padding:0 3px; border-radius:var(--radius-pill); background:var(--color-grape); color:var(--color-white); font-family:var(--font-display); font-weight:800; font-size:15px; display:flex; align-items:center; justify-content:center; z-index:2; animation:popin .25s; }
   @keyframes dropin{ 0%{transform:translateY(-40px) scale(0); opacity:0} 60%{transform:translateY(6px) scale(1.15)} 100%{transform:translateY(0) scale(1); opacity:1} }
 
   .repeatBtn{ font-family:var(--font-display); font-size:48px; background:var(--color-bubblegum); color:var(--text-on-color); border:none; border-radius:50%; width:112px; height:112px; box-shadow:0 var(--chunk-depth) 0 var(--color-bubblegum-deep); cursor:pointer; display:flex; align-items:center; justify-content:center; animation:rpulse 1.7s ease-in-out infinite; }
@@ -318,6 +322,13 @@
   function trackT(id){ pendingTimers.push(id); return id; }
   function clearPending(){ pendingTimers.forEach(clearTimeout); pendingTimers=[]; }
 
+  // idle re-prompt: if the child stalls, gently repeat the instruction (max 2 nudges per round)
+  let idlePrompt=null, idleT=null, idleN=0;
+  function armIdle(fn){ idlePrompt=fn; idleN=0; resetIdle(); }
+  function stopIdle(){ idlePrompt=null; clearTimeout(idleT); }
+  function resetIdle(){ clearTimeout(idleT); if(idlePrompt) idleT=setTimeout(()=>{ if(mode&&!roundLock&&idlePrompt&&idleN<2){ idleN++; idlePrompt(); resetIdle(); } },15000); }
+  document.addEventListener('pointerdown',resetIdle,true);
+
   // ---------- stickers (session-only: reset on reload and on profile change, never persisted) ----------
   try{ localStorage.removeItem('avalynn_stickers_v1'); }catch(e){}
   let store={count:0,board:[]};
@@ -396,11 +407,11 @@
   function onTap(el,fn){ el.addEventListener('pointerdown',e=>{ e.preventDefault(); fn(e); }); }
 
   // ---------- navigation ----------
-  function openMode(m){ goFullscreen(); initAudio(); clearPending(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
+  function openMode(m){ goFullscreen(); initAudio(); clearPending(); stopIdle(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
     if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='count') startCount();
     else if(m==='memory') startMemory(); else if(m==='dots') startDots(); else if(m==='sort') startSort(); else if(m==='shapes') startShapes();
     else if(m==='dinocount') startDinoCount(); }
-  function goHome(){ clearPending(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='var(--surface-app)'; mode=null; }
+  function goHome(){ clearPending(); stopIdle(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='var(--surface-app)'; mode=null; }
   function showBoard(){ initAudio(); home.classList.add('hidden'); play.classList.add('hidden'); board.classList.remove('hidden'); topbar.style.display='flex'; buddy.style.display='none'; mode='board';
     document.getElementById('boardCount').textContent='You have earned '+store.count+' stars!';
     const grid=document.getElementById('stickerGrid'); grid.innerHTML='';
@@ -417,12 +428,14 @@
     const sayIt=()=>speak('Can you find the '+nameOf(target)+'?');
     play.appendChild(makeRepeat(sayIt));
     const ch=document.createElement('div'); ch.id='choices';
+    let wrongs=0, rightBtn=null;
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o; b.style.animationDelay=(i*0.08)+'s';
+      if(o===target) rightBtn=b;
       onTap(b,()=>{ if(roundLock) return;
         if(o===target){ roundLock=true; b.classList.add('right'); win(); speak(rand(PRAISE), function(){ setTimeout(findRound,450); }); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        else { b.classList.add('wrong'); boop(); speak('That is the '+nameOf(o)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
-    play.appendChild(ch); sayIt();
+    play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
 
   // ================= A IS FOR (pick the picture) =================
@@ -437,36 +450,57 @@
     onTap(head,sayIt); play.appendChild(head);
     play.appendChild(makeRepeat(sayIt));
     const ch=document.createElement('div'); ch.id='choices';
+    let wrongs=0, rightBtn=null;
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice picChoice'; b.style.animationDelay=(i*0.08)+'s';
+      if(o===target) rightBtn=b;
       const pic=document.createElement('span'); pic.className='pic'; pic.innerHTML=imgOf(abcFile(o)); pic.style.animationDelay=(Math.random())+'s'; b.appendChild(pic);
       const cw=document.createElement('span'); cw.className='cword'; cw.innerHTML='<b>'+o+'</b> is for '+WORDS[o][0]; b.appendChild(cw);
       onTap(b,()=>{ if(roundLock) return;
         if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+'. '+target+' is for '+WORDS[o][0]+'!', function(){ setTimeout(soundsRound,600); }); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
-    play.appendChild(ch); sayIt();
+    play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
 
   // ================= COUNT IT =================
+  // Adaptive difficulty: starts at 1–5 (right for age 3), grows +2 after every 3 correct
+  // answers in a row (up to 20), eases back after a struggling round. Session-only.
+  let countMax=5, countStreak=0;
   function startCount(){ countRound(OBJ); }
   function startDinoCount(){ countRound(DINO_OBJ); }
   function countRound(pool){
     play.innerHTML=''; roundLock=false;
-    const n=1+Math.floor(Math.random()*20); cur=String(n);
+    const hi=countMax;
+    const n=1+Math.floor(Math.random()*hi); cur=String(n);
     const emo=rand(pool||OBJ);
     const sayIt=()=>speak('How many? Count them and tap the number.');
     const area=document.createElement('div'); area.id='countArea';
-    for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.innerHTML=imgOf(emo); o.style.animationDelay=(i*0.05)+'s'; area.appendChild(o); }
+    let counted=0;
+    for(let i=0;i<n;i++){ const o=document.createElement('span'); o.className='obj'; o.innerHTML=imgOf(emo); o.style.animationDelay=(i*0.05)+'s';
+      // tap each one to count it aloud — one-to-one correspondence practice
+      onTap(o,()=>{ if(roundLock||o.classList.contains('counted')) return;
+        counted++; o.classList.add('counted');
+        const badge=document.createElement('span'); badge.className='cnum'; badge.textContent=counted; o.appendChild(badge);
+        speak(String(counted)); });
+      area.appendChild(o); }
     play.appendChild(area);
     play.appendChild(makeRepeat(sayIt));
-    let opts=[n]; while(opts.length<3){ let d=Math.max(1,Math.min(20,n+(Math.floor(Math.random()*7)-3))); if(!opts.includes(d)) opts.push(d); } opts=shuffle(opts);
+    const cap=Math.max(5,hi);
+    let opts=[n]; while(opts.length<3){ let d=Math.max(1,Math.min(cap,n+(Math.floor(Math.random()*7)-3))); if(!opts.includes(d)) opts.push(d); } opts=shuffle(opts);
     const ch=document.createElement('div'); ch.id='choices';
+    let wrongs=0, rightBtn=null;
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o; b.style.animationDelay=(i*0.08)+'s';
+      if(o===n) rightBtn=b;
       onTap(b,()=>{ if(roundLock) return;
-        if(o===n){ roundLock=true; b.classList.add('right'); win('Yes! '+n+'!'); speak('Yes! '+n+'!', function(){ setTimeout(countRound,450); }); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        if(o===n){ roundLock=true; b.classList.add('right');
+          countStreak++; if(countStreak%3===0) countMax=Math.min(20,countMax+2);
+          win('Yes! '+n+'!'); speak('Yes! '+n+'!', function(){ setTimeout(()=>countRound(pool),450); }); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN));
+          wrongs++; countStreak=0;
+          if(wrongs>=2){ countMax=Math.max(5,countMax-2); if(rightBtn) rightBtn.classList.add('hint'); }
+          setTimeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
-    play.appendChild(ch); sayIt();
+    play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
 
   // ================= TRACE IT =================
@@ -485,6 +519,7 @@
     const nxt=document.createElement('button'); nxt.className='pill'; nxt.textContent='Next ▶'; onTap(nxt,()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); });
     row.appendChild(clr); row.appendChild(nxt); play.appendChild(row);
     speak("Let's trace the "+nameOf(t)+"!");
+    armIdle(()=>speak("Let's trace the "+nameOf(t)+"!"));
     setTimeout(()=>setupTrace(t),40);
     setTimeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
   }
@@ -578,7 +613,8 @@
       });
       grid.appendChild(el);
     });
-    speak(useNum?'Match the number to the dots!':'Match the big and little letters!');
+    const sayIt=()=>speak(useNum?'Match the number to the dots!':'Match the big and little letters!');
+    sayIt(); armIdle(sayIt);
   }
 
   // ================= DOT TO DOT =================
@@ -605,6 +641,7 @@
     setTimeout(()=>setupDots(wrap,cv),60);
     setTimeout(()=>{ if(!wrap.querySelector('.dot')) setupDots(wrap,cv); },320);
     speak('Connect the dots to make '+dotShape.name+'! Start at number one.');
+    armIdle(sayIt);
   }
   function setupDots(wrap,cv){
     const rect=wrap.getBoundingClientRect(); if(rect.width<10) return;
@@ -675,7 +712,7 @@
       makeDraggable(el,bins,(binKey)=>{ if(binKey===it.key){ el.remove(); win(); remaining--; if(remaining<=0){ const t=setTimeout(sortRound,1100); trackT(t);} return true; } return false; });
       items.appendChild(el); });
     play.appendChild(items); play.appendChild(makeRepeat(sayIt)); play.appendChild(bins);
-    sayIt();
+    sayIt(); armIdle(sayIt);
   }
 
   // ================= SHAPES & COLORS =================
@@ -692,12 +729,14 @@
     const g=document.createElement('div'); g.style.cssText='font-size:26px;color:#7a2e6b;font-weight:bold;padding:6px 10px;'; g.textContent=useColor?'Which color?':'Which shape?'; head.appendChild(g);
     play.appendChild(head); play.appendChild(makeRepeat(sayIt));
     const ch=document.createElement('div'); ch.id='choices';
+    let wrongs=0, rightBtn=null;
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o[1]; b.style.animationDelay=(i*0.08)+'s';
+      if(o[0]===tgt[0]) rightBtn=b;
       onTap(b,()=>{ if(roundLock) return;
         if(o[0]===tgt[0]){ roundLock=true; b.classList.add('right'); win(); speak('Yes! '+tgt[0]+'!', function(){ trackT(setTimeout(shapesRound,450)); }); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
-    play.appendChild(ch); sayIt();
+    play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
 
   // ---------- repeat button ----------

@@ -58,6 +58,11 @@ for i in range(1, 11): add(str(i))
 for d in DOTS: add('Yay! You made '+d+'!')
 add('Drag each one to the matching color box!')
 add('Put the letters and numbers in the right box!')
+# tap-to-count in Count It + Feed Bunny carrot counting — numbers 11-20 (1-10 made above for dot-to-dot)
+for i in range(11, 21): add(str(i))
+# Find It teaching feedback when a wrong letter/number is tapped
+for L in UPPER: add('That is the letter '+L)
+for n in NUMS:  add('That is the number '+n)
 for s in SHP: add('Find the '+s+'!')
 for c in COL: add('Find the '+c+' one!')
 for s in SHP: add('Yes! '+s+'!')
@@ -81,6 +86,17 @@ for f in ['Yum yum','Nom nom nom','Crunchy','Delicious']: add(f)
 add('Oops')
 add('Roar')
 add('You found a dinosaur')
+# Pop Balloons color challenge
+for c in ['red','orange','yellow','green','blue','purple','pink']: add('Can you pop the '+c+' balloon?')
+add('Yes! pink!')   # 'Yes! <color>!' for the other six colors already exists above
+# Dino species names — must mirror dinoName() in index.html (DINOS array + DINO_NAMES overrides)
+DINO_SPOKEN = ['T rex','triceratops','stegosaurus','brontosaurus','pterodactyl','velociraptor',
+               'ankylosaurus','parasaurolophus','spinosaurus','baby dino']
+for d in DINO_SPOKEN:
+    a = 'An ' if d[0].lower() in 'aeiou' else 'A '
+    add(a+d+'!')                      # Dino Eggs hatch line
+    add('You found '+a.lower()+d+'!') # Dino Dig reveal line
+add('You found a fossil!')
 
 byslug = {}
 for t in phrases:
