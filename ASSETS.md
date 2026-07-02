@@ -108,6 +108,16 @@ yo-yo, zebra → `img/abc-apple.svg` … `abc-zebra.svg`.
 
 ---
 
+## Tier 5 — App icon (off-brand right now)  ⭐ small but visible
+
+The installed PWA / iPad home-screen icon is still the old hand-drawn rainbow+star
+(`icon.png` 512, `icon-192.png`, `apple-touch-icon`). It no longer matches the PlayBox
+brand. Needs **PNG** (iOS home-screen icons can't be SVG):
+- `icon-512.png` (512×512) and `icon-192.png` (192×192): **Boxy** (or the logomark) centered
+  on a solid rounded tile in a brand color (e.g. sunshine `#FFC93C` or coral `#FF6B6B`),
+  generous padding, no text. Full-bleed square (not transparent — it's an app tile).
+- Once added, update `manifest.webmanifest` + the `apple-touch-icon` `<link>` in both pages.
+
 ## Not needed as art (stay as-is)
 - Letters & numbers (Find It, Trace It, Memory) — must remain real text glyphs.
 - Shapes & Colors game — simple geometric shapes / color swatches read clearer than illustrations.
