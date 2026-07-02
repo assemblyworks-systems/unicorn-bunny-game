@@ -51,6 +51,7 @@
   #home h1 { font-family:var(--font-display); font-size:40px; font-weight:800; color:var(--color-ink); }
   #homeSub{ font-family:var(--font-display); font-size:19px; font-weight:700; color:var(--color-grape); margin-top:-6px; }
   #menu { display:grid; grid-template-columns:1fr 1fr; gap:var(--tile-gap); width:100%; max-width:540px; }
+  @media (orientation:landscape){ #menu{ grid-template-columns:repeat(3,1fr); max-width:840px; } }
   .menu-btn {
     font-family:var(--font-display); font-size:21px; font-weight:800; color:var(--tone-on,var(--text-on-color));
     background:var(--tone,var(--color-sky)); border:none; border-radius:var(--radius-lg);
@@ -61,6 +62,15 @@
   .menu-btn .emo { font-size:52px; line-height:1; }
   .menu-btn .emo img { width:58px; height:58px; vertical-align:middle; }
   .menu-btn:active { transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--tone-deep,var(--color-sky-deep)); }
+
+  /* Home charm — drifting spot illustrations behind the menu */
+  .decor{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .decor img{ position:absolute; opacity:.5; filter:drop-shadow(0 4px 6px var(--tint-ink)); }
+  .decor .d1{ width:120px; top:9%; left:6%; animation:floaty2 6s ease-in-out infinite; }
+  .decor .d2{ width:62px; top:15%; right:9%; animation:floaty2 5s ease-in-out infinite .6s; }
+  .decor .d3{ width:130px; bottom:8%; right:7%; animation:floaty2 7s ease-in-out infinite .3s; }
+  @keyframes floaty2{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+  #home .big, #home h1, #homeSub, #menu, .homeRow{ position:relative; z-index:1; }
 
   /* ===== Critters & effects ===== */
   .critter { position:absolute; font-size:90px; line-height:1; will-change:transform; filter:drop-shadow(0 6px 6px var(--tint-ink)); }
@@ -162,6 +172,7 @@
 
   <!-- HOME -->
   <div id="home" class="screen hidden">
+    <div class="decor" aria-hidden="true"><img src="img/spot-cloud.svg" class="d1" alt=""><img src="img/spot-star.svg" class="d2" alt=""><img src="img/spot-rainbow.svg" class="d3" alt=""></div>
     <div class="big"><img src="img/rex-dino.svg" alt=""><img src="img/mascot-boxy.svg" alt=""></div>
     <h1 id="homeTitle">Playbox</h1>
     <div id="homeSub">Pick a box to play!</div>
@@ -472,7 +483,7 @@
   // ---------- MODE: Catch Stars (catch stars, avoid rocks, don't let stars drop!) ----------
   function startStars(){
     applyScene(2);
-    const STAR=['spot-star.svg'];
+    const STAR=['spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg'];
     const BAD=['rock.png','bomb.png','spot-cloud.svg'];
     function spawnFalling(){
       const isStar=Math.random()<0.68;
@@ -646,7 +657,7 @@
 
   // Warm the image cache once idle → smoother first play + offline-ready (SW caches them).
   (function(){
-    const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','spot-cloud.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
+    const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg','spot-cloud.svg','spot-rainbow.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
     if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
   })();
