@@ -109,6 +109,10 @@
   #traceCanvas,#guideCanvas{ position:absolute; inset:0; width:100%; height:100%; border-radius:var(--radius-lg); touch-action:none; }
   #guideCanvas{ pointer-events:none; }
   .startDot{ position:absolute; width:30px; height:30px; margin:-15px 0 0 -15px; border-radius:50%; background:var(--color-grass); box-shadow:0 0 0 6px rgba(95,201,123,.35); pointer-events:none; animation:spulse 1s ease-in-out infinite; z-index:5; }
+  .nameBanner{ display:flex; gap:8px; background:var(--color-white); border-radius:var(--radius-pill); padding:8px 22px; box-shadow:var(--shadow-soft); }
+  .nameBanner span{ font-family:var(--font-display); font-size:32px; font-weight:800; line-height:1; color:var(--color-line); }
+  .nameBanner span.done{ color:var(--color-grass-deep); }
+  .nameBanner span.now{ color:var(--color-grape); animation:bump .9s ease-in-out infinite; }
   .startDot::after{ content:"👆"; position:absolute; left:24px; top:6px; font-size:26px; }
   @keyframes spulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.3)} }
   .row{ display:flex; gap:14px; }
@@ -209,6 +213,7 @@
       <button class="menu-btn m1" data-mode="find"><span class="emo">🔍</span>Find It</button>
       <button class="menu-btn m2" data-mode="sounds"><span class="emo">🍎</span>A is for…</button>
       <button class="menu-btn m3" data-mode="trace"><span class="emo">✏️</span>Trace It</button>
+      <button class="menu-btn m2" data-mode="name"><span class="emo">✍️</span>My Name</button>
       <button class="menu-btn m4" data-mode="count"><span class="emo">🍓</span>Count It</button>
       <button class="menu-btn m3" data-mode="memory"><span class="emo">🧠</span>Memory</button>
       <button class="menu-btn m4" data-mode="dots"><span class="emo">🔗</span>Dot to Dot</button>
@@ -270,6 +275,7 @@
     return { full:full, first:first };
   }
   function applyProfile(p){
+    FIRST=p.first||'Avalynn';
     homeTitle.textContent=p.full+"'s Playbox";
     try{ document.title=p.full+"'s Playbox"; }catch(e){}
     gate.classList.add('hidden');
@@ -316,6 +322,7 @@
   const TRYAGAIN=['Try again!','Almost!','You can do it!','Keep trying!','So close!'];
 
   let mode=null, soundOn=true, audioCtx=null;
+  let FIRST='Avalynn';   // canonical first name from the profile gate (visual use only — learn.html never speaks the name)
   let cur=null, roundLock=false;
   const rand=a=>a[Math.floor(Math.random()*a.length)];
   const pick=rand;
@@ -411,7 +418,7 @@
 
   // ---------- navigation ----------
   function openMode(m){ goFullscreen(); initAudio(); clearPending(); stopIdle(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
-    if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='count') startCount();
+    if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='name') startName(); else if(m==='count') startCount();
     else if(m==='memory') startMemory(); else if(m==='dots') startDots(); else if(m==='sort') startSort(); else if(m==='shapes') startShapes();
     else if(m==='dinocount') startDinoCount(); }
   function goHome(){ clearPending(); stopIdle(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='var(--surface-app)'; mode=null; }
@@ -507,12 +514,20 @@
   }
 
   // ================= TRACE IT =================
-  let traceList=[], traceIdx=0, traceMask=null, coveredCells=null, totalCells=0, lastP=null, traceDone=false, traceActive=null, startCell=null, traceHue=0;
+  let traceList=[], traceIdx=0, traceMask=null, coveredCells=null, totalCells=0, lastP=null, traceDone=false, traceActive=null, startCell=null, traceHue=0, nameMode=false;
   const GRID=24;
-  function startTrace(){ traceList=[...UPPER, ...LOWER, ...NUMS]; traceIdx=0; renderTrace(); }
+  function startTrace(){ nameMode=false; traceList=[...UPPER, ...LOWER, ...NUMS]; traceIdx=0; renderTrace(); }
+  function startName(){ nameMode=true; traceList=FIRST.toUpperCase().split(''); traceIdx=0; renderTrace(); }
   function renderTrace(){
     play.innerHTML=''; traceDone=false; traceActive=null;
     const t=traceList[traceIdx]; cur=t;
+    if(nameMode){
+      const nb=document.createElement('div'); nb.className='nameBanner';
+      traceList.forEach((L,i)=>{ const s=document.createElement('span'); s.textContent=L;
+        if(i<traceIdx) s.classList.add('done'); else if(i===traceIdx) s.classList.add('now');
+        nb.appendChild(s); });
+      play.appendChild(nb);
+    }
     const wrap=document.createElement('div'); wrap.id='traceWrap';
     const guide=document.createElement('canvas'); guide.id='guideCanvas';
     const cv=document.createElement('canvas'); cv.id='traceCanvas';
@@ -521,8 +536,8 @@
     const clr=document.createElement('button'); clr.className='pill'; clr.textContent='↺ Again'; onTap(clr,()=>setupTrace(t));
     const nxt=document.createElement('button'); nxt.className='pill'; nxt.textContent='Next ▶'; onTap(nxt,()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); });
     row.appendChild(clr); row.appendChild(nxt); play.appendChild(row);
-    speak("Let's trace the "+nameOf(t)+"!");
-    armIdle(()=>speak("Let's trace the "+nameOf(t)+"!"));
+    const sayIt=(nameMode&&traceIdx===0) ? ()=>speak("Let's trace your name!") : ()=>speak("Let's trace the "+nameOf(t)+"!");
+    sayIt(); armIdle(sayIt);
     setTimeout(()=>setupTrace(t),40);
     setTimeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
   }
@@ -581,6 +596,12 @@
     if(wrap){ const pop=document.createElement('div');
       if(isNum(t)) pop.textContent='⭐'; else pop.innerHTML='<img src="img/'+abcFile(t.toUpperCase())+'" style="width:140px;height:140px;display:block;">';
       pop.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:120px;z-index:6;'; pop.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:0},{transform:'translate(-50%,-50%) scale(1.2)',opacity:1},{transform:'translate(-50%,-50%) scale(1)',opacity:1}],{duration:600,easing:'ease-out',fill:'forwards'}); wrap.appendChild(pop); }
+    if(nameMode && traceIdx===traceList.length-1){
+      // whole name finished — big celebration, then start the name over
+      fanfare(); confetti(30);
+      speak('You traced your name!', function(){ trackT(setTimeout(()=>{ traceIdx=0; renderTrace(); }, 900)); });
+      return;
+    }
     speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+' says '+SOUND[t.toUpperCase()]+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'), function(){ trackT(setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); }, 600)); });
   }
 
@@ -751,7 +772,7 @@
   onTap(boardBtn,showBoard);
   onTap(starCount,showBoard);
   onTap(soundBtn,()=>{ soundOn=!soundOn; soundBtn.textContent=soundOn?'🔊':'🔇'; if(!soundOn&&'speechSynthesis' in window) speechSynthesis.cancel(); if(soundOn) initAudio(); });
-  window.addEventListener('resize',()=>{ if(mode==='trace'&&cur) setupTrace(cur); });
+  window.addEventListener('resize',()=>{ if((mode==='trace'||mode==='name')&&cur) setupTrace(cur); });
 
   // gate + profile wiring
   if(gateGo){ gateGo.addEventListener('click',e=>{ e.preventDefault(); submitGate(); }); }

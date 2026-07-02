@@ -139,6 +139,16 @@
   .gateBtn:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-coral-deep); }
   .gateErr{ font-family:var(--font-body); font-size:18px; font-weight:700; color:var(--color-coral-deep); min-height:22px; }
 
+  /* ===== Draw ===== */
+  #drawWrap{ position:absolute; left:12px; right:12px; top:78px; bottom:132px; background:#FFFFFF; border-radius:var(--radius-lg); box-shadow:var(--shadow-pop); overflow:hidden; touch-action:none; }
+  #drawCanvas{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
+  #drawBar{ position:absolute; left:0; right:0; bottom:10px; display:flex; gap:9px; justify-content:center; align-items:center; flex-wrap:wrap; padding:0 10px; z-index:30; }
+  .crayon{ width:44px; height:44px; border-radius:50%; border:4px solid var(--color-white); box-shadow:var(--shadow-soft); cursor:pointer; padding:0; }
+  .crayon.sel{ transform:scale(1.22); border-color:var(--color-ink); }
+  .stampBtn{ width:48px; height:48px; background:var(--color-white); border-radius:var(--radius-md); border:none; box-shadow:var(--shadow-soft); font-size:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; }
+  .stampBtn img{ width:34px; height:34px; }
+  .stampBtn.sel{ outline:4px solid var(--color-grape); }
+
   /* ===== Dino Dig ===== */
   #digWrap{ position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); width:min(80vw,440px); height:min(80vw,440px); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-pop); background:#E9D2A8; touch-action:none; }
   .digDino{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:190px; line-height:1; filter:drop-shadow(0 6px 6px var(--tint-ink)); }
@@ -183,6 +193,7 @@
       <button class="menu-btn t-sunshine" data-mode="stars"><span class="emo"><img src="img/spot-star.svg" alt=""></span>Catch Stars</button>
       <button class="menu-btn t-teal" data-mode="eggs"><span class="emo">🥚</span>Dino Eggs</button>
       <button class="menu-btn t-tangerine" data-mode="dig"><span class="emo"><img src="img/rex-dino.svg" alt=""></span>Dino Dig</button>
+      <button class="menu-btn t-grass" data-mode="draw"><span class="emo">🖍️</span>Draw</button>
     </div>
     <div class="homeRow">
       <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
@@ -637,6 +648,74 @@
     say('Dig up the dinosaur, '+NAME+'!');
   }
 
+  // ---------- MODE: Draw (free drawing with crayons + stamps) ----------
+  function startDraw(){
+    applyScene(4);
+    play.innerHTML='';
+    const wrap=document.createElement('div'); wrap.id='drawWrap';
+    const cv=document.createElement('canvas'); cv.id='drawCanvas';
+    wrap.appendChild(cv); play.appendChild(wrap);
+    const bar=document.createElement('div'); bar.id='drawBar'; play.appendChild(bar);
+    // kid color words (clips exist), toy-palette hexes (canvas needs literals)
+    const CRAYONS=[['red','#FF6B6B'],['orange','#FF924C'],['yellow','#FFC93C'],['green','#5FC97B'],['blue','#45ADE8'],['purple','#9B5DE5'],['pink','#FF8FB1'],['brown','#8B5E3C'],['black','#43352F']];
+    const STAMPS=[['cat','friend-cat.png'],['dog','friend-dog.png'],['butterfly','friend-butterfly.png'],['bunny','hop-bunny.svg'],['dinosaur','rex-dino.svg'],['star','spot-star.svg']];
+    let tool={type:'pen', color:CRAYONS[4][1]};   // start with blue
+    let ctx=null, rect=null, cw=0, chh=0, active=null, last=null;
+    const stampImgs={};
+    STAMPS.forEach(s=>{ const im=new Image(); im.src='img/'+s[1]; stampImgs[s[0]]=im; });
+    function setup(){
+      const r=cv.getBoundingClientRect(); if(r.width<10||cv.dataset.ready==='1') return;
+      const dpr=window.devicePixelRatio||1; cv.width=r.width*dpr; cv.height=r.height*dpr; cv.dataset.ready='1';
+      cw=r.width; chh=r.height;
+      ctx=cv.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+      ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,cw,chh);
+      ctx.lineCap='round'; ctx.lineJoin='round'; ctx.lineWidth=16;
+    }
+    cv.onpointerdown=e=>{
+      if(active!==null||!ctx) return; e.preventDefault(); active=e.pointerId;
+      try{cv.setPointerCapture(e.pointerId);}catch(_){}
+      rect=cv.getBoundingClientRect();   // cached once per stroke (no per-move layout read)
+      const p={x:e.clientX-rect.left, y:e.clientY-rect.top};
+      if(tool.type==='stamp'){
+        const im=stampImgs[tool.name];
+        if(im&&im.complete&&im.naturalWidth){ ctx.drawImage(im,p.x-45,p.y-45,90,90); playSnd(SND.tap,0.5); }
+      } else {
+        ctx.fillStyle=tool.color; ctx.beginPath(); ctx.arc(p.x,p.y,8,0,7); ctx.fill(); last=p;
+      }
+    };
+    cv.onpointermove=e=>{
+      if(e.pointerId!==active||tool.type!=='pen'||!last) return; e.preventDefault();
+      const p={x:e.clientX-rect.left, y:e.clientY-rect.top};
+      ctx.strokeStyle=tool.color; ctx.beginPath(); ctx.moveTo(last.x,last.y); ctx.lineTo(p.x,p.y); ctx.stroke(); last=p;
+    };
+    cv.onpointerup=e=>{ if(e.pointerId===active){ active=null; last=null; } };
+    cv.onpointercancel=cv.onpointerup;
+    CRAYONS.forEach(c=>{
+      const b=document.createElement('button'); b.className='crayon'; b.style.background=c[1];
+      if(c[1]===tool.color) b.classList.add('sel');
+      b.addEventListener('pointerdown',e=>{ e.preventDefault();
+        tool={type:'pen',color:c[1]};
+        bar.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+        say(c[0]); });
+      bar.appendChild(b);
+    });
+    STAMPS.forEach(s=>{
+      const b=document.createElement('button'); b.className='stampBtn'; b.innerHTML=imgOf(s[1]);
+      b.addEventListener('pointerdown',e=>{ e.preventDefault();
+        tool={type:'stamp',name:s[0]};
+        bar.querySelectorAll('.sel').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+        say(s[0]); });
+      bar.appendChild(b);
+    });
+    const clr=document.createElement('button'); clr.className='stampBtn'; clr.textContent='🧽';
+    clr.addEventListener('pointerdown',e=>{ e.preventDefault(); if(!ctx) return;
+      ctx.fillStyle='#FFFFFF'; ctx.fillRect(0,0,cw,chh); playSnd(SND.tap,0.5); });
+    bar.appendChild(clr);
+    setTimeout(setup,40);
+    setTimeout(()=>{ if(cv.dataset.ready!=='1') setup(); },300);
+    say('Draw a picture, '+NAME+'!');
+  }
+
   // ---------- navigation ----------
   function goFullscreen(){
     const el = document.documentElement;
@@ -659,6 +738,7 @@
     else if(m==='stars') startStars();
     else if(m==='eggs') startEggs();
     else if(m==='dig') startDig();
+    else if(m==='draw') startDraw();
   }
   function goHome(){
     clearTimers();

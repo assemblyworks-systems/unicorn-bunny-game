@@ -6,8 +6,8 @@ Project context and maintenance guide for Claude Code. Read this fully before ed
 
 A free, kid-friendly web app ("**Playbox**") for young children — two parts. Access is gated by a **profile name** (see "Profile gate" below); once entered, the app titles itself "**<Name>'s Playbox**" and the arcade speaks that child's name.
 
-- **`index.html`** — arcade mini-games (home page, `/`): Match It, Pop Balloons, Feed Bunny, Catch Stars, **Dino Eggs**, **Dino Dig**.
-- **`learn.html`** — learning games: Find It, A is for…, Trace It, Count It, Memory, Dot to Dot, Sort It, Shapes, **Count Dinos**. Dot to Dot also includes a **dinosaur** shape.
+- **`index.html`** — arcade mini-games (home page, `/`): Match It, Pop Balloons, Feed Bunny, Catch Stars, **Dino Eggs**, **Dino Dig**, **Draw**.
+- **`learn.html`** — learning games: Find It, A is for…, Trace It, **My Name**, Count It, Memory, Dot to Dot, Sort It, Shapes, **Count Dinos**. Dot to Dot also includes a **dinosaur** shape.
 
 The two pages cross-link (buttons on each home screen). Everything is **plain HTML/CSS/JS in single files** (no build step, no framework, no bundler). It's hosted on **GitHub Pages** and installed on devices as a **PWA** (Add to Home Screen).
 
@@ -144,6 +144,8 @@ games:
 - **Idle re-prompt (learn.html):** `armIdle(sayIt)` per round repeats the instruction after 15s of no taps, max 2 nudges; any `pointerdown` resets the timer; `stopIdle()` runs on `openMode`/`goHome`.
 - **Balloon color challenge (index.html):** after every 5 free pops, `setBalloonChallenge()` picks a color **currently on screen**, shows a `match-banner` + speaks `'Can you pop the <color> balloon?'`; the right color earns +2 and clears it; wrong colors still pop normally (no punishment). `spawnBalloon()` force-spawns the challenge color if it leaves the screen.
 - **Feed Bunny counting:** the first 10 carrots speak the running count (`say(String(score))`), then revert to yum lines.
+- **Draw (index.html):** free-draw canvas — 9 crayons (kid color words spoken on pick; hexes are canvas literals, mirroring the toy palette), 6 art stamps (name spoken on pick: cat/dog/butterfly/bunny/dinosaur/star), 🧽 clears. Single-pointer palm-proof like trace/dig; rect cached at `pointerdown`; no per-move sounds.
+- **My Name (learn.html):** `startName()` traces the profile's canonical first name (`FIRST`, set in `applyProfile`) letter by letter, with a `.nameBanner` progress strip (done=grass, current=grape pulse). Finishing the last letter triggers `fanfare()`+`confetti(30)`+`'You traced your name!'` then restarts. The name is **shown but never spoken** (learn.html has no per-name clips — keep it that way). Reuses the whole Trace It engine; `nameMode` flag is reset by `startTrace()`.
 
 ## Regenerating voice clips
 
