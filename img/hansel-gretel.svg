@@ -1,0 +1,53 @@
+<svg viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hansel and Gretel">
+  <ellipse cx="130" cy="206" rx="100" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- Hansel (left) -->
+  <g>
+    <rect x="52" y="150" width="14" height="48" rx="7" fill="#8B5E3C"></rect>
+    <rect x="80" y="150" width="14" height="48" rx="7" fill="#8B5E3C"></rect>
+    <ellipse cx="59" cy="202" rx="13" ry="7" fill="#43352F"></ellipse>
+    <ellipse cx="87" cy="202" rx="13" ry="7" fill="#43352F"></ellipse>
+    <path d="M73 96 L44 168 Q73 178 102 168 Z" fill="#2FC2B2"></path>
+    <rect x="58" y="92" width="30" height="30" rx="12" fill="#2FC2B2"></rect>
+    <path d="M56 116 Q40 130 38 146" stroke="#FFDFC2" stroke-width="10" stroke-linecap="round" fill="none"></path>
+    <path d="M90 116 Q106 130 108 146" stroke="#FFDFC2" stroke-width="10" stroke-linecap="round" fill="none"></path>
+    <circle cx="38" cy="146" r="6" fill="#FFDFC2"></circle>
+    <circle cx="108" cy="146" r="6" fill="#FFDFC2"></circle>
+    <circle cx="73" cy="66" r="32" fill="#FFDFC2"></circle>
+    <path d="M43 58 Q50 34 73 32 Q96 34 103 58 Q88 48 73 48 Q58 48 43 58 Z" fill="#7A4E33"></path>
+    <circle cx="62" cy="62" r="5" fill="#43352F"></circle>
+    <circle cx="84" cy="62" r="5" fill="#43352F"></circle>
+    <circle cx="63.7" cy="60.3" r="1.7" fill="#FFFFFF"></circle>
+    <circle cx="85.7" cy="60.3" r="1.7" fill="#FFFFFF"></circle>
+    <circle cx="53" cy="74" r="5.5" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="93" cy="74" r="5.5" fill="#FF8FB1" opacity="0.6"></circle>
+    <path d="M65 76 q8 9 16 0" stroke="#43352F" stroke-width="3" fill="none" stroke-linecap="round"></path>
+  </g>
+
+  <!-- Gretel (right) -->
+  <g>
+    <rect x="172" y="154" width="13" height="44" rx="6.5" fill="#FFDFC2"></rect>
+    <rect x="200" y="154" width="13" height="44" rx="6.5" fill="#FFDFC2"></rect>
+    <ellipse cx="178" cy="202" rx="13" ry="7" fill="#E24848"></ellipse>
+    <ellipse cx="207" cy="202" rx="13" ry="7" fill="#E24848"></ellipse>
+    <path d="M192 96 L158 170 Q192 182 226 170 Z" fill="#FF6B6B"></path>
+    <rect x="177" y="92" width="30" height="30" rx="12" fill="#FF6B6B"></rect>
+    <path d="M175 116 Q159 130 157 146" stroke="#FFDFC2" stroke-width="10" stroke-linecap="round" fill="none"></path>
+    <path d="M209 116 Q225 130 227 146" stroke="#FFDFC2" stroke-width="10" stroke-linecap="round" fill="none"></path>
+    <circle cx="157" cy="146" r="6" fill="#FFDFC2"></circle>
+    <circle cx="227" cy="146" r="6" fill="#FFDFC2"></circle>
+    <ellipse cx="160" cy="66" rx="12" ry="16" fill="#FFC93C" transform="rotate(14 160 66)"></ellipse>
+    <ellipse cx="224" cy="66" rx="12" ry="16" fill="#FFC93C" transform="rotate(-14 224 66)"></ellipse>
+    <circle cx="160" cy="52" r="5" fill="#FF8FB1"></circle>
+    <circle cx="224" cy="52" r="5" fill="#FF8FB1"></circle>
+    <circle cx="192" cy="66" r="32" fill="#FFDFC2"></circle>
+    <path d="M162 58 Q169 34 192 32 Q215 34 222 58 Q207 48 192 48 Q177 48 162 58 Z" fill="#FFC93C"></path>
+    <circle cx="181" cy="62" r="5" fill="#43352F"></circle>
+    <circle cx="203" cy="62" r="5" fill="#43352F"></circle>
+    <circle cx="182.7" cy="60.3" r="1.7" fill="#FFFFFF"></circle>
+    <circle cx="204.7" cy="60.3" r="1.7" fill="#FFFFFF"></circle>
+    <circle cx="172" cy="74" r="5.5" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="212" cy="74" r="5.5" fill="#FF8FB1" opacity="0.6"></circle>
+    <path d="M184 76 q8 9 16 0" stroke="#43352F" stroke-width="3" fill="none" stroke-linecap="round"></path>
+  </g>
+</svg>

@@ -156,6 +156,11 @@
   .stampBtn img{ width:34px; height:34px; }
   .stampBtn.sel{ outline:4px solid var(--color-grape); }
 
+  /* ===== Candy House trail ===== */
+  .cbadge{ position:absolute; top:-12px; right:-10px; min-width:26px; height:26px; padding:0 4px; border-radius:var(--radius-pill); background:var(--color-grape); color:var(--color-white); font-family:var(--font-display); font-weight:800; font-size:17px; display:flex; align-items:center; justify-content:center; z-index:2; }
+  .pulseC{ animation:cpulse 1s ease-in-out infinite; }
+  @keyframes cpulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.22)} }
+
   /* ===== Dino Dig ===== */
   #digWrap{ position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); width:min(80vw,440px); height:min(80vw,440px); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-pop); background:#E9D2A8; touch-action:none; }
   .digDino{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:190px; line-height:1; filter:drop-shadow(0 6px 6px var(--tint-ink)); }
@@ -202,6 +207,7 @@
       <button class="menu-btn t-tangerine" data-mode="dig"><span class="emo"><img src="img/rex-dino.svg" alt=""></span>Dino Dig</button>
       <button class="menu-btn t-grass" data-mode="draw"><span class="emo">🖍️</span>Draw</button>
       <button class="menu-btn t-bubblegum" data-mode="princess"><span class="emo">👸</span>Princess</button>
+      <button class="menu-btn t-tangerine" data-mode="candy"><span class="emo"><img src="img/candy-house.svg" alt=""></span>Candy House</button>
       <button class="menu-btn t-sky" data-mode="tardi"><span class="emo"><img src="img/tardi-gavin.svg" alt=""></span>Tardigrades</button>
     </div>
     <div class="homeRow">
@@ -945,6 +951,119 @@
     });
   }
 
+  // ---------- MODE: Candy House (gentle Hansel & Gretel story game) ----------
+  // 1) Follow the candy trail — tap candies in number order (counting practice).
+  // 2) Nibble the candy house — tap the candies off it.
+  // 3) The kind candy witch — tap her to share cookies. Loops. No scary bits.
+  function startCandy(){
+    say('Follow the candy trail, '+NAME+'!');
+    candyTrail();
+  }
+  function candyTrail(){
+    if(mode!=='candy') return;
+    play.innerHTML=''; app.style.background='var(--color-grass-soft)'; tardiLabel('🌲 The Forest');
+    const SPOTS=[[0.14,0.78],[0.34,0.64],[0.26,0.42],[0.50,0.30],[0.66,0.52],[0.82,0.34]];
+    const W=window.innerWidth, H=window.innerHeight;
+    let next=1;
+    SPOTS.forEach((p,i)=>{
+      const n=i+1;
+      const c=document.createElement('div'); c.className='critter'; c.textContent='🍬';
+      c.style.fontSize='64px';
+      c.style.left=Math.min(W-70,Math.max(6,p[0]*W-32))+'px';
+      c.style.top =Math.min(H-90,Math.max(120,p[1]*H-32))+'px';
+      const b=document.createElement('span'); b.className='cbadge'; b.textContent=n; c.appendChild(b);
+      if(n===1) c.classList.add('pulseC');
+      c.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(c.classList.contains('pop')) return;
+        if(n!==next){ bonk(); c.classList.add('shake'); c.addEventListener('animationend',()=>c.classList.remove('shake'),{once:true}); return; }
+        next++;
+        const r=c.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+        setScore(score+1); chime(); say(String(n));
+        c.classList.remove('pulseC'); c.classList.add('pop');
+        c.addEventListener('animationend',()=>c.remove(),{once:true});
+        play.querySelectorAll('.critter .cbadge').forEach(bd=>{ if(+bd.textContent===next) bd.parentElement.classList.add('pulseC'); });
+        if(n===SPOTS.length){
+          cheerText('🍬 A candy house!');
+          const t=setTimeout(()=>{ if(mode==='candy'){ say('You found the candy house!'); } }, 800); trackTimer(t);
+          const t2=setTimeout(candyHouse, 2600); trackTimer(t2);
+        }
+      });
+      play.appendChild(c);
+    });
+  }
+  function candyHouse(){
+    if(mode!=='candy') return;
+    play.innerHTML=''; app.style.background='var(--color-sunshine-soft)'; tardiLabel('🍬 Candy House');
+    const W=window.innerWidth, H=window.innerHeight;
+    const hsize=Math.min(W*0.62,320);
+    const hx=W/2-hsize/2, hy=H*0.52-hsize/2;
+    const house=document.createElement('div'); house.className='critter'; house.innerHTML=imgOf('candy-house.svg');
+    house.style.fontSize=hsize+'px'; house.style.left=hx+'px'; house.style.top=hy+'px';
+    play.appendChild(house);
+    say('Nibble the candy house!');
+    const YUMS=['Yum yum','Nom nom nom','Crunchy','Delicious'];
+    const CANDY=['🍬','🍭','🍪','🧁','🍩','🍬'];
+    const OFF=[[-0.08,0.18],[0.30,0.05],[0.72,0.18],[-0.02,0.62],[0.74,0.62],[0.36,0.86]];
+    let left=CANDY.length;
+    CANDY.forEach((emo,i)=>{
+      const c=document.createElement('div'); c.className='critter'; c.textContent=emo;
+      c.style.fontSize='54px';
+      c.style.left=(hx+OFF[i][0]*hsize)+'px';
+      c.style.top =(hy+OFF[i][1]*hsize)+'px';
+      c.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(c.classList.contains('pop')) return;
+        const r=c.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+        setScore(score+1); chime();
+        cheerText(pick(['Yum!','Nom nom!','Crunch!'])); say(pick(YUMS));
+        c.classList.add('pop'); c.addEventListener('animationend',()=>c.remove(),{once:true});
+        left--;
+        if(left<=0){ const t=setTimeout(candyWitch, 1400); trackTimer(t); }
+      });
+      play.appendChild(c);
+    });
+  }
+  function candyWitch(){
+    if(mode!=='candy') return;
+    play.innerHTML=''; app.style.background='var(--color-grape-soft)'; tardiLabel('💜 The Candy Witch');
+    const W=window.innerWidth, H=window.innerHeight;
+    const wsize=170;
+    const witch=document.createElement('div'); witch.className='critter'; witch.innerHTML=imgOf('candy-witch.svg');
+    witch.style.fontSize=wsize+'px';
+    witch.style.left=(W/2-wsize/2)+'px'; witch.style.top=(H*0.48-wsize/2)+'px';
+    play.appendChild(witch);
+    let bob=0;
+    function drift(){ if(!witch.isConnected) return; bob+=0.03; witch.style.transform='translateY('+Math.sin(bob)*7+'px)'; requestAnimationFrame(drift); }
+    requestAnimationFrame(drift);
+    say('Who is nibbling my house?');
+    let asked=false, done=false;
+    const t=setTimeout(()=>{
+      if(mode!=='candy'||done) return;
+      asked=true;
+      say('The candy witch is kind. Tap her to share!');
+      const banner=document.createElement('div'); banner.className='match-banner';
+      banner.innerHTML='Tap the witch! <span class="big">'+imgOf('candy-witch.svg')+'</span>';
+      play.appendChild(banner);
+    }, 3200); trackTimer(t);
+    witch.addEventListener('pointerdown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(done) return; done=true;
+      const ban=play.querySelector('.match-banner'); if(ban) ban.remove();
+      chime(); setScore(score+3);
+      const r=witch.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+      tardiFx(['💖','🍪','🍬','💕']);
+      cheerText('Cookies! 🍪');
+      say('Hooray! Cookies for everyone!');
+      const kids=document.createElement('div'); kids.className='critter'; kids.innerHTML=imgOf('hansel-gretel.svg');
+      kids.style.fontSize='130px';
+      kids.querySelector('img').style.width='154px';
+      kids.style.left=(W/2-wsize/2-160)+'px'; kids.style.top=(H*0.48-55)+'px';
+      play.appendChild(kids);
+      const t2=setTimeout(()=>{ if(mode==='candy') candyTrail(); }, 4200); trackTimer(t2);   // story loops
+    });
+  }
+
   // ---------- navigation ----------
   function goFullscreen(){
     const el = document.documentElement;
@@ -970,6 +1089,7 @@
     else if(m==='draw') startDraw();
     else if(m==='princess') startPrincess();
     else if(m==='tardi') startTardi();
+    else if(m==='candy') startCandy();
   }
   function goHome(){
     clearTimers();
@@ -1002,7 +1122,8 @@
   // Warm the image cache once idle → smoother first play + offline-ready (SW caches them).
   (function(){
     const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg','spot-cloud.svg','spot-rainbow.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg',
-      'tardi-trio.svg','spider-wolf.svg','tardi-gavin.svg','tardi-colin.svg','tardi-doug.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
+      'tardi-trio.svg','spider-wolf.svg','tardi-gavin.svg','tardi-colin.svg','tardi-doug.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg',
+      'candy-house.svg','candy-witch.svg','hansel-gretel.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
     if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
   })();

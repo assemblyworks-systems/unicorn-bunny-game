@@ -1,0 +1,43 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The candy house">
+  <ellipse cx="110" cy="204" rx="88" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- house body -->
+  <rect x="40" y="104" width="140" height="100" rx="10" fill="#A9714B"></rect>
+
+  <!-- roof with icing scallops -->
+  <path d="M30 110 L110 38 L190 110 Z" fill="#8B5E3C"></path>
+  <path d="M42 100 L110 40 L178 100 Q168 112 156 100 Q146 112 134 100 Q122 112 110 100 Q98 112 86 100 Q74 112 62 100 Q52 112 42 100 Z" fill="#FFFFFF"></path>
+
+  <!-- candy buttons on roof -->
+  <circle cx="86" cy="76" r="7" fill="#FF6B6B"></circle>
+  <circle cx="110" cy="62" r="7" fill="#45ADE8"></circle>
+  <circle cx="134" cy="76" r="7" fill="#5FC97B"></circle>
+
+  <!-- chimney lollipop -->
+  <rect x="152" y="30" width="7" height="56" rx="3.5" fill="#D9CFC4"></rect>
+  <circle cx="155.5" cy="24" r="13" fill="#FF8FB1"></circle>
+  <path d="M148 19 q7 -5 14 2 q-7 5 -14 -2" fill="#FFFFFF" opacity="0.8"></path>
+
+  <!-- door -->
+  <path d="M88 204 Q88 152 110 150 Q132 152 132 204 Z" fill="#7A4E33"></path>
+  <path d="M94 204 Q94 158 110 156 Q126 158 126 204 Z" fill="#E24848"></path>
+  <circle cx="120" cy="182" r="3.5" fill="#FFC93C"></circle>
+
+  <!-- windows with icing frames -->
+  <circle cx="64" cy="136" r="15" fill="#FFF3B0"></circle>
+  <circle cx="64" cy="136" r="15" fill="none" stroke="#FFFFFF" stroke-width="5"></circle>
+  <path d="M64 124 v24 M52 136 h24" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"></path>
+  <circle cx="156" cy="136" r="15" fill="#FFF3B0"></circle>
+  <circle cx="156" cy="136" r="15" fill="none" stroke="#FFFFFF" stroke-width="5"></circle>
+  <path d="M156 124 v24 M144 136 h24" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round"></path>
+
+  <!-- candy dots along the base -->
+  <circle cx="54" cy="192" r="6" fill="#FF8FB1"></circle>
+  <circle cx="72" cy="192" r="6" fill="#FFC93C"></circle>
+  <circle cx="148" cy="192" r="6" fill="#5FC97B"></circle>
+  <circle cx="166" cy="192" r="6" fill="#45ADE8"></circle>
+
+  <!-- candy cane by the door -->
+  <path d="M56 200 v-26 q0 -12 12 -12" stroke="#E24848" stroke-width="8" fill="none" stroke-linecap="round"></path>
+  <path d="M52 192 h8 M52 180 h8" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"></path>
+</svg>

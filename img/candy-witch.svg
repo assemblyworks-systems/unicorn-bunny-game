@@ -1,0 +1,40 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The kind candy witch">
+  <ellipse cx="110" cy="206" rx="66" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- dress -->
+  <path d="M110 108 L64 196 Q110 210 156 196 Z" fill="#9B5DE5"></path>
+  <ellipse cx="88" cy="200" rx="12" ry="7" fill="#7838C9"></ellipse>
+  <ellipse cx="132" cy="200" rx="12" ry="7" fill="#7838C9"></ellipse>
+  <rect x="94" y="100" width="32" height="30" rx="12" fill="#9B5DE5"></rect>
+  <!-- candy buttons -->
+  <circle cx="110" cy="140" r="5" fill="#FF8FB1"></circle>
+  <circle cx="110" cy="158" r="5" fill="#FFC93C"></circle>
+  <circle cx="110" cy="176" r="5" fill="#2FC2B2"></circle>
+
+  <!-- arms: one waving, one holding a cookie -->
+  <path d="M96 116 Q72 128 64 148" stroke="#FFDFC2" stroke-width="10" stroke-linecap="round" fill="none"></path>
+  <path d="M124 116 Q148 122 158 106" stroke="#FFDFC2" stroke-width="10" stroke-linecap="round" fill="none"></path>
+  <circle cx="64" cy="148" r="6.5" fill="#FFDFC2"></circle>
+  <circle cx="158" cy="106" r="6.5" fill="#FFDFC2"></circle>
+  <circle cx="166" cy="96" r="13" fill="#C68B59"></circle>
+  <circle cx="161" cy="92" r="2.5" fill="#5E3A24"></circle>
+  <circle cx="170" cy="99" r="2.5" fill="#5E3A24"></circle>
+  <circle cx="166" cy="90" r="2" fill="#5E3A24"></circle>
+
+  <!-- head -->
+  <circle cx="110" cy="74" r="36" fill="#FFDFC2"></circle>
+  <!-- white granny bun -->
+  <path d="M79 58 A36 36 0 0 1 141 58" fill="none" stroke="#FFFFFF" stroke-width="14" stroke-linecap="round"></path>
+  <circle cx="110" cy="33" r="11" fill="#FFFFFF"></circle>
+  <!-- round glasses -->
+  <circle cx="97" cy="72" r="9.5" fill="none" stroke="#43352F" stroke-width="3"></circle>
+  <circle cx="123" cy="72" r="9.5" fill="none" stroke="#43352F" stroke-width="3"></circle>
+  <path d="M106.5 72 h7" stroke="#43352F" stroke-width="3" stroke-linecap="round"></path>
+  <circle cx="97" cy="72" r="4" fill="#43352F"></circle>
+  <circle cx="123" cy="72" r="4" fill="#43352F"></circle>
+  <circle cx="98.4" cy="70.6" r="1.4" fill="#FFFFFF"></circle>
+  <circle cx="124.4" cy="70.6" r="1.4" fill="#FFFFFF"></circle>
+  <circle cx="86" cy="86" r="6" fill="#FF8FB1" opacity="0.6"></circle>
+  <circle cx="134" cy="86" r="6" fill="#FF8FB1" opacity="0.6"></circle>
+  <path d="M100 88 q10 10 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+</svg>

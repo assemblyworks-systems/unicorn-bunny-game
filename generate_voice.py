@@ -141,6 +141,27 @@ TARDI_BOOK = ['The Three Little Tardigrades',
  'They all became friends. The end.']
 for s in TARDI_BOOK: add(s)
 
+# ===== Candy House (arcade Hansel & Gretel story game, index.html) =====
+for nm in NAMES: add('Follow the candy trail, '+nm+'!')
+add('You found the candy house!')
+add('Nibble the candy house!')
+add('Who is nibbling my house?')
+add('The candy witch is kind. Tap her to share!')
+add('Hooray! Cookies for everyone!')
+# Hansel and Gretel book (learn.html BOOKS — gentle retelling, mirror exactly)
+HG_BOOK = ['Hansel and Gretel',
+ 'Hansel and Gretel went walking in the big forest.',
+ 'They dropped shiny pebbles to find the way home.',
+ 'They found a house made of candy!',
+ 'Nibble, nibble! Yum yum yum!',
+ 'Out came the candy witch. Who is nibbling my house?',
+ 'We are sorry! We were so hungry.',
+ 'The kind witch smiled. Let us share!',
+ 'They ate cookies and cocoa together.',
+ 'The shiny pebbles showed the way home.',
+ 'Home sweet home. The end.']
+for s in HG_BOOK: add(s)
+
 byslug = {}
 for t in phrases:
     s = slug(t)

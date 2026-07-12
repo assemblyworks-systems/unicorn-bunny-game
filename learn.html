@@ -808,7 +808,19 @@
       ['tardi-colin-ball.svg','Colin curled into a ball. Too cold for the spider!'],
       ['tardi-doug-ball.svg','Doug curled into a ball. Too floaty for the spider!'],
       ['spider-wolf.svg','The spider was not scary. He was just lonely.'],
-      ['tardi-trio.svg','They all became friends. The end.']]}
+      ['tardi-trio.svg','They all became friends. The end.']]},
+    // Gentle age-3 retelling of the Grimm tale (public domain) — kind witch, no scary bits
+    {title:'Hansel and Gretel', cover:'hansel-gretel.svg', pages:[
+      ['hansel-gretel.svg','Hansel and Gretel went walking in the big forest.'],
+      ['spot-star.svg','They dropped shiny pebbles to find the way home.'],
+      ['candy-house.svg','They found a house made of candy!'],
+      ['hansel-gretel.svg','Nibble, nibble! Yum yum yum!'],
+      ['candy-witch.svg','Out came the candy witch. Who is nibbling my house?'],
+      ['hansel-gretel.svg','We are sorry! We were so hungry.'],
+      ['candy-witch.svg','The kind witch smiled. Let us share!'],
+      ['candy-house.svg','They ate cookies and cocoa together.'],
+      ['spot-star.svg','The shiny pebbles showed the way home.'],
+      ['hansel-gretel.svg','Home sweet home. The end.']]}
   ];
   function startBooks(){ showShelf(); }
   function showShelf(){
@@ -862,7 +874,8 @@
   // Warm the image cache once idle → smoother first play + offline-ready (SW caches them).
   (function(){
     const list=[...OBJ,...DINO_OBJ,'rex-dino.svg','mascot-boxy.svg','hop-bunny.svg','spot-cloud.svg','spot-rainbow.svg','star-pink.svg',
-      'tardi-trio.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg','spider-wolf.svg','spot-volcano.svg','spot-icecave.svg'].concat(UPPER.map(abcFile));
+      'tardi-trio.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg','spider-wolf.svg','spot-volcano.svg','spot-icecave.svg',
+      'hansel-gretel.svg','candy-house.svg','candy-witch.svg','spot-star.svg'].concat(UPPER.map(abcFile));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
     if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
   })();
