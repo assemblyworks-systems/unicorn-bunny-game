@@ -1,0 +1,17 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Doug curled into a ball">
+  <ellipse cx="110" cy="196" rx="60" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <circle cx="110" cy="118" r="66" fill="#9B5DE5"></circle>
+  <path d="M52 96 q58 -32 116 0" stroke="#7838C9" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+  <path d="M48 130 q62 26 124 0" stroke="#7838C9" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+
+  <ellipse cx="76" cy="172" rx="12" ry="9" fill="#7838C9"></ellipse>
+  <ellipse cx="110" cy="180" rx="12" ry="9" fill="#7838C9"></ellipse>
+  <ellipse cx="144" cy="172" rx="12" ry="9" fill="#7838C9"></ellipse>
+
+  <circle cx="78" cy="122" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+  <circle cx="142" cy="122" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+  <path d="M86 106 q8 8 16 0" stroke="#43352F" stroke-width="4" fill="none" stroke-linecap="round"></path>
+  <path d="M118 106 q8 8 16 0" stroke="#43352F" stroke-width="4" fill="none" stroke-linecap="round"></path>
+  <path d="M100 124 q10 10 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+</svg>

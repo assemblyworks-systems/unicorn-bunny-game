@@ -1,0 +1,18 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A cold ice cave">
+  <ellipse cx="110" cy="196" rx="94" ry="12" fill="#CDEAFA"></ellipse>
+
+  <!-- ice dome -->
+  <path d="M26 192 Q26 78 110 66 Q194 78 194 192 Z" fill="#45ADE8"></path>
+  <ellipse cx="110" cy="76" rx="50" ry="15" fill="#FFFFFF"></ellipse>
+
+  <!-- cave opening with icicles -->
+  <path d="M72 192 Q72 118 110 112 Q148 118 148 192 Z" fill="#2A88C2"></path>
+  <path d="M86 120 l7 20 7 -20 Z" fill="#FFFFFF"></path>
+  <path d="M104 116 l7 28 7 -28 Z" fill="#FFFFFF"></path>
+  <path d="M122 120 l7 18 7 -18 Z" fill="#FFFFFF"></path>
+
+  <!-- sparkles -->
+  <path d="M48 130 l5 9 -5 9 -5 -9 Z" fill="#FFFFFF" opacity="0.9"></path>
+  <path d="M172 148 l5 9 -5 9 -5 -9 Z" fill="#FFFFFF" opacity="0.9"></path>
+  <path d="M160 96 l4 7 -4 7 -4 -7 Z" fill="#CDEAFA"></path>
+</svg>

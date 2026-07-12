@@ -202,6 +202,7 @@
       <button class="menu-btn t-tangerine" data-mode="dig"><span class="emo"><img src="img/rex-dino.svg" alt=""></span>Dino Dig</button>
       <button class="menu-btn t-grass" data-mode="draw"><span class="emo">🖍️</span>Draw</button>
       <button class="menu-btn t-bubblegum" data-mode="princess"><span class="emo">👸</span>Princess</button>
+      <button class="menu-btn t-sky" data-mode="tardi"><span class="emo"><img src="img/tardi-gavin.svg" alt=""></span>Tardigrades</button>
     </div>
     <div class="homeRow">
       <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
@@ -806,6 +807,144 @@
     say('Draw a picture, '+NAME+'!');
   }
 
+  // ---------- MODE: Tardigrades (story game from "The Three Little Tardigrades") ----------
+  // Three homes in sequence. The wolf spider creeps in; tapping the tardigrade tucks it
+  // into a ball, the extreme home chases the spider off. Ends with the friendship finale.
+  const TARDI_HOMES=[
+    {who:'Gavin', img:'tardi-gavin.svg', ball:'tardi-gavin-ball.svg', bg:'var(--color-coral-soft)',  label:'🌋 Hot Volcano', intro:'Gavin lives in a hot volcano.',  winLine:'Too hot for the spider!',    fx:['🔥','☀️','💥','🌋']},
+    {who:'Colin', img:'tardi-colin.svg', ball:'tardi-colin-ball.svg', bg:'var(--color-sky-soft)',    label:'❄️ Ice Cave',    intro:'Colin lives in a cold ice cave.', winLine:'Too cold for the spider!',   fx:['❄️','🧊','✨','☃️']},
+    {who:'Doug',  img:'tardi-doug.svg',  ball:'tardi-doug-ball.svg',  bg:'var(--color-grape-soft)',  label:'🌙 The Moon',    intro:'Doug lives on the moon.',        winLine:'Too floaty for the spider!', fx:['⭐','🌙','✨','💫']}
+  ];
+  function tardiLabel(text){
+    let lbl=document.querySelector('.scene-label');
+    if(!lbl){ lbl=document.createElement('div'); lbl.className='scene-label'; document.body.appendChild(lbl); }
+    lbl.textContent=text;
+  }
+  function tardiFx(set){
+    for(let i=0;i<10;i++){
+      const s=document.createElement('div'); s.className='spark'; s.textContent=pick(set);
+      s.style.fontSize=rnd(30,52)+'px';
+      s.style.left=rnd(10,window.innerWidth-50)+'px';
+      s.style.top=rnd(120,window.innerHeight-140)+'px';
+      s.style.setProperty('--dx',rnd(-70,70)+'px');
+      s.style.setProperty('--dy',rnd(-90,-20)+'px');
+      play.appendChild(s);
+      s.addEventListener('animationend',()=>s.remove(),{once:true});
+    }
+  }
+  function startTardi(){
+    say('Help the three little tardigrades, '+NAME+'!');
+    const t=setTimeout(()=>tardiHome(0), 2400); trackTimer(t);
+    tardiLabel('🏠 Three Little Tardigrades');
+    app.style.background='var(--color-grass-soft)';
+    play.innerHTML='';
+    const trio=document.createElement('div'); trio.className='critter'; trio.innerHTML=imgOf('tardi-trio.svg');
+    trio.style.fontSize='200px';
+    trio.style.left='calc(50% - 145px)'; trio.style.top='calc(45% - 70px)';
+    trio.querySelector('img').style.width='290px';
+    play.appendChild(trio);
+  }
+  function tardiHome(i){
+    if(mode!=='tardi') return;
+    if(i>=TARDI_HOMES.length){ tardiFinale(); return; }
+    const h=TARDI_HOMES[i];
+    play.innerHTML=''; app.style.background=h.bg; tardiLabel(h.label);
+    const size=150;
+    const tx=window.innerWidth/2-size/2, ty=window.innerHeight*0.52-size/2;
+    const tardi=document.createElement('div'); tardi.className='critter'; tardi.innerHTML=imgOf(h.img);
+    tardi.style.fontSize=size+'px'; tardi.style.left=tx+'px'; tardi.style.top=ty+'px';
+    play.appendChild(tardi);
+    let bob=Math.random()*6;
+    function drift(){ if(!tardi.isConnected) return; bob+=0.03; tardi.style.transform='translateY('+Math.sin(bob)*8+'px)'; requestAnimationFrame(drift); }
+    requestAnimationFrame(drift);
+    say(h.intro);
+    let tucked=false, spider=null, sx=0, sdir=1;
+    const t=setTimeout(spawnSpider, 3000); trackTimer(t);
+    function spawnSpider(){
+      if(mode!=='tardi'||tucked) return;
+      sdir = Math.random()<0.5 ? 1 : -1;                    // 1 = enters from the left
+      spider=document.createElement('div'); spider.className='critter'; spider.innerHTML=imgOf('spider-wolf.svg');
+      const ssize=120; spider.style.fontSize=ssize+'px';
+      sx = sdir===1 ? -ssize : window.innerWidth;
+      spider.style.left=sx+'px'; spider.style.top=(ty+10)+'px';
+      play.appendChild(spider);
+      say('Here comes the big hairy wolf spider! Tap '+h.who+'!');
+      const banner=document.createElement('div'); banner.className='match-banner';
+      banner.innerHTML='Tap <b>'+h.who+'</b>! <span class="big">'+imgOf(h.img)+'</span>';
+      play.appendChild(banner);
+      const stopAt = sdir===1 ? tx-140 : tx+size+20;        // creep up to the tardigrade, then wait
+      const id=setInterval(()=>{
+        if(mode!=='tardi'||!spider.isConnected||tucked){ clearInterval(id); return; }
+        if((sdir===1&&sx<stopAt)||(sdir===-1&&sx>stopAt)){ sx+=sdir*1.3; spider.style.left=sx+'px'; }
+        spider.style.transform='translateY('+Math.sin(Date.now()/300)*6+'px)';
+      },16); trackTimer(id);
+      spider.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(tucked) return;
+        bonk(); say('Not that one');
+        spider.classList.add('shake');
+        spider.addEventListener('animationend',()=>spider.classList.remove('shake'),{once:true});
+      });
+    }
+    tardi.addEventListener('pointerdown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(tucked) return; tucked=true;
+      const ban=play.querySelector('.match-banner'); if(ban) ban.remove();
+      tardi.innerHTML=imgOf(h.ball); chime();
+      const r=tardi.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+      const t1=setTimeout(()=>{
+        if(mode!=='tardi') return;
+        tardiFx(h.fx); say(h.winLine); cheerText(h.winLine); setScore(score+1);
+        if(spider&&spider.isConnected){                      // spider flees the way it came
+          const id=setInterval(()=>{
+            if(!spider.isConnected){ clearInterval(id); return; }
+            sx-=sdir*16; spider.style.left=sx+'px';
+            spider.style.transform='rotate('+(sdir*-18)+'deg) scaleX('+(-sdir)+')';
+            if(sx<-200||sx>window.innerWidth+200){ clearInterval(id); spider.remove(); }
+          },16); trackTimer(id);
+        }
+      }, 500); trackTimer(t1);
+      const t2=setTimeout(()=>{ if(mode!=='tardi') return; tardi.innerHTML=imgOf(h.img); }, 2600); trackTimer(t2);
+      const t3=setTimeout(()=>tardiHome(i+1), 3600); trackTimer(t3);
+    });
+  }
+  function tardiFinale(){
+    if(mode!=='tardi') return;
+    play.innerHTML=''; app.style.background='var(--color-bubblegum-soft)'; tardiLabel('💖 New Friends');
+    const ssize=150;
+    const spider=document.createElement('div'); spider.className='critter'; spider.innerHTML=imgOf('spider-wolf.svg');
+    spider.style.fontSize=ssize+'px';
+    spider.style.left=(window.innerWidth/2-ssize/2)+'px'; spider.style.top=(window.innerHeight*0.48-ssize/2)+'px';
+    play.appendChild(spider);
+    const tear=document.createElement('div'); tear.className='critter'; tear.textContent='💧';
+    tear.style.fontSize='34px';
+    tear.style.left=(window.innerWidth/2+ssize/2-20)+'px'; tear.style.top=(window.innerHeight*0.48-ssize/2+30)+'px';
+    play.appendChild(tear);
+    say('The spider is just lonely. Tap the spider to be his friend!');
+    const banner=document.createElement('div'); banner.className='match-banner';
+    banner.innerHTML='Tap the spider! <span class="big">'+imgOf('spider-wolf.svg')+'</span>';
+    play.appendChild(banner);
+    let done=false;
+    spider.addEventListener('pointerdown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(done) return; done=true;
+      tear.remove(); banner.remove();
+      chime(); setScore(score+3);
+      const r=spider.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+      tardiFx(['💖','💕','💗','🌸']);
+      cheerText('Friends! 💖');
+      say('Hooray! Friends! Tardigrades can live anywhere!');
+      TARDI_HOMES.forEach((h,k)=>{
+        const f=document.createElement('div'); f.className='critter'; f.innerHTML=imgOf(h.img);
+        f.style.fontSize='96px';
+        f.style.left=(window.innerWidth/2-48+(k-1)*130)+'px';
+        f.style.top=(window.innerHeight*0.48+70)+'px';
+        play.appendChild(f);
+      });
+      const t=setTimeout(()=>tardiHome(0), 4200); trackTimer(t);   // story loops
+    });
+  }
+
   // ---------- navigation ----------
   function goFullscreen(){
     const el = document.documentElement;
@@ -830,6 +969,7 @@
     else if(m==='dig') startDig();
     else if(m==='draw') startDraw();
     else if(m==='princess') startPrincess();
+    else if(m==='tardi') startTardi();
   }
   function goHome(){
     clearTimers();
@@ -861,7 +1001,8 @@
 
   // Warm the image cache once idle → smoother first play + offline-ready (SW caches them).
   (function(){
-    const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg','spot-cloud.svg','spot-rainbow.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
+    const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg','spot-cloud.svg','spot-rainbow.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg',
+      'tardi-trio.svg','spider-wolf.svg','tardi-gavin.svg','tardi-colin.svg','tardi-doug.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
     if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
   })();

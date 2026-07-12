@@ -1,0 +1,60 @@
+<svg viewBox="0 0 320 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The three little tardigrades">
+  <ellipse cx="160" cy="204" rx="130" ry="10" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- Gavin (left, tangerine) -->
+  <g transform="translate(2 62) scale(0.62)">
+    <ellipse cx="70" cy="186" rx="11" ry="17" fill="#FF924C"></ellipse>
+    <ellipse cx="97" cy="190" rx="11" ry="17" fill="#FF924C"></ellipse>
+    <ellipse cx="123" cy="190" rx="11" ry="17" fill="#FF924C"></ellipse>
+    <ellipse cx="150" cy="186" rx="11" ry="17" fill="#FF924C"></ellipse>
+    <ellipse cx="110" cy="130" rx="62" ry="52" fill="#FF924C"></ellipse>
+    <path d="M62 146 q48 18 96 0" stroke="#E26E26" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+    <ellipse cx="110" cy="148" rx="32" ry="22" fill="#FFE0CB"></ellipse>
+    <circle cx="110" cy="80" r="42" fill="#FF924C"></circle>
+    <circle cx="80" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="140" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="95" cy="74" r="7.5" fill="#43352F"></circle>
+    <circle cx="125" cy="74" r="7.5" fill="#43352F"></circle>
+    <circle cx="97.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+    <circle cx="127.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+    <path d="M100 90 q10 11 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+  </g>
+
+  <!-- Colin (middle, sky, a bit taller) -->
+  <g transform="translate(85 38) scale(0.68)">
+    <ellipse cx="70" cy="186" rx="11" ry="17" fill="#45ADE8"></ellipse>
+    <ellipse cx="97" cy="190" rx="11" ry="17" fill="#45ADE8"></ellipse>
+    <ellipse cx="123" cy="190" rx="11" ry="17" fill="#45ADE8"></ellipse>
+    <ellipse cx="150" cy="186" rx="11" ry="17" fill="#45ADE8"></ellipse>
+    <ellipse cx="110" cy="130" rx="62" ry="52" fill="#45ADE8"></ellipse>
+    <path d="M62 146 q48 18 96 0" stroke="#2A88C2" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+    <ellipse cx="110" cy="148" rx="32" ry="22" fill="#CDEAFA"></ellipse>
+    <circle cx="110" cy="80" r="42" fill="#45ADE8"></circle>
+    <circle cx="80" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="140" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="95" cy="74" r="7.5" fill="#43352F"></circle>
+    <circle cx="125" cy="74" r="7.5" fill="#43352F"></circle>
+    <circle cx="97.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+    <circle cx="127.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+    <path d="M100 90 q10 11 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+  </g>
+
+  <!-- Doug (right, grape) -->
+  <g transform="translate(180 62) scale(0.62)">
+    <ellipse cx="70" cy="186" rx="11" ry="17" fill="#9B5DE5"></ellipse>
+    <ellipse cx="97" cy="190" rx="11" ry="17" fill="#9B5DE5"></ellipse>
+    <ellipse cx="123" cy="190" rx="11" ry="17" fill="#9B5DE5"></ellipse>
+    <ellipse cx="150" cy="186" rx="11" ry="17" fill="#9B5DE5"></ellipse>
+    <ellipse cx="110" cy="130" rx="62" ry="52" fill="#9B5DE5"></ellipse>
+    <path d="M62 146 q48 18 96 0" stroke="#7838C9" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+    <ellipse cx="110" cy="148" rx="32" ry="22" fill="#E7D6FB"></ellipse>
+    <circle cx="110" cy="80" r="42" fill="#9B5DE5"></circle>
+    <circle cx="80" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="140" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+    <circle cx="95" cy="74" r="7.5" fill="#43352F"></circle>
+    <circle cx="125" cy="74" r="7.5" fill="#43352F"></circle>
+    <circle cx="97.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+    <circle cx="127.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+    <path d="M100 90 q10 11 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+  </g>
+</svg>

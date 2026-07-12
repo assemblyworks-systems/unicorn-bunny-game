@@ -1,0 +1,39 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The big hairy wolf spider (friendly)">
+  <ellipse cx="110" cy="206" rx="72" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- legs (4 each side) -->
+  <path d="M88 126 Q48 108 34 72" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M84 140 Q40 134 22 102" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M84 154 Q42 166 28 198" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M92 166 Q64 190 58 208" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M132 126 Q172 108 186 72" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M136 140 Q180 134 198 102" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M136 154 Q178 166 192 198" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+  <path d="M128 166 Q156 190 162 208" stroke="#7A4E33" stroke-width="11" fill="none" stroke-linecap="round"></path>
+
+  <!-- fuzzy abdomen -->
+  <circle cx="72" cy="136" r="12" fill="#8B5E3C"></circle>
+  <circle cx="148" cy="136" r="12" fill="#8B5E3C"></circle>
+  <circle cx="82" cy="176" r="12" fill="#8B5E3C"></circle>
+  <circle cx="138" cy="176" r="12" fill="#8B5E3C"></circle>
+  <circle cx="110" cy="186" r="12" fill="#8B5E3C"></circle>
+  <ellipse cx="110" cy="150" rx="48" ry="42" fill="#8B5E3C"></ellipse>
+  <ellipse cx="110" cy="160" rx="26" ry="20" fill="#A9714B"></ellipse>
+
+  <!-- head with big friendly wolf-spider eyes -->
+  <circle cx="88" cy="62" r="7" fill="#A9714B"></circle>
+  <circle cx="110" cy="58" r="7" fill="#A9714B"></circle>
+  <circle cx="132" cy="62" r="7" fill="#A9714B"></circle>
+  <circle cx="110" cy="94" r="38" fill="#A9714B"></circle>
+  <circle cx="86" cy="72" r="4.5" fill="#43352F"></circle>
+  <circle cx="134" cy="72" r="4.5" fill="#43352F"></circle>
+  <circle cx="87.5" cy="70.5" r="1.5" fill="#FFFFFF"></circle>
+  <circle cx="135.5" cy="70.5" r="1.5" fill="#FFFFFF"></circle>
+  <circle cx="96" cy="90" r="9" fill="#43352F"></circle>
+  <circle cx="124" cy="90" r="9" fill="#43352F"></circle>
+  <circle cx="99" cy="87" r="3" fill="#FFFFFF"></circle>
+  <circle cx="127" cy="87" r="3" fill="#FFFFFF"></circle>
+  <circle cx="80" cy="104" r="7.5" fill="#FF8FB1" opacity="0.6"></circle>
+  <circle cx="140" cy="104" r="7.5" fill="#FF8FB1" opacity="0.6"></circle>
+  <path d="M100 106 q10 10 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+</svg>

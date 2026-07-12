@@ -118,6 +118,29 @@ for d in DINO_SPOKEN:
     add('You found '+a.lower()+d+'!') # Dino Dig reveal line
 add('You found a fossil!')
 
+# ===== Tardigrades (arcade story game, index.html) =====
+for nm in NAMES: add('Help the three little tardigrades, '+nm+'!')
+for who, intro, winl in [
+    ('Gavin', 'Gavin lives in a hot volcano.',  'Too hot for the spider!'),
+    ('Colin', 'Colin lives in a cold ice cave.','Too cold for the spider!'),
+    ('Doug',  'Doug lives on the moon.',        'Too floaty for the spider!')]:
+    add(intro)
+    add('Here comes the big hairy wolf spider! Tap '+who+'!')
+    add(winl)
+add('The spider is just lonely. Tap the spider to be his friend!')
+add('Hooray! Friends! Tardigrades can live anywhere!')
+# The Three Little Tardigrades book (learn.html BOOKS — original retelling, mirror exactly)
+TARDI_BOOK = ['The Three Little Tardigrades',
+ 'Three little tardigrades went to find new homes.',
+ 'Gavin picked a hot volcano.','Colin picked a cold ice cave.','Doug picked the moon.',
+ 'Along came the big hairy wolf spider!',
+ 'Gavin curled into a ball. Too hot for the spider!',
+ 'Colin curled into a ball. Too cold for the spider!',
+ 'Doug curled into a ball. Too floaty for the spider!',
+ 'The spider was not scary. He was just lonely.',
+ 'They all became friends. The end.']
+for s in TARDI_BOOK: add(s)
+
 byslug = {}
 for t in phrases:
     s = slug(t)

@@ -1,0 +1,24 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Colin the tardigrade">
+  <ellipse cx="110" cy="202" rx="58" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <ellipse cx="46" cy="140" rx="12" ry="18" fill="#45ADE8" transform="rotate(28 46 140)"></ellipse>
+  <ellipse cx="174" cy="140" rx="12" ry="18" fill="#45ADE8" transform="rotate(-28 174 140)"></ellipse>
+  <ellipse cx="70" cy="186" rx="11" ry="17" fill="#45ADE8"></ellipse>
+  <ellipse cx="97" cy="190" rx="11" ry="17" fill="#45ADE8"></ellipse>
+  <ellipse cx="123" cy="190" rx="11" ry="17" fill="#45ADE8"></ellipse>
+  <ellipse cx="150" cy="186" rx="11" ry="17" fill="#45ADE8"></ellipse>
+
+  <ellipse cx="110" cy="130" rx="62" ry="52" fill="#45ADE8"></ellipse>
+  <path d="M56 116 q54 22 108 0" stroke="#2A88C2" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+  <path d="M62 146 q48 18 96 0" stroke="#2A88C2" stroke-width="4" fill="none" stroke-linecap="round" opacity="0.45"></path>
+  <ellipse cx="110" cy="146" rx="34" ry="24" fill="#CDEAFA"></ellipse>
+
+  <circle cx="110" cy="80" r="42" fill="#45ADE8"></circle>
+  <circle cx="80" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+  <circle cx="140" cy="90" r="8" fill="#FF8FB1" opacity="0.6"></circle>
+  <circle cx="95" cy="74" r="7.5" fill="#43352F"></circle>
+  <circle cx="125" cy="74" r="7.5" fill="#43352F"></circle>
+  <circle cx="97.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+  <circle cx="127.5" cy="71.5" r="2.4" fill="#FFFFFF"></circle>
+  <path d="M100 90 q10 11 20 0" stroke="#43352F" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+</svg>
