@@ -17,6 +17,12 @@ VOICE = "en-US-JennyNeural"
 RATE  = "-8%"
 PITCH = "+8Hz"
 
+# Chinese voice for the 拔萝卜 (Pull the Radish) arcade game.
+# zh-CN-XiaoxiaoNeural = warm, clear Mandarin woman (zh-CN-XiaoyiNeural is younger/lighter).
+ZH_VOICE = "zh-CN-XiaoxiaoNeural"
+ZH_RATE  = "-6%"
+ZH_PITCH = "+6Hz"
+
 import os, re, asyncio, sys
 
 def slug(t):
@@ -172,16 +178,36 @@ add('A hungry wolf! He looks sad.')
 add('Share your bread with the wolf. Tap him!')
 add('You shared! Now everyone is friends!')
 
-byslug = {}
+# ===== 拔萝卜 Pull the Radish (arcade story game, index.html) — Chinese (Xiaoxiao) =====
+# These clips are keyed explicitly (Chinese text can't be slugified) and spoken with ZH_VOICE.
+# The JS plays them via sayKey('<key>'). R_ADD / R_SUB MUST match the pools in index.html.
+zh_clips = {}
+def addzh(key, text): zh_clips[key] = text
+ZNUM = ['一','二','三','四','五','六','七','八','九','十']
+for i, w in enumerate(ZNUM, 1): addzh('zh_'+str(i), w)   # running count 1-10
+addzh('zh_intro',   '我们一起来拔萝卜！')
+addzh('zh_win',     '耶！拔出来啦！')
+addzh('zh_fewer',   '还不够，再加人！')
+addzh('zh_toomany', '太多啦，哈哈！再试一次！')
+addzh('zh_hint',    '数一数，等于几？')
+R_ADD = [(1,1),(2,1),(1,2),(2,2),(3,1),(1,3),(3,2),(2,3),(4,1),(1,4),(4,2),(3,3),(5,1)]
+R_SUB = [(3,1),(4,1),(4,2),(5,1),(5,2),(5,3),(6,2),(6,1),(6,3)]
+for a, b in R_ADD: addzh('zh_eq_'+str(a)+'_plus_'+str(b),  ZNUM[a-1]+'加'+ZNUM[b-1]+'，等于几？')
+for a, b in R_SUB: addzh('zh_eq_'+str(a)+'_minus_'+str(b), ZNUM[a-1]+'减'+ZNUM[b-1]+'，等于几？')
+
+# Build the work list: English phrases (slugified, VOICE) + Chinese clips (explicit key, ZH_VOICE).
+byslug = {}   # slug/key -> (text, voice, rate, pitch)
 for t in phrases:
     s = slug(t)
     if s and s not in byslug:
-        byslug[s] = t
+        byslug[s] = (t, VOICE, RATE, PITCH)
+for k, t in zh_clips.items():
+    byslug[k] = (t, ZH_VOICE, ZH_RATE, ZH_PITCH)
 
 print("Distinct clips:", len(byslug))
 
 if os.environ.get("DRYRUN") == "1":
-    for s in sorted(byslug): print(s, "  <-  ", byslug[s])
+    for s in sorted(byslug): print(s, "  <-  ", byslug[s][0])
     sys.exit(0)
 
 try:
@@ -192,14 +218,14 @@ except ImportError:
 
 os.makedirs("voice", exist_ok=True)
 
-async def one(s, text):
+async def one(s, text, voice, rate, pitch):
     path = os.path.join("voice", s + ".mp3")
     if os.path.exists(path) and os.path.getsize(path) > 0:
         return True
     last = None
     for attempt in range(5):
         try:
-            c = edge_tts.Communicate(text, VOICE, rate=RATE, pitch=PITCH)
+            c = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
             await c.save(path)
             if os.path.exists(path) and os.path.getsize(path) > 0:
                 return True
@@ -217,8 +243,8 @@ async def one(s, text):
 async def main():
     items = list(byslug.items())
     ok = 0
-    for i, (s, text) in enumerate(items, 1):
-        if await one(s, text):
+    for i, (s, (text, voice, rate, pitch)) in enumerate(items, 1):
+        if await one(s, text, voice, rate, pitch):
             ok += 1
         await asyncio.sleep(0.4)
         if i % 20 == 0:

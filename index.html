@@ -169,6 +169,36 @@
   @keyframes digpop{ 0%{transform:scale(.6)} 55%{transform:scale(1.18)} 100%{transform:scale(1)} }
   #digCanvas{ position:absolute; inset:0; width:100%; height:100%; touch-action:none; }
   .digHint{ position:absolute; bottom:10px; left:50%; transform:translateX(-50%); z-index:5; background:var(--color-white); color:var(--text-muted); font-family:var(--font-display); font-size:17px; font-weight:700; padding:6px 16px; border-radius:var(--radius-pill); pointer-events:none; white-space:nowrap; }
+
+  /* ===== 拔萝卜 Pull the Radish ===== */
+  .radishBig{ position:absolute; z-index:6; filter:drop-shadow(0 6px 6px var(--tint-ink)); }
+  .radishBig img{ width:100%; height:auto; display:block; }
+  .radishMound{ position:absolute; z-index:5; border-radius:50%; background:#C99A63; box-shadow:inset 0 6px 0 #B4854E; }
+  .radishRope{ position:absolute; z-index:7; height:9px; border-radius:var(--radius-pill); background:#B4854E; transform-origin:left center; }
+  .radishHelper{ position:absolute; z-index:8; filter:drop-shadow(0 5px 5px var(--tint-ink)); transition:left .3s var(--ease-out), top .3s var(--ease-out); }
+  .radishHelper img{ width:100%; height:auto; display:block; transform:rotate(-9deg); }
+  @keyframes rpop{ 0%{transform:translateY(0) rotate(0)} 22%{transform:translateY(12px)} 100%{transform:translateY(-160px) rotate(360deg)} }
+  .radishPulled{ animation:rpop 1s ease-in forwards; }
+  @keyframes rwiggle{ 0%,100%{transform:translateX(0) rotate(0)} 25%{transform:translateX(-9px) rotate(-4deg)} 75%{transform:translateX(9px) rotate(4deg)} }
+  .radishWiggle{ animation:rwiggle .5s; }
+  @keyframes htumble{ 0%{transform:translateY(0) rotate(-9deg)} 100%{transform:translateY(46px) rotate(-82deg); opacity:.55} }
+  .helperTumble img{ animation:htumble .6s ease-in forwards; }
+  .eqSign{ position:fixed; top:66px; left:50%; transform:translateX(-50%); z-index:45; background:var(--color-white); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); padding:9px 20px; display:flex; flex-direction:column; align-items:center; gap:5px; }
+  .eqRow{ display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:800; font-size:38px; color:var(--color-ink); line-height:1; }
+  .eqRow .q{ color:var(--color-tangerine); }
+  .eqRow .q.reveal{ color:var(--color-grass); animation:cpulse 1s ease-in-out infinite; }
+  .eqDots{ display:flex; gap:12px; align-items:center; }
+  .eqDots .grp{ display:flex; gap:4px; }
+  .eqDots .dot{ width:13px; height:13px; border-radius:50%; background:var(--color-tangerine); }
+  .eqDots .dot.off{ background:var(--color-line); opacity:.5; }
+  .eqCount{ font-family:var(--font-body); font-weight:800; font-size:18px; color:var(--text-muted); }
+  .eqCount b{ color:var(--color-grass); font-size:24px; }
+  #radishTray{ position:fixed; left:0; right:0; bottom:8px; display:flex; gap:7px; justify-content:center; align-items:center; flex-wrap:wrap; padding:0 8px; z-index:46; }
+  .helperChip{ width:50px; height:50px; background:var(--color-white); border-radius:var(--radius-md); border:none; box-shadow:var(--shadow-soft); display:flex; align-items:center; justify-content:center; cursor:pointer; padding:0; transition:transform var(--dur-fast) var(--ease-out); }
+  .helperChip img{ width:38px; height:38px; pointer-events:none; }
+  .helperChip.sel{ outline:4px solid var(--color-grass); transform:translateY(-4px) scale(1.06); }
+  .pullBtn{ font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--text-on-color); background:var(--color-tangerine); border:none; border-radius:var(--radius-pill); padding:11px 24px; box-shadow:0 var(--chunk-depth) 0 var(--color-tangerine-deep); cursor:pointer; transition:transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out); }
+  .pullBtn:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-tangerine-deep); }
 </style>
 </head>
 <body>
@@ -210,6 +240,7 @@
       <button class="menu-btn t-tangerine" data-mode="candy"><span class="emo"><img src="img/candy-house.svg" alt=""></span>Candy House</button>
       <button class="menu-btn t-sky" data-mode="tardi"><span class="emo"><img src="img/tardi-gavin.svg" alt=""></span>Tardigrades</button>
       <button class="menu-btn t-coral" data-mode="red"><span class="emo"><img src="img/red-riding-hood.svg" alt=""></span>Red Riding Hood</button>
+      <button class="menu-btn t-tangerine" data-mode="radish"><span class="emo"><img src="img/radish.svg" alt=""></span>Pull the Radish</button>
     </div>
     <div class="homeRow">
       <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
@@ -343,6 +374,17 @@
     a.onerror=function(){ if(!fell){ fell=true; ttsSay(text); } };
     a.src='voice/'+slugify(text)+'.mp3'; a.volume=1; try{ a.currentTime=0; }catch(e){}
     const p=a.play(); if(p&&p.catch) p.catch(function(){ if(!fell){ fell=true; ttsSay(text); } });
+  }
+  // Play a clip by explicit key (for non-Latin phrases, e.g. the Chinese 拔萝卜 lines,
+  // whose text can't be slugified). Reuses the single voice element (no per-call new Audio).
+  function sayKey(key, fallbackText){
+    if(!soundOn) return;
+    if(!_voiceEl) _voiceEl=new Audio();
+    const a=_voiceEl; try{ a.pause(); }catch(e){}
+    let fell=false;
+    a.onerror=function(){ if(!fell){ fell=true; if(fallbackText) ttsSay(fallbackText); } };
+    a.src='voice/'+key+'.mp3'; a.volume=1; try{ a.currentTime=0; }catch(e){}
+    const p=a.play(); if(p&&p.catch) p.catch(function(){ if(!fell){ fell=true; if(fallbackText) ttsSay(fallbackText); } });
   }
   if ('speechSynthesis' in window) speechSynthesis.onvoiceschanged = ()=>{};
 
@@ -1188,6 +1230,144 @@
     });
   }
 
+  // ---------- MODE: 拔萝卜 Pull the Radish (Chinese-voiced arithmetic story game) ----------
+  // A giant radish needs exactly the answer to a small +/- problem in helpers to pull out.
+  // Tap helper characters to add/remove them (running count spoken in Chinese), then Pull.
+  // Too few → wiggle + "add more"; too many → giggly tumble + retry (never injured).
+  // Numbers grow adaptively. Voice is zh-CN-Xiaoxiao clips played by key (see generate_voice.py).
+  // The equation pools below MUST stay identical to R_ADD / R_SUB in generate_voice.py.
+  const R_ADD=[[1,1],[2,1],[1,2],[2,2],[3,1],[1,3],[3,2],[2,3],[4,1],[1,4],[4,2],[3,3],[5,1]];
+  const R_SUB=[[3,1],[4,1],[4,2],[5,1],[5,2],[5,3],[6,2],[6,1],[6,3]];
+  const RADISH_EQ=[];
+  R_ADD.forEach(p=>RADISH_EQ.push({a:p[0],b:p[1],op:'+',ans:p[0]+p[1],key:'zh_eq_'+p[0]+'_plus_'+p[1]}));
+  R_SUB.forEach(p=>RADISH_EQ.push({a:p[0],b:p[1],op:'-',ans:p[0]-p[1],key:'zh_eq_'+p[0]+'_minus_'+p[1]}));
+  const RADISH_HELPERS=['grandma.svg','hop-bunny.svg','rex-dino.svg','pip-pig.svg','pip-pig.svg','pip-pig.svg','red-riding-hood.svg','goat.svg','girl.svg','unicorn.svg'];
+  let radishStreak=0, radishTeam=[], radishEq=null, radishTries=0, radishBusy=false;
+
+  function startRadish(){
+    radishStreak=0;
+    sayKey('zh_intro');
+    const t=setTimeout(radishRound, 2200); trackTimer(t);
+  }
+  function radishRound(){
+    if(mode!=='radish') return;
+    radishBusy=false; radishTeam=[]; radishTries=0;
+    play.innerHTML=''; app.style.background='var(--color-grass-soft)';
+    const _lbl=document.querySelector('.scene-label'); if(_lbl) _lbl.remove();   // tray owns the bottom here
+    const maxAns=3+Math.min(3,Math.floor(radishStreak/2));   // 3 → 6 as the child succeeds
+    const pool=RADISH_EQ.filter(e=> e.ans<=maxAns && (e.op==='+' || maxAns>=4));
+    radishEq=pick(pool);
+    buildRadishScene();
+    const t=setTimeout(()=>{ if(mode==='radish') sayKey(radishEq.key); }, 500); trackTimer(t);
+  }
+  function radishGeo(){
+    const W=window.innerWidth, H=window.innerHeight;
+    const Rw=Math.min(W*0.30,175);
+    const rx=W*0.66, ry=H*0.24;                 // radish top-left
+    const handY=ry+Rw*0.42;
+    return {W,H,Rw,rx,ry,handY};
+  }
+  function buildRadishScene(){
+    const g=radishGeo();
+    // mound + radish
+    const mound=document.createElement('div'); mound.className='radishMound';
+    mound.style.width=(g.Rw*1.1)+'px'; mound.style.height=(g.Rw*0.34)+'px';
+    mound.style.left=(g.rx+g.Rw*0.5-g.Rw*0.55)+'px'; mound.style.top=(g.ry+g.Rw*0.82)+'px';
+    play.appendChild(mound);
+    const radish=document.createElement('div'); radish.className='radishBig'; radish.id='radishBig'; radish.innerHTML=imgOf('radish.svg');
+    radish.style.width=g.Rw+'px'; radish.style.left=g.rx+'px'; radish.style.top=g.ry+'px';
+    play.appendChild(radish);
+    // rope from radish toward the left where helpers pull
+    const rope=document.createElement('div'); rope.className='radishRope'; rope.id='radishRope';
+    const ropeLen=g.rx-8; rope.style.left='8px'; rope.style.top=g.handY+'px'; rope.style.width=ropeLen+'px';
+    play.appendChild(rope);
+    // helper container
+    const hc=document.createElement('div'); hc.id='radishHelpers'; play.appendChild(hc);
+    // equation sign
+    const sign=document.createElement('div'); sign.className='eqSign'; sign.id='eqSign';
+    const dotsAdd = '<span class="grp">'+'<span class="dot"></span>'.repeat(radishEq.a)+'</span>'
+      + (radishEq.op==='+' ? '<span>+</span><span class="grp">'+'<span class="dot"></span>'.repeat(radishEq.b)+'</span>' : '');
+    let dotsHtml;
+    if(radishEq.op==='+'){ dotsHtml=dotsAdd; }
+    else { // a dots, last b greyed out
+      let s='<span class="grp">';
+      for(let i=0;i<radishEq.a;i++){ s+='<span class="dot'+(i>=radishEq.a-radishEq.b?' off':'')+'"></span>'; }
+      s+='</span>'; dotsHtml=s;
+    }
+    sign.innerHTML=
+      '<div class="eqRow"><span>'+radishEq.a+'</span><span>'+radishEq.op+'</span><span>'+radishEq.b+'</span><span>=</span><span class="q" id="eqAns">?</span></div>'
+      +'<div class="eqDots">'+dotsHtml+'</div>'
+      +'<div class="eqCount">Helpers: <b id="eqCount">0</b></div>';
+    play.appendChild(sign);
+    // tray: helper chips + pull button
+    const tray=document.createElement('div'); tray.id='radishTray';
+    RADISH_HELPERS.forEach((f,idx)=>{
+      const chip=document.createElement('button'); chip.className='helperChip'; chip.innerHTML=imgOf(f); chip.dataset.idx=idx;
+      chip.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(radishBusy) return;
+        const pos=radishTeam.indexOf(idx);
+        if(pos>=0){ radishTeam.splice(pos,1); chip.classList.remove('sel'); playSnd(SND.tap,0.4); }
+        else { radishTeam.push(idx); chip.classList.add('sel'); chime(); sayKey('zh_'+radishTeam.length); }
+        renderRadishTeam();
+      });
+      tray.appendChild(chip);
+    });
+    const pull=document.createElement('button'); pull.className='pullBtn'; pull.textContent='拔萝卜! Pull!';
+    pull.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); radishPull(); });
+    tray.appendChild(pull);
+    play.appendChild(tray);
+    renderRadishTeam();
+  }
+  function renderRadishTeam(){
+    const hc=document.getElementById('radishHelpers'); if(!hc) return;
+    const g=radishGeo();
+    const hw=Math.min(g.W*0.15,92);
+    const spacing=hw*0.72;
+    hc.innerHTML='';
+    radishTeam.forEach((idx,i)=>{
+      const h=document.createElement('div'); h.className='radishHelper'; h.innerHTML=imgOf(RADISH_HELPERS[idx]);
+      h.style.width=hw+'px';
+      h.style.left=Math.max(2,(g.rx-(i+1)*spacing))+'px';
+      h.style.top=(g.handY-hw*0.55)+'px';
+      hc.appendChild(h);
+    });
+    const c=document.getElementById('eqCount'); if(c) c.textContent=radishTeam.length;
+  }
+  function showRadishHint(){
+    const ans=document.getElementById('eqAns'); if(ans){ ans.textContent=radishEq.ans; ans.classList.add('reveal'); }
+    sayKey('zh_hint');
+  }
+  function radishPull(){
+    if(mode!=='radish'||radishBusy) return;
+    const n=radishTeam.length, ans=radishEq.ans;
+    if(n===0){ bonk(); sayKey('zh_fewer'); return; }
+    if(n===ans){
+      radishBusy=true; chime(); setScore(score+3); radishStreak++;
+      const r=document.getElementById('radishBig'); if(r) r.classList.add('radishPulled');
+      const rr=document.getElementById('radishRope'); if(rr) rr.style.opacity='0';
+      tardiFx(['🥕','✨','💪','🎉']);
+      cheerText('🥕 拔出来啦!');
+      sayKey('zh_win');
+      const t=setTimeout(()=>{ if(mode==='radish') radishRound(); }, 3400); trackTimer(t);
+    } else if(n<ans){
+      bonk(); sayKey('zh_fewer'); radishTries++;
+      const r=document.getElementById('radishBig'); if(r){ r.classList.remove('radishWiggle'); void r.offsetWidth; r.classList.add('radishWiggle'); }
+      if(radishTries>=2) showRadishHint();
+    } else {
+      bonk(); radishBusy=true; radishTries++; sayKey('zh_toomany');
+      cheerText('😆 太多啦!');
+      play.querySelectorAll('.radishHelper').forEach(h=>h.classList.add('helperTumble'));
+      const t=setTimeout(()=>{
+        if(mode!=='radish') return;
+        radishTeam=[]; renderRadishTeam();
+        play.querySelectorAll('.helperChip.sel').forEach(c=>c.classList.remove('sel'));
+        radishBusy=false;
+        if(radishTries>=2) showRadishHint();
+      }, 1000); trackTimer(t);
+    }
+  }
+
   // ---------- navigation ----------
   function goFullscreen(){
     const el = document.documentElement;
@@ -1215,6 +1395,7 @@
     else if(m==='tardi') startTardi();
     else if(m==='candy') startCandy();
     else if(m==='red') startRed();
+    else if(m==='radish') startRadish();
   }
   function goHome(){
     clearTimers();
@@ -1249,7 +1430,8 @@
     const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg','spot-cloud.svg','spot-rainbow.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg',
       'tardi-trio.svg','spider-wolf.svg','tardi-gavin.svg','tardi-colin.svg','tardi-doug.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg',
       'candy-house.svg','candy-witch.svg','hansel-gretel.svg',
-      'red-riding-hood.svg','wolf-kind.svg','grandma.svg','basket.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
+      'red-riding-hood.svg','wolf-kind.svg','grandma.svg','basket.svg',
+      'radish.svg','goat.svg','girl.svg','unicorn.svg','pip-pig.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
     if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
   })();

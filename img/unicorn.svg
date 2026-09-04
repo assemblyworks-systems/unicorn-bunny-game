@@ -1,0 +1,47 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A unicorn">
+  <ellipse cx="110" cy="206" rx="60" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- legs -->
+  <rect x="80" y="158" width="15" height="44" rx="7.5" fill="#F3ECFF"></rect>
+  <rect x="125" y="158" width="15" height="44" rx="7.5" fill="#F3ECFF"></rect>
+  <ellipse cx="87" cy="202" rx="10" ry="6" fill="#C9B4EC"></ellipse>
+  <ellipse cx="133" cy="202" rx="10" ry="6" fill="#C9B4EC"></ellipse>
+
+  <!-- body -->
+  <ellipse cx="110" cy="150" rx="54" ry="44" fill="#FFFFFF"></ellipse>
+  <ellipse cx="110" cy="160" rx="34" ry="28" fill="#F3ECFF"></ellipse>
+
+  <!-- rainbow tail -->
+  <path d="M158 140 Q192 150 188 186" fill="none" stroke="#FF6B6B" stroke-width="7" stroke-linecap="round"></path>
+  <path d="M162 138 Q194 148 190 182" fill="none" stroke="#FFC93C" stroke-width="7" stroke-linecap="round"></path>
+  <path d="M166 137 Q198 146 194 180" fill="none" stroke="#2FC2B2" stroke-width="7" stroke-linecap="round"></path>
+
+  <!-- head -->
+  <circle cx="110" cy="84" r="40" fill="#FFFFFF"></circle>
+  <ellipse cx="110" cy="104" rx="24" ry="18" fill="#F3ECFF"></ellipse>
+
+  <!-- ears -->
+  <path d="M84 52 L78 30 L98 46 Z" fill="#FFFFFF"></path>
+  <path d="M136 52 L142 30 L122 46 Z" fill="#FFFFFF"></path>
+
+  <!-- golden horn -->
+  <path d="M110 46 L102 12 L118 12 Z" fill="#FFD34D"></path>
+  <path d="M110 46 L106 24 M110 46 L114 30" stroke="#E8B32A" stroke-width="2.5" stroke-linecap="round"></path>
+
+  <!-- rainbow mane -->
+  <path d="M74 58 Q56 74 62 96 Q70 84 82 82 Z" fill="#FF6B6B"></path>
+  <path d="M76 78 Q58 94 66 116 Q74 102 86 100 Z" fill="#FFC93C"></path>
+  <path d="M80 98 Q64 114 74 134 Q80 122 90 120 Z" fill="#2FC2B2"></path>
+  <path d="M110 46 Q90 50 82 66 Q98 58 110 60 Z" fill="#9B5DE5"></path>
+
+  <!-- face -->
+  <circle cx="96" cy="86" r="6" fill="#43352F"></circle>
+  <circle cx="124" cy="86" r="6" fill="#43352F"></circle>
+  <circle cx="98" cy="84" r="2" fill="#FFFFFF"></circle>
+  <circle cx="126" cy="84" r="2" fill="#FFFFFF"></circle>
+  <ellipse cx="105" cy="104" rx="2.6" ry="3.4" fill="#43352F"></ellipse>
+  <ellipse cx="115" cy="104" rx="2.6" ry="3.4" fill="#43352F"></ellipse>
+  <path d="M101 112 q9 6 18 0" stroke="#43352F" stroke-width="2.6" fill="none" stroke-linecap="round"></path>
+  <circle cx="82" cy="98" r="6" fill="#FF8FB1" opacity="0.55"></circle>
+  <circle cx="138" cy="98" r="6" fill="#FF8FB1" opacity="0.55"></circle>
+</svg>

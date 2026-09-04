@@ -1,0 +1,39 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A friendly goat">
+  <ellipse cx="110" cy="206" rx="60" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- legs -->
+  <rect x="80" y="160" width="14" height="42" rx="7" fill="#E6D9C4"></rect>
+  <rect x="126" y="160" width="14" height="42" rx="7" fill="#E6D9C4"></rect>
+  <ellipse cx="87" cy="202" rx="10" ry="6" fill="#8B7355"></ellipse>
+  <ellipse cx="133" cy="202" rx="10" ry="6" fill="#8B7355"></ellipse>
+
+  <!-- body -->
+  <ellipse cx="110" cy="150" rx="52" ry="42" fill="#F5EDE0"></ellipse>
+  <ellipse cx="110" cy="160" rx="34" ry="28" fill="#FFFFFF"></ellipse>
+
+  <!-- horns -->
+  <path d="M88 52 Q74 30 80 16 Q90 30 96 50 Z" fill="#C9B79B"></path>
+  <path d="M132 52 Q146 30 140 16 Q130 30 124 50 Z" fill="#C9B79B"></path>
+
+  <!-- head -->
+  <ellipse cx="110" cy="86" rx="40" ry="38" fill="#F5EDE0"></ellipse>
+  <!-- floppy ears -->
+  <ellipse cx="66" cy="82" rx="16" ry="9" fill="#E6D9C4" transform="rotate(24 66 82)"></ellipse>
+  <ellipse cx="154" cy="82" rx="16" ry="9" fill="#E6D9C4" transform="rotate(-24 154 82)"></ellipse>
+
+  <!-- snout -->
+  <ellipse cx="110" cy="104" rx="24" ry="18" fill="#FFFFFF"></ellipse>
+  <ellipse cx="101" cy="104" rx="3" ry="4" fill="#43352F"></ellipse>
+  <ellipse cx="119" cy="104" rx="3" ry="4" fill="#43352F"></ellipse>
+  <path d="M100 114 q10 7 20 0" stroke="#43352F" stroke-width="3" fill="none" stroke-linecap="round"></path>
+  <!-- little beard -->
+  <path d="M104 120 Q110 138 116 120 Z" fill="#E6D9C4"></path>
+
+  <!-- eyes -->
+  <circle cx="94" cy="82" r="6.5" fill="#43352F"></circle>
+  <circle cx="126" cy="82" r="6.5" fill="#43352F"></circle>
+  <circle cx="96" cy="80" r="2" fill="#FFFFFF"></circle>
+  <circle cx="128" cy="80" r="2" fill="#FFFFFF"></circle>
+  <circle cx="80" cy="94" r="5.5" fill="#FF8FB1" opacity="0.5"></circle>
+  <circle cx="140" cy="94" r="5.5" fill="#FF8FB1" opacity="0.5"></circle>
+</svg>
