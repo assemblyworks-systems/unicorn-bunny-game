@@ -1,0 +1,24 @@
+<svg viewBox="0 0 220 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A picnic basket">
+  <ellipse cx="110" cy="188" rx="80" ry="10" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- handle -->
+  <path d="M56 118 Q110 30 164 118" fill="none" stroke="#A56B3C" stroke-width="12" stroke-linecap="round"></path>
+  <path d="M56 118 Q110 44 164 118" fill="none" stroke="#C68B59" stroke-width="5" stroke-linecap="round"></path>
+
+  <!-- checkered cloth peeking over the rim -->
+  <path d="M52 116 Q110 100 168 116 L162 128 Q110 114 58 128 Z" fill="#FF8FB1"></path>
+  <path d="M74 111 l6 12 M96 107 l6 14 M118 107 l6 14 M140 111 l6 12" stroke="#FFFFFF" stroke-width="3" opacity="0.7"></path>
+
+  <!-- basket body -->
+  <path d="M48 118 L60 176 Q110 190 160 176 L172 118 Q110 134 48 118 Z" fill="#C68B59"></path>
+  <rect x="48" y="114" width="124" height="12" rx="6" fill="#A56B3C"></rect>
+  <!-- weave lines -->
+  <path d="M62 132 Q110 144 158 132 M64 148 Q110 160 156 148 M66 164 Q110 174 154 164" fill="none" stroke="#A56B3C" stroke-width="3" opacity="0.7"></path>
+  <path d="M84 128 L82 172 M110 130 L110 176 M136 128 L138 172" stroke="#A56B3C" stroke-width="3" opacity="0.5"></path>
+
+  <!-- goodies poking out -->
+  <circle cx="88" cy="104" r="14" fill="#FF6B6B"></circle>
+  <path d="M88 92 q4 -6 8 -3" fill="none" stroke="#6BBF59" stroke-width="4" stroke-linecap="round"></path>
+  <circle cx="118" cy="102" r="12" fill="#FFC93C"></circle>
+  <circle cx="136" cy="106" r="10" fill="#9B5DE5"></circle>
+</svg>

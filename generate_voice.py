@@ -162,6 +162,16 @@ HG_BOOK = ['Hansel and Gretel',
  'Home sweet home. The end.']
 for s in HG_BOOK: add(s)
 
+# ===== Little Red Riding Hood (arcade story game, index.html) =====
+for nm in NAMES: add('Help Little Red Riding Hood, '+nm+'!')
+add('Pack the basket for Grandma!')
+add('The basket is full!')
+add("Follow the path to Grandma's house!")
+add("You made it to Grandma's house!")
+add('A hungry wolf! He looks sad.')
+add('Share your bread with the wolf. Tap him!')
+add('You shared! Now everyone is friends!')
+
 byslug = {}
 for t in phrases:
     s = slug(t)

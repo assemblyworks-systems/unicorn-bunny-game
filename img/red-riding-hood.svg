@@ -1,0 +1,45 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Little Red Riding Hood">
+  <ellipse cx="110" cy="207" rx="58" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- shoes -->
+  <ellipse cx="96" cy="200" rx="12" ry="7" fill="#7A4E33"></ellipse>
+  <ellipse cx="124" cy="200" rx="12" ry="7" fill="#7A4E33"></ellipse>
+
+  <!-- red cape -->
+  <path d="M110 100 L56 196 Q110 208 164 196 Z" fill="#FF5A5A"></path>
+  <ellipse cx="82" cy="198" rx="11" ry="6" fill="#D63D3D"></ellipse>
+  <ellipse cx="138" cy="198" rx="11" ry="6" fill="#D63D3D"></ellipse>
+
+  <!-- arms -->
+  <path d="M92 118 Q70 130 62 150" stroke="#FF5A5A" stroke-width="14" stroke-linecap="round" fill="none"></path>
+  <path d="M128 118 Q150 128 158 146" stroke="#FF5A5A" stroke-width="14" stroke-linecap="round" fill="none"></path>
+  <circle cx="62" cy="152" r="6.5" fill="#FFDFC2"></circle>
+  <circle cx="158" cy="148" r="6.5" fill="#FFDFC2"></circle>
+
+  <!-- little basket in one hand -->
+  <path d="M149 149 q11 -12 22 0" fill="none" stroke="#A56B3C" stroke-width="3"></path>
+  <path d="M147 151 h26 l-3 17 h-20 z" fill="#C68B59"></path>
+  <rect x="147" y="149" width="26" height="5" rx="2.5" fill="#A56B3C"></rect>
+  <circle cx="156" cy="149" r="3" fill="#FF8FB1"></circle>
+  <circle cx="164" cy="149" r="3" fill="#FFC93C"></circle>
+
+  <!-- hood (red) -->
+  <path d="M110 30 Q150 34 150 78 Q150 110 110 110 Q70 110 70 78 Q70 34 110 30 Z" fill="#FF5A5A"></path>
+  <circle cx="110" cy="31" r="9" fill="#FF5A5A"></circle>
+
+  <!-- face -->
+  <circle cx="110" cy="80" r="31" fill="#FFDFC2"></circle>
+  <!-- hair peeking at the sides -->
+  <path d="M83 76 q-4 11 2 20" stroke="#8B5E3C" stroke-width="7" fill="none" stroke-linecap="round"></path>
+  <path d="M137 76 q4 11 -2 20" stroke="#8B5E3C" stroke-width="7" fill="none" stroke-linecap="round"></path>
+  <path d="M85 66 Q110 52 135 66 Q120 60 110 60 Q100 60 85 66 Z" fill="#8B5E3C"></path>
+
+  <!-- face features -->
+  <circle cx="99" cy="81" r="4.5" fill="#43352F"></circle>
+  <circle cx="121" cy="81" r="4.5" fill="#43352F"></circle>
+  <circle cx="100.4" cy="79.4" r="1.5" fill="#FFFFFF"></circle>
+  <circle cx="122.4" cy="79.4" r="1.5" fill="#FFFFFF"></circle>
+  <circle cx="89" cy="91" r="5.5" fill="#FF8FB1" opacity="0.6"></circle>
+  <circle cx="131" cy="91" r="5.5" fill="#FF8FB1" opacity="0.6"></circle>
+  <path d="M101 93 q9 9 18 0" stroke="#43352F" stroke-width="3.2" fill="none" stroke-linecap="round"></path>
+</svg>

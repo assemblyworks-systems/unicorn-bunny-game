@@ -1,0 +1,42 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A friendly wolf">
+  <ellipse cx="110" cy="206" rx="64" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- tail -->
+  <path d="M156 168 Q194 158 184 122 Q180 148 154 156 Z" fill="#8E9AA6"></path>
+  <path d="M184 122 Q182 138 172 148" fill="none" stroke="#E8ECF1" stroke-width="6" stroke-linecap="round"></path>
+
+  <!-- body -->
+  <ellipse cx="110" cy="152" rx="52" ry="46" fill="#A6B1BD"></ellipse>
+  <ellipse cx="110" cy="164" rx="33" ry="30" fill="#E8ECF1"></ellipse>
+  <ellipse cx="84" cy="192" rx="16" ry="10" fill="#8E9AA6"></ellipse>
+  <ellipse cx="136" cy="192" rx="16" ry="10" fill="#8E9AA6"></ellipse>
+
+  <!-- head -->
+  <circle cx="110" cy="88" r="46" fill="#A6B1BD"></circle>
+
+  <!-- ears -->
+  <path d="M74 56 L62 18 L98 44 Z" fill="#A6B1BD"></path>
+  <path d="M146 56 L158 18 L122 44 Z" fill="#A6B1BD"></path>
+  <path d="M78 52 L72 32 L92 46 Z" fill="#FF8FB1" opacity="0.5"></path>
+  <path d="M142 52 L148 32 L128 46 Z" fill="#FF8FB1" opacity="0.5"></path>
+
+  <!-- snout -->
+  <ellipse cx="110" cy="104" rx="27" ry="21" fill="#E8ECF1"></ellipse>
+  <ellipse cx="110" cy="93" rx="8" ry="6" fill="#43352F"></ellipse>
+  <path d="M110 99 v9" stroke="#43352F" stroke-width="3" stroke-linecap="round"></path>
+  <path d="M99 112 q11 9 22 0" stroke="#43352F" stroke-width="3.2" fill="none" stroke-linecap="round"></path>
+
+  <!-- soft friendly eyebrows -->
+  <path d="M82 68 q10 -5 19 -1" stroke="#7E8B99" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+  <path d="M119 67 q9 -4 19 1" stroke="#7E8B99" stroke-width="3.5" fill="none" stroke-linecap="round"></path>
+
+  <!-- big friendly eyes -->
+  <circle cx="92" cy="80" r="7" fill="#43352F"></circle>
+  <circle cx="128" cy="80" r="7" fill="#43352F"></circle>
+  <circle cx="94" cy="78" r="2.2" fill="#FFFFFF"></circle>
+  <circle cx="130" cy="78" r="2.2" fill="#FFFFFF"></circle>
+
+  <!-- rosy cheeks -->
+  <circle cx="80" cy="98" r="6" fill="#FF8FB1" opacity="0.55"></circle>
+  <circle cx="140" cy="98" r="6" fill="#FF8FB1" opacity="0.55"></circle>
+</svg>

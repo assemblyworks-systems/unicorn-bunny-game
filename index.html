@@ -209,6 +209,7 @@
       <button class="menu-btn t-bubblegum" data-mode="princess"><span class="emo">👸</span>Princess</button>
       <button class="menu-btn t-tangerine" data-mode="candy"><span class="emo"><img src="img/candy-house.svg" alt=""></span>Candy House</button>
       <button class="menu-btn t-sky" data-mode="tardi"><span class="emo"><img src="img/tardi-gavin.svg" alt=""></span>Tardigrades</button>
+      <button class="menu-btn t-coral" data-mode="red"><span class="emo"><img src="img/red-riding-hood.svg" alt=""></span>Red Riding Hood</button>
     </div>
     <div class="homeRow">
       <a href="learn.html" class="homeLink">📚 Learn ABC &amp; 123</a>
@@ -1064,6 +1065,129 @@
     });
   }
 
+  // ---------- MODE: Little Red Riding Hood (gentle story game) ----------
+  // 1) Pack the basket — tap goodies in number order (counting practice).
+  // 2) Follow the path — tap the flowers to walk Red to Grandma's house.
+  // 3) The kind wolf — a hungry, friendly wolf; tap him to share bread. Loops. Never scary.
+  function startRed(){
+    say('Help Little Red Riding Hood, '+NAME+'!');
+    const t=setTimeout(redBasket, 2400); trackTimer(t);
+  }
+  function redBasket(){
+    if(mode!=='red') return;
+    play.innerHTML=''; app.style.background='var(--color-sky-soft)'; tardiLabel('🧺 Pack the Basket');
+    const W=window.innerWidth, H=window.innerHeight;
+    const bsize=Math.min(W*0.5,240);
+    const bx=W/2-bsize/2, by=H-bsize*0.92;
+    const basket=document.createElement('div'); basket.className='critter'; basket.innerHTML=imgOf('basket.svg');
+    basket.style.fontSize=bsize+'px'; basket.style.left=bx+'px'; basket.style.top=by+'px';
+    play.appendChild(basket);
+    say('Pack the basket for Grandma!');
+    const FOOD=['🍞','🧀','🍎','🍇','🍪'];
+    const SPOTS=[[0.16,0.30],[0.38,0.20],[0.60,0.22],[0.80,0.32],[0.50,0.42]];
+    let next=1;
+    FOOD.forEach((emo,i)=>{
+      const n=i+1;
+      const c=document.createElement('div'); c.className='critter'; c.textContent=emo;
+      c.style.fontSize='60px';
+      c.style.left=Math.min(W-70,Math.max(6,SPOTS[i][0]*W-30))+'px';
+      c.style.top =Math.min(H-90,Math.max(110,SPOTS[i][1]*H-30))+'px';
+      const b=document.createElement('span'); b.className='cbadge'; b.textContent=n; c.appendChild(b);
+      if(n===1) c.classList.add('pulseC');
+      c.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(c.classList.contains('pop')) return;
+        if(n!==next){ bonk(); c.classList.add('shake'); c.addEventListener('animationend',()=>c.classList.remove('shake'),{once:true}); return; }
+        next++;
+        const r=c.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+        setScore(score+1); chime(); say(String(n));
+        c.classList.remove('pulseC'); c.classList.add('pop');
+        c.addEventListener('animationend',()=>c.remove(),{once:true});
+        play.querySelectorAll('.critter .cbadge').forEach(bd=>{ if(+bd.textContent===next) bd.parentElement.classList.add('pulseC'); });
+        if(n===FOOD.length){
+          cheerText('🧺 All packed!');
+          const t=setTimeout(()=>{ if(mode==='red') say('The basket is full!'); }, 700); trackTimer(t);
+          const t2=setTimeout(redPath, 2400); trackTimer(t2);
+        }
+      });
+      play.appendChild(c);
+    });
+  }
+  function redPath(){
+    if(mode!=='red') return;
+    play.innerHTML=''; app.style.background='var(--color-grass-soft)'; tardiLabel('🌲 The Forest Path');
+    const W=window.innerWidth, H=window.innerHeight;
+    const laneY=H*0.5;
+    const house=document.createElement('div'); house.className='critter'; house.textContent='🏠';
+    house.style.fontSize='92px'; house.style.left=(W-118)+'px'; house.style.top=laneY+'px';
+    play.appendChild(house);
+    const rsize=112;
+    const red=document.createElement('div'); red.className='critter'; red.innerHTML=imgOf('red-riding-hood.svg');
+    red.style.fontSize=rsize+'px'; red.style.left='10px'; red.style.top=laneY+'px';
+    red.style.transition='left .5s ease';
+    play.appendChild(red);
+    let bob=0; function drift(){ if(!red.isConnected) return; bob+=0.05; red.style.transform='translateY('+Math.sin(bob)*5+'px)'; requestAnimationFrame(drift); } requestAnimationFrame(drift);
+    say("Follow the path to Grandma's house!");
+    const N=5, FLOWERS=['🌸','🌼','🌷','🌻','🌺'];
+    const startX=10, endX=W-210, step=(endX-startX)/N;
+    let picked=0;
+    for(let i=0;i<N;i++){
+      const f=document.createElement('div'); f.className='critter'; f.textContent=FLOWERS[i];
+      f.style.fontSize='52px';
+      f.style.left=(startX+step*(i+1)-8)+'px';
+      f.style.top=(laneY+82)+'px';
+      f.addEventListener('pointerdown',e=>{
+        e.preventDefault(); e.stopPropagation();
+        if(f.classList.contains('pop')) return;
+        const r=f.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+        chime(); setScore(score+1);
+        f.classList.add('pop'); f.addEventListener('animationend',()=>f.remove(),{once:true});
+        picked++;
+        red.style.left=(startX+step*picked)+'px';
+        if(picked>=N){
+          cheerText("🏠 Grandma's house!");
+          const t=setTimeout(()=>{ if(mode==='red') say("You made it to Grandma's house!"); }, 600); trackTimer(t);
+          const t2=setTimeout(redWolf, 2600); trackTimer(t2);
+        }
+      });
+      play.appendChild(f);
+    }
+  }
+  function redWolf(){
+    if(mode!=='red') return;
+    play.innerHTML=''; app.style.background='var(--color-grape-soft)'; tardiLabel('🐺 The Kind Wolf');
+    const W=window.innerWidth, H=window.innerHeight;
+    const wsize=180;
+    const wolf=document.createElement('div'); wolf.className='critter'; wolf.innerHTML=imgOf('wolf-kind.svg');
+    wolf.style.fontSize=wsize+'px'; wolf.style.left=(W/2-wsize/2)+'px'; wolf.style.top=(H*0.46-wsize/2)+'px';
+    play.appendChild(wolf);
+    let bob=0; function drift(){ if(!wolf.isConnected) return; bob+=0.03; wolf.style.transform='translateY('+Math.sin(bob)*7+'px)'; requestAnimationFrame(drift); } requestAnimationFrame(drift);
+    say('A hungry wolf! He looks sad.');
+    let done=false;
+    const t=setTimeout(()=>{
+      if(mode!=='red'||done) return;
+      say('Share your bread with the wolf. Tap him!');
+      const banner=document.createElement('div'); banner.className='match-banner';
+      banner.innerHTML='Tap the wolf! <span class="big">'+imgOf('wolf-kind.svg')+'</span>';
+      play.appendChild(banner);
+    }, 3200); trackTimer(t);
+    wolf.addEventListener('pointerdown',e=>{
+      e.preventDefault(); e.stopPropagation();
+      if(done) return; done=true;
+      const ban=play.querySelector('.match-banner'); if(ban) ban.remove();
+      chime(); setScore(score+3);
+      const r=wolf.getBoundingClientRect(); burst(r.left+r.width/2, r.top+r.height/2);
+      tardiFx(['💖','🍞','💕','🌸']);
+      cheerText('Yummy bread! 🍞');
+      say('You shared! Now everyone is friends!');
+      const gran=document.createElement('div'); gran.className='critter'; gran.innerHTML=imgOf('grandma.svg');
+      gran.style.fontSize='150px';
+      gran.style.left=(W/2-wsize/2-150)+'px'; gran.style.top=(H*0.46-40)+'px';
+      play.appendChild(gran);
+      const t2=setTimeout(()=>{ if(mode==='red') redBasket(); }, 4200); trackTimer(t2);   // story loops
+    });
+  }
+
   // ---------- navigation ----------
   function goFullscreen(){
     const el = document.documentElement;
@@ -1090,6 +1214,7 @@
     else if(m==='princess') startPrincess();
     else if(m==='tardi') startTardi();
     else if(m==='candy') startCandy();
+    else if(m==='red') startRed();
   }
   function goHome(){
     clearTimers();
@@ -1123,7 +1248,8 @@
   (function(){
     const list=[...FRIENDS,...DINOS,...FOSSILS,'egg-spotted.png','egg-cracking.png','carrot.png','rock.png','bomb.png','spot-star.svg','star-pink.svg','star-sky.svg','star-grape.svg','spot-cloud.svg','spot-rainbow.svg','hop-bunny.svg','rex-dino.svg','mascot-boxy.svg',
       'tardi-trio.svg','spider-wolf.svg','tardi-gavin.svg','tardi-colin.svg','tardi-doug.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg',
-      'candy-house.svg','candy-witch.svg','hansel-gretel.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
+      'candy-house.svg','candy-witch.svg','hansel-gretel.svg',
+      'red-riding-hood.svg','wolf-kind.svg','grandma.svg','basket.svg'].concat(BALLOON_COLORS.map(c=>'balloon-'+c.name+'.svg'));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
     if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
   })();
