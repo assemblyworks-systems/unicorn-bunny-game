@@ -177,6 +177,10 @@ add("You made it to Grandma's house!")
 add('A hungry wolf! He looks sad.')
 add('Share your bread with the wolf. Tap him!')
 add('You shared! Now everyone is friends!')
+# Scene 1 kitchen items — spoken when dragged into the basket (mirror RED_ITEMS in index.html)
+for it in ['book','herbal tea','pudding','cheese','donut','muffin','apple','coconut','medicine',
+           'soup','Vitagen','strawberries','orange juice','biscuits','ice cream']:
+    add(it)
 
 # ===== 拔萝卜 Pull the Radish (arcade story game, index.html) — Chinese (Xiaoxiao) =====
 # These clips are keyed explicitly (Chinese text can't be slugified) and spoken with ZH_VOICE.

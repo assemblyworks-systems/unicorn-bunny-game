@@ -1,0 +1,39 @@
+<svg viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A baby polar bear">
+  <ellipse cx="110" cy="206" rx="58" ry="9" fill="#3D2C56" opacity="0.10"></ellipse>
+
+  <!-- legs -->
+  <ellipse cx="86" cy="190" rx="18" ry="14" fill="#EAF1F7"></ellipse>
+  <ellipse cx="134" cy="190" rx="18" ry="14" fill="#EAF1F7"></ellipse>
+  <ellipse cx="86" cy="194" rx="9" ry="6" fill="#C9D6E3"></ellipse>
+  <ellipse cx="134" cy="194" rx="9" ry="6" fill="#C9D6E3"></ellipse>
+
+  <!-- body -->
+  <ellipse cx="110" cy="152" rx="50" ry="46" fill="#F6FAFD"></ellipse>
+  <ellipse cx="110" cy="160" rx="30" ry="28" fill="#EAF1F7"></ellipse>
+
+  <!-- arms -->
+  <ellipse cx="66" cy="150" rx="15" ry="12" fill="#F6FAFD"></ellipse>
+  <ellipse cx="154" cy="150" rx="15" ry="12" fill="#F6FAFD"></ellipse>
+
+  <!-- head -->
+  <circle cx="110" cy="90" r="42" fill="#F6FAFD"></circle>
+  <!-- round ears -->
+  <circle cx="78" cy="58" r="16" fill="#F6FAFD"></circle>
+  <circle cx="142" cy="58" r="16" fill="#F6FAFD"></circle>
+  <circle cx="78" cy="58" r="7" fill="#DCE9F4"></circle>
+  <circle cx="142" cy="58" r="7" fill="#DCE9F4"></circle>
+
+  <!-- snout -->
+  <ellipse cx="110" cy="104" rx="22" ry="17" fill="#EAF1F7"></ellipse>
+  <ellipse cx="110" cy="98" rx="7" ry="5" fill="#43352F"></ellipse>
+  <path d="M110 103 v6" stroke="#43352F" stroke-width="3" stroke-linecap="round"></path>
+  <path d="M100 111 q10 7 20 0" stroke="#43352F" stroke-width="3" fill="none" stroke-linecap="round"></path>
+
+  <!-- eyes -->
+  <circle cx="94" cy="86" r="6.5" fill="#43352F"></circle>
+  <circle cx="126" cy="86" r="6.5" fill="#43352F"></circle>
+  <circle cx="96" cy="84" r="2" fill="#FFFFFF"></circle>
+  <circle cx="128" cy="84" r="2" fill="#FFFFFF"></circle>
+  <circle cx="80" cy="98" r="6" fill="#FF8FB1" opacity="0.5"></circle>
+  <circle cx="140" cy="98" r="6" fill="#FF8FB1" opacity="0.5"></circle>
+</svg>
