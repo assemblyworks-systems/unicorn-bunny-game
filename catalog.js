@@ -1,0 +1,27 @@
+/* Discovery metadata is independent of the individual game engines. */
+window.PLAYBOX_CATALOG = {
+  houses: ['Hello, Neighbour!', 'stories', 'Kindness · matching · counting', 'neighbourhood.svg', 'sky', 'NEW'],
+  friends: ['Match It', 'puzzles', 'Look closely. Find a friend.', 'friend-cat.png', 'grape'],
+  balloons: ['Pop Balloons', 'puzzles', 'A little pop of colour.', 'balloon-red.svg', 'coral'],
+  feed: ['Feed Bunny', 'puzzles', 'Count a crunchy lunch.', 'hop-bunny.svg', 'grass'],
+  stars: ['Catch Stars', 'puzzles', 'Reach for something sparkly.', 'spot-star.svg', 'sunshine'],
+  eggs: ['Dino Eggs', 'puzzles', 'Who is hiding inside?', 'egg-cracking.png', 'teal'],
+  dig: ['Dino Dig', 'puzzles', 'Brush, discover, roar!', 'rex-dino.svg', 'tangerine'],
+  draw: ['Little Art Studio', 'create', 'Make something only you can.', 'abc-rainbow.png', 'grass'],
+  princess: ['Dress-up Studio', 'create', 'Mix colours and make believe.', 'girl.svg', 'bubblegum'],
+  candy: ['Candy House', 'stories', 'Follow a trail. Share a treat.', 'candy-house.svg', 'bubblegum'],
+  tardi: ['Tiny Explorers', 'stories', 'An adventure in little worlds.', 'tardi-trio.svg', 'teal'],
+  red: ['Red Riding Hood', 'stories', 'Pack a picnic. Find a path.', 'red-riding-hood.svg', 'coral'],
+  radish: ['Pull the Radish', 'stories', 'Count together · 中文', 'radish.svg', 'tangerine'],
+  find: ['Find It', 'letters', 'Meet letters and numbers.', 'abc-apple.png', 'coral'],
+  sounds: ['Letter Sounds', 'letters', 'Listen, look, and learn.', 'abc-banana.png', 'sunshine'],
+  books: ['Story Corner', 'stories', 'A small story, a big smile.', 'abc-moon.png', 'grape'],
+  trace: ['Trace It', 'letters', 'Follow a letter with your finger.', 'abc-kite.png', 'sky'],
+  name: ['My Name', 'letters', 'Your very own special letters.', 'mascot-boxy.svg', 'bubblegum'],
+  count: ['Count It', 'numbers', 'One, two… how many?', 'count-strawberry.png', 'coral'],
+  memory: ['Memory Match', 'puzzles', 'Turn over a little surprise.', 'abc-cat.png', 'teal'],
+  dots: ['Dot to Dot', 'numbers', 'Join the dots. See a surprise.', 'dino-triceratops.png', 'sky'],
+  sort: ['Sort It', 'puzzles', 'Everything has a place.', 'abc-watermelon.png', 'grass'],
+  shapes: ['Shapes & Colours', 'puzzles', 'A world of wonderful shapes.', 'star-grape.svg', 'grape'],
+  dinocount: ['Count Dinos', 'numbers', 'A herd of counting fun.', 'dino-stegosaurus.png', 'tangerine']
+};

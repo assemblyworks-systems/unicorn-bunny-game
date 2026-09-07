@@ -23,7 +23,9 @@ ZH_VOICE = "zh-CN-XiaoxiaoNeural"
 ZH_RATE  = "-6%"
 ZH_PITCH = "+6Hz"
 
-import os, re, asyncio, sys
+import os, re, asyncio, sys, json
+from pathlib import Path
+os.chdir(Path(__file__).resolve().parent)
 
 def slug(t):
     return re.sub(r'[^a-z0-9]+', '_', t.lower()).strip('_')
@@ -199,6 +201,14 @@ R_SUB = [(3,1),(4,1),(4,2),(5,1),(5,2),(5,3),(6,2),(6,1),(6,3)]
 for a, b in R_ADD: addzh('zh_eq_'+str(a)+'_plus_'+str(b),  ZNUM[a-1]+'加'+ZNUM[b-1]+'，等于几？')
 for a, b in R_SUB: addzh('zh_eq_'+str(a)+'_minus_'+str(b), ZNUM[a-1]+'减'+ZNUM[b-1]+'，等于几？')
 
+# Generic prompts for renamed profiles; original profiles retain their name clips.
+for text in list(phrases):
+    generic = re.sub(r', (?:' + '|'.join(NAMES) + r')([!.?]?)$', r'\1', text)
+    if generic != text:
+        phrases.append(generic)
+with open('voice-lines.json', encoding='utf-8') as source:
+    phrases.extend(json.load(source))
+
 # Build the work list: English phrases (slugified, VOICE) + Chinese clips (explicit key, ZH_VOICE).
 byslug = {}   # slug/key -> (text, voice, rate, pitch)
 for t in phrases:
@@ -207,6 +217,11 @@ for t in phrases:
         byslug[s] = (t, VOICE, RATE, PITCH)
 for k, t in zh_clips.items():
     byslug[k] = (t, ZH_VOICE, ZH_RATE, ZH_PITCH)
+
+if '--new-lines-only' in sys.argv:
+    with open('voice-lines.json', encoding='utf-8') as source:
+        new_lines = json.load(source)
+    byslug = {slug(t): (t, VOICE, RATE, PITCH) for t in new_lines}
 
 print("Distinct clips:", len(byslug))
 
@@ -230,7 +245,9 @@ async def one(s, text, voice, rate, pitch):
     for attempt in range(5):
         try:
             c = edge_tts.Communicate(text, voice, rate=rate, pitch=pitch)
-            await c.save(path)
+            await c.save(path + ".part")
+            if os.path.getsize(path + ".part") > 0:
+                os.replace(path + ".part", path)
             if os.path.exists(path) and os.path.getsize(path) > 0:
                 return True
         except Exception as e:
@@ -245,7 +262,8 @@ async def one(s, text, voice, rate, pitch):
     return False
 
 async def main():
-    items = list(byslug.items())
+    items = [(s, entry) for s, entry in byslug.items() if not os.path.exists(os.path.join("voice", s + ".mp3")) or os.path.getsize(os.path.join("voice", s + ".mp3")) == 0]
+    print("Missing clips to generate:", len(items), flush=True)
     ok = 0
     for i, (s, (text, voice, rate, pitch)) in enumerate(items, 1):
         if await one(s, text, voice, rate, pitch):
@@ -255,7 +273,9 @@ async def main():
             print("  ...", i, "/", len(items), "(", ok, "made/skipped )")
     made = len([f for f in os.listdir("voice") if f.endswith(".mp3")])
     print("Done. Clips in 'voice' folder:", made, "of", len(items))
-    if made < len(items):
-        print(">>> Some are still missing - just run the script again to finish them.")
+    missing = [s for s in byslug if not os.path.exists(os.path.join("voice", s + ".mp3")) or os.path.getsize(os.path.join("voice", s + ".mp3")) == 0]
+    if missing:
+        print(">>> Missing clips:", ", ".join(missing))
+        sys.exit(1)
 
 asyncio.run(main())

@@ -1,14 +1,51 @@
 {
-  "name": "Playbox",
+  "name": "Playbox — Play & Learn",
   "short_name": "Playbox",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
-  "display_override": ["fullscreen", "standalone"],
+  "display_override": [
+    "fullscreen",
+    "standalone"
+  ],
   "background_color": "#FFF9F0",
   "theme_color": "#FFF9F0",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "id": "./",
+  "description": "Avalynn’s personal iPad playroom",
+  "categories": [
+    "education",
+    "games",
+    "kids"
+  ],
+  "lang": "en",
+  "shortcuts": [
+    {
+      "name": "Playroom",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Learning activities",
+      "url": "./learn.html"
+    }
   ]
 }

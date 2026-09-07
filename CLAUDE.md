@@ -1,3 +1,7 @@
+# Current version: personal Playbox 2
+
+Read README.md and DESIGN-REVIEW.md first. They describe the September 2026 upgrade and supersede the old profile gate, monolithic audio, font-loading and offline assumptions below. The app opens directly into Avalynn’s profile; there is no public onboarding or offline download feature. Shared code lives in app-core.js, catalog.js, app-shell.js/css and houses.js. New voice lines are in voice-lines.json. Keep every game timer inside Playbox.session, and preserve the iPad audio/touch constraints below.
+
 # CLAUDE.md — Avalynn's Unicorn & Bunny Games
 
 Project context and maintenance guide for Claude Code. Read this fully before editing.

@@ -9,3 +9,9 @@ desktop.ini
 
 # Local Claude Code tooling (preview server config, etc.)
 .claude/
+
+# Local validation and dependencies
+node_modules/
+.tools/
+artifacts/
+*.part

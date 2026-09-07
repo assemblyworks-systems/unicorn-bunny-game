@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>Playbox</title>
+<title>Playbox — Little adventures, big discoveries</title>
+<meta name="description" content="A playful collection of stories, creative activities and early learning games. Made for little hands, with no ads or accounts.">
 <link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#FFF9F0">
 <meta name="mobile-web-app-capable" content="yes">
@@ -14,8 +15,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Playbox">
 <link rel="apple-touch-icon" href="icon.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="playbox.css">
 <style>
   *{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; user-select:none; -webkit-user-select:none; }
@@ -193,6 +192,7 @@
   .gateBtn:active{ transform:translateY(4px); box-shadow:0 var(--chunk-depth-press) 0 var(--color-coral-deep); }
   .gateErr{ font-family:var(--font-body); font-size:18px; font-weight:700; color:var(--color-coral-deep); min-height:22px; }
 </style>
+<link rel="stylesheet" href="app-shell.css">
 </head>
 <body>
 <div id="app">
@@ -201,11 +201,11 @@
   <div id="gate" class="screen">
     <div class="gateCard">
       <div class="gateHero"><img src="img/rex-dino.svg" alt=""><img src="img/mascot-boxy.svg" alt=""></div>
-      <h1 class="gateTitle">Welcome!</h1>
-      <p class="gateSub">Who's playing today?</p>
-      <input id="gateName" type="text" inputmode="text" autocomplete="off" autocapitalize="words" placeholder="Type your name" />
-      <button id="gateGo" class="gateBtn">Let's Play! ▶</button>
-      <div id="gateErr" class="gateErr"></div>
+      <p class="eyebrow">WELCOME TO PLAYBOX</p><h1 class="gateTitle">Hello, little explorer.</h1>
+      <p class="gateSub">A little world of play, just for you.</p>
+      <input id="gateName" type="text" aria-label="Your nickname" maxlength="24" inputmode="text" autocomplete="off" autocapitalize="words" placeholder="Your nickname" />
+      <p class="gate-note">Your name makes this little world yours.</p><button id="gateGo" data-native="true" class="gateBtn">Let's Play! ▶</button>
+      <div id="gateErr" class="gateErr" role="alert"></div>
     </div>
   </div>
 
@@ -254,6 +254,9 @@
   <div id="buddy"><img src="img/rex-dino.svg" alt=""></div>
 </div>
 
+<script src="app-core.js"></script>
+<script src="catalog.js"></script>
+<script src="houses.js"></script>
 <script>
 (function(){
   const app=document.getElementById('app');
@@ -275,18 +278,10 @@
 
   // ---------- profile gate (client-side soft gate; shared with index.html) ----------
   const PKEY='playbox_profile_v1';
-  const ALLOWED=['Avalynn','Raynice','Sophia'];
+
   function loadProfile(){ try{ return JSON.parse(localStorage.getItem(PKEY)); }catch(e){ return null; } }
   function saveProfile(p){ try{ localStorage.setItem(PKEY, JSON.stringify(p)); }catch(e){} }
-  function matchProfile(input){
-    const s=(input||'').trim().replace(/\s+/g,' ');
-    const low=s.toLowerCase();
-    let first=null;
-    for(const n of ALLOWED){ if(low.indexOf(n.toLowerCase())===0){ first=n; break; } }
-    if(!first) return null;
-    const full=s.split(' ').map(w=> w ? w.charAt(0).toUpperCase()+w.slice(1).toLowerCase() : w).join(' ');
-    return { full:full, first:first };
-  }
+  function matchProfile(input){ return Playbox.profile(input); }
   function applyProfile(p){
     FIRST=p.first||'Avalynn';
     homeTitle.textContent=p.full+"'s Playbox";
@@ -302,7 +297,7 @@
   }
   function submitGate(){
     const p=matchProfile(gateName.value);
-    if(!p){ gateErr.textContent='Profile not authorised.'; return; }
+    if(!p){ gateErr.textContent='Use a nickname: 1–24 letters, spaces, apostrophes or hyphens.'; return; }
     saveProfile(p); applyProfile(p);
   }
   function changeProfile(){
@@ -334,7 +329,7 @@
   const PRAISE=['Yay!','Great job!','Wonderful!','You did it!','Amazing!','Hooray!','Super!','Well done!','Brilliant!','Awesome!'];
   const TRYAGAIN=['Try again!','Almost!','You can do it!','Keep trying!','So close!'];
 
-  let mode=null, soundOn=true, audioCtx=null;
+  let mode=null, soundOn=Playbox.settings.sound, audioCtx=null;
   let FIRST='Avalynn';   // canonical first name from the profile gate (visual use only — learn.html never speaks the name)
   let cur=null, roundLock=false;
   const rand=a=>a[Math.floor(Math.random()*a.length)];
@@ -349,7 +344,7 @@
   let idlePrompt=null, idleT=null, idleN=0;
   function armIdle(fn){ idlePrompt=fn; idleN=0; resetIdle(); }
   function stopIdle(){ idlePrompt=null; clearTimeout(idleT); }
-  function resetIdle(){ clearTimeout(idleT); if(idlePrompt) idleT=setTimeout(()=>{ if(mode&&!roundLock&&idlePrompt&&idleN<2){ idleN++; idlePrompt(); resetIdle(); } },15000); }
+  function resetIdle(){ clearTimeout(idleT); if(idlePrompt) idleT=Playbox.session.timeout(()=>{ if(mode&&!roundLock&&idlePrompt&&idleN<2){ idleN++; idlePrompt(); resetIdle(); } },15000); }
   document.addEventListener('pointerdown',resetIdle,true);
 
   // ---------- stickers (session-only: reset on reload and on profile change, never persisted) ----------
@@ -362,14 +357,14 @@
     renderStars();
     starCount.classList.remove('bump'); void starCount.offsetWidth; starCount.classList.add('bump');
     flyTo(s);
-    if(store.count%10===0){ setTimeout(()=>{ fanfare(); cheerText('⭐ '+store.count+' stars! ⭐'); confetti(28); }, 500); }
+    if(store.count%10===0){ Playbox.session.timeout(()=>{ fanfare(); cheerText('⭐ '+store.count+' stars! ⭐'); confetti(28); }, 500); }
   }
   function flyTo(emo){
     const f=document.createElement('div'); f.className='flyStick'; f.textContent=emo;
     f.style.left='48vw'; f.style.top='42vh'; document.body.appendChild(f);
     const r=starCount.getBoundingClientRect();
     requestAnimationFrame(()=>{ f.style.left=r.left+'px'; f.style.top=r.top+'px'; f.style.transform='scale(.4)'; f.style.opacity='0.2'; });
-    setTimeout(()=>f.remove(),850);
+    Playbox.session.timeout(()=>f.remove(),850);
   }
 
   // ---------- audio ----------
@@ -388,20 +383,7 @@
   if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; }
   function ttsSpeak(text){ if(!soundOn||!('speechSynthesis' in window)) return; try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text); u.rate=.9; u.pitch=1.3; u.volume=1; if(chosenVoice) u.voice=chosenVoice; speechSynthesis.speak(u); }catch(e){} }
   function slugify(t){ return t.toLowerCase().replace(/[^a-z0-9]+/g,'_').replace(/^_+|_+$/g,''); }
-  let _voiceEl=null;
-  function speak(text,onDone){
-    if(!soundOn){ if(onDone) onDone(); return; }
-    if(!_voiceEl) _voiceEl=new Audio();
-    const a=_voiceEl;
-    try{ a.pause(); }catch(e){}
-    let done=false, fell=false;
-    const finish=function(){ if(done) return; done=true; if(onDone) onDone(); };
-    a.onended=finish;
-    a.onerror=function(){ if(!fell){ fell=true; ttsSpeak(text); } finish(); };
-    a.src='voice/'+slugify(text)+'.mp3'; a.volume=1; try{ a.currentTime=0; }catch(e){}
-    const p=a.play(); if(p&&p.catch) p.catch(function(){ if(!fell){ fell=true; ttsSpeak(text); } finish(); });
-    setTimeout(finish,7000); // safety so a round never gets stuck
-  }
+  function speak(text,onDone){ Playbox.audio.play(text,onDone); }
   function nameOf(t){ return isNum(t)?('number '+t):('letter '+t.toUpperCase()); }
 
   // ---- mobile audio unlock (Chrome/Safari require a user gesture) ----
@@ -420,22 +402,22 @@
 
   // ---------- fx ----------
   function cheerText(msg){ const c=document.createElement('div'); c.className='cheer'; c.textContent=msg; document.body.appendChild(c); c.addEventListener('animationend',()=>c.remove(),{once:true}); }
-  function confetti(n){ const set=['🎉','✨','💖','⭐','🌈','🎊','🌸','💕']; for(let i=0;i<(n||18);i++){ const d=document.createElement('div'); d.className='confetti'; d.textContent=rand(set); d.style.left=(Math.random()*100)+'vw'; document.body.appendChild(d); const dur=1200+Math.random()*900, x=(Math.random()*200-100); d.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate('+x+'px,'+(window.innerHeight+60)+'px) rotate('+(Math.random()*720-360)+'deg)',opacity:.9}],{duration:dur,easing:'ease-in'}); setTimeout(()=>d.remove(),dur); } }
+  function confetti(n){ if(Playbox.reducedMotion()) return; const set=['🎉','✨','💖','⭐','🌈','🎊','🌸','💕']; for(let i=0;i<(n||18);i++){ const d=document.createElement('div'); d.className='confetti'; d.textContent=rand(set); d.style.left=(Math.random()*100)+'vw'; document.body.appendChild(d); const dur=1200+Math.random()*900, x=(Math.random()*200-100); d.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:'translate('+x+'px,'+(window.innerHeight+60)+'px) rotate('+(Math.random()*720-360)+'deg)',opacity:.9}],{duration:dur,easing:'ease-in'}); Playbox.session.timeout(()=>d.remove(),dur); } }
   function sparkAt(x,y){ const s=document.createElement('div'); s.className='spark'; s.textContent=rand(['✨','⭐','💖','🌟','💕']); s.style.left=x+'px'; s.style.top=y+'px'; s.style.fontSize=(18+Math.random()*16)+'px'; s.style.setProperty('--dx',(Math.random()*120-60)+'px'); s.style.setProperty('--dy',(-30-Math.random()*70)+'px'); document.body.appendChild(s); s.addEventListener('animationend',()=>s.remove(),{once:true}); }
   function buddyCheer(){ buddy.classList.remove('cheer'); void buddy.offsetWidth; buddy.classList.add('cheer'); }
   function win(praiseText){ chime(); confetti(); buddyCheer(); cheerText(praiseText||rand(PRAISE)); earnSticker(); }
-  function goFullscreen(){ const el=document.documentElement; const rfs=el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen; if(rfs&&!(document.fullscreenElement||document.webkitFullscreenElement)){ try{ const p=rfs.call(el); if(p&&p.catch)p.catch(()=>{}); }catch(e){} } }
+  function goFullscreen() {}
 
   // palm-proof tap helper for buttons
   function onTap(el,fn){ el.addEventListener('pointerdown',e=>{ e.preventDefault(); fn(e); }); }
 
   // ---------- navigation ----------
-  function openMode(m){ goFullscreen(); initAudio(); clearPending(); stopIdle(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
+  function openMode(m){ Playbox.session.clear(); if(window.cancelPlayboxDrag) window.cancelPlayboxDrag(); play.classList.remove('neighbour-game'); window.dispatchEvent(new CustomEvent('playbox-activity',{detail:m})); goFullscreen(); initAudio(); clearPending(); stopIdle(); mode=m; roundLock=false; play.innerHTML=''; board.classList.add('hidden'); home.classList.add('hidden'); play.classList.remove('hidden'); topbar.style.display='flex'; app.style.background=rand(SCENES); buddy.style.display='block';
     if(m==='find') startFind(); else if(m==='sounds') startSounds(); else if(m==='trace') startTrace(); else if(m==='name') startName(); else if(m==='count') startCount();
     else if(m==='memory') startMemory(); else if(m==='dots') startDots(); else if(m==='sort') startSort(); else if(m==='shapes') startShapes();
     else if(m==='dinocount') startDinoCount(); else if(m==='books') startBooks(); }
-  function goHome(){ clearPending(); stopIdle(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='var(--surface-app)'; mode=null; }
-  function showBoard(){ initAudio(); home.classList.add('hidden'); play.classList.add('hidden'); board.classList.remove('hidden'); topbar.style.display='flex'; buddy.style.display='none'; mode='board';
+  function goHome(){ Playbox.session.clear(); if(window.cancelPlayboxDrag) window.cancelPlayboxDrag(); play.classList.remove('neighbour-game'); window.dispatchEvent(new CustomEvent('playbox-home')); clearPending(); stopIdle(); if('speechSynthesis' in window) speechSynthesis.cancel(); play.classList.add('hidden'); board.classList.add('hidden'); home.classList.remove('hidden'); topbar.style.display='none'; buddy.style.display='none'; app.style.background='var(--surface-app)'; mode=null; }
+  function showBoard(){ Playbox.session.clear(); clearPending(); stopIdle(); initAudio(); home.classList.add('hidden'); play.classList.add('hidden'); board.classList.remove('hidden'); topbar.style.display='flex'; buddy.style.display='none'; mode='board';
     document.getElementById('boardCount').textContent='You have earned '+store.count+' stars!';
     const grid=document.getElementById('stickerGrid'); grid.innerHTML='';
     if(!store.board.length){ const e=document.createElement('div'); e.className='empty'; e.textContent='Play the games to earn stickers! Every time you get it right, you win one. 🌟'; grid.appendChild(e); }
@@ -448,6 +430,7 @@
     const cat=rand([UPPER,LOWER,NUMS]);
     const target=rand(cat); cur=target;
     const opts=shuffle([target,...shuffle(cat.filter(x=>x!==target)).slice(0,2)]);
+    const instruction=document.createElement('h2'); instruction.className='round-instruction'; instruction.textContent='Find the '+nameOf(target); play.appendChild(instruction);
     const sayIt=()=>speak('Can you find the '+nameOf(target)+'?');
     play.appendChild(makeRepeat(sayIt));
     const ch=document.createElement('div'); ch.id='choices';
@@ -455,8 +438,8 @@
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o; b.style.animationDelay=(i*0.08)+'s';
       if(o===target) rightBtn=b;
       onTap(b,()=>{ if(roundLock) return;
-        if(o===target){ roundLock=true; b.classList.add('right'); win(); speak(rand(PRAISE), function(){ setTimeout(findRound,450); }); }
-        else { b.classList.add('wrong'); boop(); speak('That is the '+nameOf(o)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        if(o===target){ roundLock=true; b.classList.add('right'); win(); speak(rand(PRAISE), function(){ Playbox.session.timeout(findRound,450); }); }
+        else { b.classList.add('wrong'); boop(); speak('That is the '+nameOf(o)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); Playbox.session.timeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
     play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
@@ -479,8 +462,8 @@
       const pic=document.createElement('span'); pic.className='pic'; pic.innerHTML=imgOf(abcFile(o)); pic.style.animationDelay=(Math.random())+'s'; b.appendChild(pic);
       const cw=document.createElement('span'); cw.className='cword'; cw.innerHTML='<b>'+o+'</b> is for '+WORDS[o][0]; b.appendChild(cw);
       onTap(b,()=>{ if(roundLock) return;
-        if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+' says '+SOUND[target]+'! '+target+' is for '+WORDS[o][0]+'!', function(){ setTimeout(soundsRound,600); }); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        if(o===target){ roundLock=true; b.classList.add('right'); cw.classList.add('show'); win(); speak(target+' says '+SOUND[target]+'! '+target+' is for '+WORDS[o][0]+'!', function(){ Playbox.session.timeout(soundsRound,600); }); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); Playbox.session.timeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
     play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
@@ -517,11 +500,11 @@
       onTap(b,()=>{ if(roundLock) return;
         if(o===n){ roundLock=true; b.classList.add('right');
           countStreak++; if(countStreak%3===0) countMax=Math.min(20,countMax+2);
-          win('Yes! '+n+'!'); speak('Yes! '+n+'!', function(){ setTimeout(()=>countRound(pool),450); }); }
+          win('Yes! '+n+'!'); speak('Yes! '+n+'!', function(){ Playbox.session.timeout(()=>countRound(pool),450); }); }
         else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN));
           wrongs++; countStreak=0;
           if(wrongs>=2){ countMax=Math.max(5,countMax-2); if(rightBtn) rightBtn.classList.add('hint'); }
-          setTimeout(()=>b.classList.remove('wrong'),420); } });
+          Playbox.session.timeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
     play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
@@ -551,8 +534,8 @@
     row.appendChild(clr); row.appendChild(nxt); play.appendChild(row);
     const sayIt=(nameMode&&traceIdx===0) ? ()=>speak("Let's trace your name!") : ()=>speak("Let's trace the "+nameOf(t)+"!");
     sayIt(); armIdle(sayIt);
-    setTimeout(()=>setupTrace(t),40);
-    setTimeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
+    Playbox.session.timeout(()=>setupTrace(t),40);
+    Playbox.session.timeout(()=>{ const g=document.getElementById('guideCanvas'); if(g&&g.width<=300) setupTrace(t); },300);
   }
   function setupTrace(t){
     const wrap=document.getElementById('traceWrap'); const guide=document.getElementById('guideCanvas'); const cv=document.getElementById('traceCanvas');
@@ -612,10 +595,10 @@
     if(nameMode && traceIdx===traceList.length-1){
       // whole name finished — big celebration, then start the name over
       fanfare(); confetti(30);
-      speak('You traced your name!', function(){ trackT(setTimeout(()=>{ traceIdx=0; renderTrace(); }, 900)); });
+      speak('You traced your name!', function(){ trackT(Playbox.session.timeout(()=>{ traceIdx=0; renderTrace(); }, 900)); });
       return;
     }
-    speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+' says '+SOUND[t.toUpperCase()]+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'), function(){ trackT(setTimeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); }, 600)); });
+    speak(isNum(t)?('You traced '+t+'!'):(t.toUpperCase()+' says '+SOUND[t.toUpperCase()]+'! '+t.toUpperCase()+' is for '+WORDS[t.toUpperCase()][0]+'!'), function(){ trackT(Playbox.session.timeout(()=>{ traceIdx=(traceIdx+1)%traceList.length; renderTrace(); }, 600)); });
   }
 
   // ================= MEMORY MATCH =================
@@ -642,9 +625,9 @@
         if(flipped.length===2){
           roundLock=true; const a=flipped[0], b=flipped[1];
           if(a.dataset.key===b.dataset.key){
-            setTimeout(()=>{ a.classList.add('done'); b.classList.add('done'); win(); matched++; flipped=[]; roundLock=false; if(matched>=cards.length/2){ const t=setTimeout(memoryRound,1300); trackT(t);} },450);
+            Playbox.session.timeout(()=>{ a.classList.add('done'); b.classList.add('done'); win(); matched++; flipped=[]; roundLock=false; if(matched>=cards.length/2){ const t=Playbox.session.timeout(memoryRound,1300); trackT(t);} },450);
           } else {
-            setTimeout(()=>{ a.classList.remove('open'); b.classList.remove('open'); boop(); flipped=[]; roundLock=false; },950);
+            Playbox.session.timeout(()=>{ a.classList.remove('open'); b.classList.remove('open'); boop(); flipped=[]; roundLock=false; },950);
           }
         }
       });
@@ -675,8 +658,8 @@
     play.appendChild(wrap);
     const sayIt=()=>speak('Connect the dots! Start at number one.');
     play.appendChild(makeRepeat(sayIt));
-    setTimeout(()=>setupDots(wrap,cv),60);
-    setTimeout(()=>{ if(!wrap.querySelector('.dot')) setupDots(wrap,cv); },320);
+    Playbox.session.timeout(()=>setupDots(wrap,cv),60);
+    Playbox.session.timeout(()=>{ if(!wrap.querySelector('.dot')) setupDots(wrap,cv); },320);
     speak('Connect the dots to make '+dotShape.name+'! Start at number one.');
     armIdle(sayIt);
   }
@@ -700,7 +683,7 @@
           ctx.beginPath(); ctx.moveTo(a[0]*rect.width,a[1]*rect.height); ctx.lineTo(z[0]*rect.width,z[1]*rect.height); ctx.stroke();
           const em=document.createElement('div'); em.textContent=dotShape.emoji; em.style.cssText='position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:130px;z-index:6;';
           wrap.appendChild(em); em.animate([{opacity:0,transform:'translate(-50%,-50%) scale(0)'},{opacity:1,transform:'translate(-50%,-50%) scale(1.1)'}],{duration:600,fill:'forwards'});
-          win('You made '+dotShape.name+'!'); speak('Yay! You made '+dotShape.name+'!', function(){ trackT(setTimeout(dotsRound,500)); });
+          win('You made '+dotShape.name+'!'); speak('Yay! You made '+dotShape.name+'!', function(){ trackT(Playbox.session.timeout(dotsRound,500)); });
         } else { const nx=wrap.querySelector('.dot[data-idx="'+dotNext+'"]'); if(nx) nx.classList.add('next'); }
       });
       wrap.appendChild(b);
@@ -746,7 +729,7 @@
     }
     let remaining=list.length;
     list.forEach(it=>{ const el=document.createElement('div'); el.className='sortItem'; el.textContent=it.emo;
-      makeDraggable(el,bins,(binKey)=>{ if(binKey===it.key){ el.remove(); win(); remaining--; if(remaining<=0){ const t=setTimeout(sortRound,1100); trackT(t);} return true; } return false; });
+      makeDraggable(el,bins,(binKey)=>{ if(binKey===it.key){ el.remove(); win(); remaining--; if(remaining<=0){ const t=Playbox.session.timeout(sortRound,1100); trackT(t);} return true; } return false; });
       items.appendChild(el); });
     play.appendChild(items); play.appendChild(makeRepeat(sayIt)); play.appendChild(bins);
     sayIt(); armIdle(sayIt);
@@ -770,8 +753,8 @@
     opts.forEach((o,i)=>{ const b=document.createElement('button'); b.className='choice'; b.textContent=o[1]; b.style.animationDelay=(i*0.08)+'s';
       if(o[0]===tgt[0]) rightBtn=b;
       onTap(b,()=>{ if(roundLock) return;
-        if(o[0]===tgt[0]){ roundLock=true; b.classList.add('right'); win(); speak('Yes! '+tgt[0]+'!', function(){ trackT(setTimeout(shapesRound,450)); }); }
-        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); setTimeout(()=>b.classList.remove('wrong'),420); } });
+        if(o[0]===tgt[0]){ roundLock=true; b.classList.add('right'); win(); speak('Yes! '+tgt[0]+'!', function(){ trackT(Playbox.session.timeout(shapesRound,450)); }); }
+        else { b.classList.add('wrong'); boop(); speak(rand(TRYAGAIN)); wrongs++; if(wrongs>=2&&rightBtn) rightBtn.classList.add('hint'); Playbox.session.timeout(()=>b.classList.remove('wrong'),420); } });
       ch.appendChild(b); });
     play.appendChild(ch); sayIt(); armIdle(sayIt);
   }
@@ -846,7 +829,7 @@
     const nxt=document.createElement('button'); nxt.className='bigNext'; nxt.textContent = i<bk.pages.length-1 ? 'Next ▶' : '🎉 The End';
     onTap(nxt,()=>{ if(roundLock) return;
       if(i<bk.pages.length-1) renderPage(bk,i+1);
-      else { roundLock=true; win(); speak(rand(PRAISE), function(){ trackT(setTimeout(showShelf,600)); }); } });
+      else { roundLock=true; win(); speak(rand(PRAISE), function(){ trackT(Playbox.session.timeout(showShelf,600)); }); } });
     row.appendChild(shelfBtn); row.appendChild(nxt); play.appendChild(row);
     if(i===0) speak(bk.title, sayIt); else sayIt();
     armIdle(sayIt);
@@ -856,31 +839,34 @@
   function makeRepeat(fn){ const b=document.createElement('button'); b.className='repeatBtn'; b.textContent='🔊'; b.setAttribute('aria-label','Repeat'); onTap(b,()=>{ initAudio(); fn(); }); return b; }
 
   // ---------- wiring ----------
-  document.querySelectorAll('.menu-btn').forEach(btn=>{ onTap(btn,()=>openMode(btn.dataset.mode)); });
+  document.querySelectorAll('.menu-btn').forEach(btn=>{ btn.dataset.native='true'; btn.addEventListener('click',()=>openMode(btn.dataset.mode)); });
   onTap(backBtn,goHome);
   onTap(boardBtn,showBoard);
   onTap(starCount,showBoard);
-  onTap(soundBtn,()=>{ soundOn=!soundOn; soundBtn.textContent=soundOn?'🔊':'🔇'; if(!soundOn&&'speechSynthesis' in window) speechSynthesis.cancel(); if(soundOn) initAudio(); });
+  onTap(soundBtn,()=>{ soundOn=!soundOn; Playbox.setSettings({sound:soundOn}); if(!soundOn) _sfxPool.forEach(a=>a.pause()); soundBtn.textContent=soundOn?'🔊':'🔇'; if(!soundOn&&'speechSynthesis' in window) speechSynthesis.cancel(); if(soundOn) initAudio(); });
   window.addEventListener('resize',()=>{ if((mode==='trace'||mode==='name')&&cur) setupTrace(cur); });
 
+  window.addEventListener('playbox-settings',()=>{ soundOn=Playbox.settings.sound; if(!soundOn) _sfxPool.forEach(a=>a.pause()); });
+  Playbox.applySettings();
   // gate + profile wiring
   if(gateGo){ gateGo.addEventListener('click',e=>{ e.preventDefault(); submitGate(); }); }
   if(gateName){ gateName.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submitGate(); } }); }
   onTap(profileBtn,changeProfile);
 
   renderStars();
-  (function(){ const _p=loadProfile(); if(_p && _p.first) applyProfile(_p); else showGate(); })();
+  (function(){ const saved=loadProfile(); const p=Playbox.profile(saved && saved.full) || {full:'Avalynn',first:'Avalynn'}; saveProfile(p); applyProfile(p); })();
 
-  // Warm the image cache once idle → smoother first play + offline-ready (SW caches them).
+  // Warm the image cache once idle → smoother first play.
   (function(){
     const list=[...OBJ,...DINO_OBJ,'rex-dino.svg','mascot-boxy.svg','hop-bunny.svg','spot-cloud.svg','spot-rainbow.svg','star-pink.svg',
       'tardi-trio.svg','tardi-gavin-ball.svg','tardi-colin-ball.svg','tardi-doug-ball.svg','spider-wolf.svg','spot-volcano.svg','spot-icecave.svg',
       'hansel-gretel.svg','candy-house.svg','candy-witch.svg','spot-star.svg'].concat(UPPER.map(abcFile));
     const run=()=>list.forEach(f=>{ const im=new Image(); im.src='img/'+f; });
-    if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else setTimeout(run,1500);
+    if('requestIdleCallback' in window) requestIdleCallback(run,{timeout:3000}); else Playbox.session.timeout(run,1500);
   })();
 })();
 </script>
 <script>if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(function(){}); }</script>
+<script src="app-shell.js"></script>
 </body>
 </html>
